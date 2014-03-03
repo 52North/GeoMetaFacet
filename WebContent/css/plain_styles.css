@@ -1,0 +1,86 @@
+
+body { 
+  	background-color:#DCEBF0; 
+  	color:#666666;
+	font-family:sans-serif; 
+  	font-size:small; 
+  	font-weight:normal; 
+  	margin:0; 
+  	padding:0;  
+}
+
+#feature_label {
+	color: #666;
+	font-family: sans-serif;
+    font-size: small;
+    font-weight: normal; 
+} 
+
+.tooltip {
+  color:#666;
+  width:190px; 
+  z-index:1000001;
+}
+
+.tooltip2 {
+  color:#666;
+  width:100px; 
+  z-index:1000001;
+}
+
+.claro .dijitTooltipContainer{
+  border: 1px solid #F9B200;
+}
+
+/* ------------------- MAP AND LEGEND ------------------- */
+
+div.map { 
+  height:450px; 
+  position:absolute; 
+  border-width:1px;
+  border-style:solid;
+  border-color:silver; 
+  padding:5px;
+}
+
+/* ------------------- TIME ------------------- */
+
+#fromDate_Input_popup {
+	z-index:23;
+}
+
+#fromDate_Input, #widget_fromDate_Input {
+	z-index:10000 !important;
+}
+
+.dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer {
+	z-index:10000 !important;
+}
+
+div.content_time {  
+  z-index:1000000; 
+}
+
+#time_start_label {
+  padding-right:10px;
+  float:left; 
+}
+
+#time_end_label {
+  padding-left:10px;
+}  
+
+/* setting buttons in same size */
+.dijitButtonText {
+  width:100px;
+}
+
+#OpenLayers_Control_MaximizeDiv {
+	left: 0px !important;
+	float: right !important; 
+	position:relative !important;	
+}
+
+#OpenLayers.Control.AntiresistLayerSwitcher_42_layersDiv {
+	height: 100% !important;
+}

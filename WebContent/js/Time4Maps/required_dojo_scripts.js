@@ -1,0 +1,16 @@
+dojo.require("dojox.form.RangeSlider");     
+dojo.require("dojo.data.ItemFileReadStore");  
+dojo.require("dojo.date");                      
+dojo.require("dijit.form.DateTextBox");     
+dojo.require("dijit.form.Slider");
+dojo.require("dijit.form.HorizontalSlider");
+dojo.require("dijit.form.HorizontalRule");
+dojo.require("dijit.form.TextBox"); 
+dojo.require("dijit.layout.ContentPane"); 
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.layout.TabContainer");
+dojo.require("dijit.Tooltip");              
+dojo.require("dojo.data.ItemFileWriteStore");
+dojo.require("dijit.form.ComboBox"); 
+dojo.require("dijit.form.Button"); 
+dojo.require("dojo.parser");    

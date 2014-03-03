@@ -1,0 +1,44 @@
+<html>
+<head>
+	<!-- STYLES -->
+	<link rel="stylesheet" href="js/Dojo-1.9.0/dijit/themes/tundra/tundra.css" media="screen">
+	<link rel="stylesheet" href="css/additional_styles.css" type="text/css"> 
+	<link rel="stylesheet" href="css/style2.css" media="screen">
+	
+	<script type="text/javascript" src="js/Dojo-1.9.0/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+	<script type="text/javascript" src="js/Exhibit3/lib/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="js/Registries/jsonToTable.js"></script>
+
+	<style>
+		body { font-family: sans-serif; }
+		table,td { padding: 10px; border: 1px solid #CCC; border-collapse: collapse; font: small/1.5 "Tahoma", "Bitstream Vera Sans", Verdana, Helvetica, sans-serif; }
+		table { border: 1px solid #CCC; }
+ 		th { background: #FFF url(js/Registries/th_bck.gif) repeat-x; color: #666; padding: 5px 10px; border-left: 1px solid #CCC; }
+		tbody th { background: #fafafb; border-top: 1px solid #CCC; text-align: left; font-weight: normal; }
+		.table_row_name { width: 220px; }
+		.table_row_children { width: 400px; word-break: break-all; word-wrap: break-word; }
+		.p_id { font-size: smaller;}
+	</style>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>GLUES Topic Category Registry</title>
+</head>
+<body class="tundra" onload="convertJsonToTable()">
+	<div id="base_borderContainer" class="demoLayout" style="height: 100%; width: 90%;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
+		<!-- HEADER -->
+		<div id="headerPane" style="height: 100px;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top',  design: 'headline'">				
+			<div class="header_logo"></div>
+			<div class="header_title">
+				<h1 style="width:600px;">GLUES Topic Category Registry</h1>
+			</div> 
+			<div class="line"></div>
+		</div>
+		<div class="registryPanel" id="registryPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left'">				
+			<div id="tableDiv"></div>
+		</div>
+	</div>
+	<script>
+		document.getElementById("tableDiv").appendChild(convertJsonToTable("registries/glues_registry_topiccategories.json"));
+	</script>
+</body>
+</html>

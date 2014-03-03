@@ -1,0 +1,129 @@
+[
+	{
+		"identifier":"glues:registry:scenarios",
+		"name":"Scenarios",
+		"description":"These are the scenarios used in the Sustainable Land Management Program. The scenarios are grouped into GLUES specific scenarios and IPCC scenarios. The GLUES specific scenarios are developed by the GLUES scientists and suit the specific requirements of the regional projects in the Sustainable Land Management Program. The IPCC scenarios are developed by the IPCC and are used in several GLUES models.",
+		"children":[		
+			{
+				"identifier":"glues:registry:scenarios:glues",
+				"name":"GLUES Scenarios",
+				"description":"The GLUES scenarios are specific scenarios, which are developed within the GLUES project and suit the specific requirements of the regional projects in the Sustainable Land Management Program.",
+				"children": [				
+					{
+						"identifier":"glues:registry:scenarios:baseline",
+						"name":"Baseline", 
+						"description":"The baseline scenario is defined to carry forward the current situation while using current developments and trends. Basic conditions are not varied.",
+						"web":"http://modul-a.nachhaltiges-landmanagement.de/de/glossar/artikel/article/baselineszenario-referenzszenario/"
+					},
+					{
+						"identifier":"glues:registry:scenarios:baselinecc",
+						"name":"Baseline under Climate Change", 
+						"description":"See description of Baseline plus effects from climate change."
+					},
+					{
+						"identifier":"glues:registry:scenarios:nobiofq",
+						"name":"No global biofuel quotas", 
+						"description":"Some countries have already started or are discussing to reduce or abolish biofuel targets. Therefore, we implement a scenario in which there are no biofuel policies while other parameters are kept constant."
+					},
+					{
+						"identifier":"glues:registry:scenarios:nobiofqcc",
+						"name":"No global biofuel quotas under Climate Change", 
+						"description":"See description of noBiofQ Scenario plus effects from climate change."
+					},
+					{
+						"identifier":"glues:registry:scenarios:animalsourcedfood",
+						"name":"Higher consumption of animal sourced food", 
+						"description":"Since livestock production in industrialized and industrializing countries shows a trend towards indoor livestock production, we presume that the consumption of indoor livestock increases in some regions."
+					},
+					{
+						"identifier":"glues:registry:scenarios:animalsourcedfoodcc",
+						"name":"Higher consumption of animal sourced food under Climate Change", 
+						"description":"See description of AnimalSourcedFood plus effects from climate change."
+					},
+					{
+						"identifier":"glues:registry:scenarios:landexpansion",
+						"name":"Land expansion", 
+						"description":"The FAO long-term baseline outlook 'World agriculture: towards 2030/2050 - The 2012 Revision' projects changes in land used for agricultural production. In this scenario we change the land endowment to represent these changes. Globally, cropland increases by 6 percent in 2030 compared to 2007."
+					},
+					{
+						"identifier":"glues:registry:scenarios:landexpansioncc",
+						"name":"Land expansion under Climate Change", 
+						"description":"See description of LandExpansion Scenario plus effects from climate change."
+					}
+				]
+			},	
+			{
+				"identifier":"glues:registry:scenarios:sres",
+				"name":"SRES Scenarios",
+				"description":"These are IPCC specific scenarios.",
+				"web":"http://www.ipcc.ch/ipccreports/sres/emission/index.php?idp=91",
+				"children": [		
+					{
+						"identifier":"glues:registry:scenarios:sresa1family",
+						"name":"A1 Storyline and Scenario Family",
+						"description":"The A1 storyline is a case of rapid and successful economic development, in which regional average income per capita converge - current distinctions between 'poor' and 'rich' countries eventually dissolve. The primary dynamics are: Strong commitment to market-based solutions; High savings and commitment to education at the household level; High rates of investment and innovation in education, technology, and institutions at the national and international levels; International mobility of people, ideas, and technology. The transition to economic convergence results from advances in transport and communication technology, shifts in national policies on immigration and education, and international cooperation in the development of national and international institutions that enhance productivity growth and technology diffusion.",
+						"web":"http://www.ipcc.ch/ipccreports/sres/emission/index.php?idp=93",
+						"children": [ 
+							{
+								"identifier":"glues:registry:scenarios:sresa1",
+								"name":"A1", 
+								"description":"The SRES A1 Emissions Scenarios is subdivided into A1F1 and A1T. The SRES A1FI Emissions Scenarios are based on the following key assumptions: A future world of very rapid economic growth, low population growth and rapid introduction of new and more efficient technology. Major underlying themes are economic and cultural convergence and capacity building, with a substantial reduction in regional differences in per capita income. In this world, people pursue personal wealth rather than environmental quality. The SRES A1FT Emissions Scenarios are based on the following key assumptions: A future world of very rapid economic growth, low population growth and rapid introduction of new and more efficient technology. Major underlying themes are economic and cultural convergence and capacity building, with a substantial reduction in regional differences in per capita income. In this world, people pursue personal wealth rather than environmental quality. The SRES A1T Emissions Scenarios are based on the following key assumptions: A future world of very rapid economic growth, low population growth and rapid introduction of new and more efficient technology. Major underlying themes are economic and cultural convergence and capacity building, with a substantial reduction in regional differences in per capita income. In this world, people pursue personal wealth rather than environmental quality.",
+								"web":"http://www.ipcc-data.org/sres/ddc_sres_emissions.html"
+							},
+							{
+								"identifier":"glues:registry:scenarios:sresa1b",
+								"name":"A1B", 
+								"description":"The SRES A1B Emmissions Scenarios are based on the following key assumptions:A future world of very rapid economic growth, low population growth and rapid introduction of new and more efficient technology. Major underlying themes are economic and cultural convergence and capacity building, with a substantial reduction in regional differences in per capita income. In this world, people pursue personal wealth rather than environmental quality.",
+								"web":"http://www.ipcc-data.org/sres/ddc_sres_emissions.html"
+							} 
+						]
+					},
+				
+					{
+						"identifier":"glues:registry:scenarios:sresa2family",
+						"name":"A2 Storyline and Scenario Family",
+						"description":"The A2 scenario family represents a differentiated world. Compared to the A1 storyline it is characterized by lower trade flows, relatively slow capital stock turnover, and slower technological change. The A2 world 'consolidates' into a series of economic regions. Self-reliance in terms of resources and less emphasis on economic, social, and cultural interactions between regions are characteristic for this future. Economic growth is uneven and the income gap between now-industrialized and developing parts of the world does not narrow, unlike in the A1 and B1 scenario families.",
+						"web":"http://www.ipcc.ch/ipccreports/sres/emission/index.php?idp=94",
+						"children": [ 
+							{	
+								"identifier":"glues:registry:scenarios:sresa2",
+								"name":"A2", 
+								"description":"The SRES A2 Emissions Scenarios are based on the following key assumptions: A very heterogeneous world. The underlying theme is that of strengthening regional cultural identities, with an emphasis on family values and local traditions, high population growth, and less concern for rapid economic development.",
+								"web":"http://www.ipcc-data.org/sres/ddc_sres_emissions.html"
+							}
+						]
+					},					
+					{
+						"identifier":"glues:registry:scenarios:sresb1family",
+						"name":"B1 Storyline and Scenario Family",
+						"description":"The central elements of the B1 future are a high level of environmental and social consciousness combined with a globally coherent approach to a more sustainable development. Heightened environmental consciousness might be brought about by clear evidence that impacts of natural resource use, such as deforestation, soil depletion, over-fishing, and global and regional pollution, pose a serious threat to the continuation of human life on Earth. In the B1 storyline, governments, businesses, the media, and the public pay increased attention to the environmental and social aspects of development. Technological change plays an important role. At the same time, however, the storyline does not include any climate policies, to reflect the SRES terms of reference. Nevertheless, such a possible future cannot be ruled out.",
+						"web":"http://www.ipcc.ch/ipccreports/sres/emission/index.php?idp=94",
+						"children": [ 
+							{
+								"identifier":"glues:registry:scenarios:sresb1",
+								"name":"B1", 
+								"description":"The SRES B1 Emissions Scenarios are based on the following key assumptions: A convergent world with the same global population as in the A1 storyline but with rapid changes in economic structures toward a service and information economy, with reductions in materials intensity, and the introduction of clean and resource-efficient technologies.",
+								"web":"http://www.ipcc-data.org/sres/ddc_sres_emissions.html"
+							}
+						]
+					}, 
+					{
+						"identifier":"glues:registry:scenarios:sresb2family",
+						"name":"B2 Storyline and Scenario Family",
+						"description":"The B2 world is one of increased concern for environmental and social sustainability compared to the A2 storyline. Increasingly, government policies and business strategies at the national and local levels are influenced by environmentally aware citizens, with a trend toward local self-reliance and stronger communities. International institutions decline in importance, with a shift toward local and regional decision-making structures and institutions. Human welfare, equality, and environmental protection all have high priority, and they are addressed through community-based social solutions in addition to technical solutions, although implementation rates vary across regions.",
+						"web":"http://www.ipcc.ch/ipccreports/sres/emission/index.php?idp=95",
+						"children": [ 
+							{	
+								"identifier":"glues:registry:scenarios:sresb2", 
+								"name":"B2",
+								"description":"The SRES B2 Emissions Scenarios are based on the following key assumptions: A world in which the emphasis is on local solutions to economic, social, and environmental sustainability. It is again a heterogeneous world with less rapid, and more diverse technological change but a strong emphasis on community initiative and social innovation to find local, rather than global solutions.",
+								"web":"http://www.ipcc-data.org/sres/ddc_sres_emissions.html"
+							}
+						]
+					}	
+						 
+				]
+			}
+		]
+	}
+]

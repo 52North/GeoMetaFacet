@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<namespaces>
+	<namespace>
+		<prefix>csw</prefix>
+		<namespaceuri>http://www.opengis.net/cat/csw/2.0.2</namespaceuri>
+	</namespace>
+	<namespace>
+		<prefix>gco</prefix>
+		<namespaceuri>http://www.isotc211.org/2005/gco</namespaceuri>
+	</namespace> 
+		<namespace>
+		<prefix>gmd</prefix>
+		<namespaceuri>http://www.isotc211.org/2005/gmd</namespaceuri>
+	</namespace> 
+	<namespace>
+		<prefix>srv</prefix>
+		<namespaceuri>http://www.isotc211.org/2005/srv</namespaceuri>
+	</namespace> 
+	<namespace>
+		<prefix>xsi</prefix>
+		<namespaceuri>http://www.w3.org/2001/XMLSchema-instance</namespaceuri>
+	</namespace>
+	<namespace>
+		<prefix></prefix>
+		<namespaceuri>http://www.isotc211.org/2005/gmd</namespaceuri>
+	</namespace>
+</namespaces>
