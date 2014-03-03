@@ -1,0 +1,10 @@
+MetaViz - Visualizing lineage information in a graph
+----------------------------------------------------
+
+This widget is only available for GLUES project metadata stored in terra.catalog specific database.
+
+Requests to database are limited to internal LAN usage only.
+In case of questions, please contact christin.henzen@tu-dresden.de
+
+Otherwise the widget's backend classes (Java) have to be reconfigured for file mode (requesting data from an xml file) or
+CSW mode.

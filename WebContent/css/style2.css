@@ -1,0 +1,295 @@
+/* Any demo specific styling needed for this tutorial only */
+html, body {
+	font-family: sans-serif;
+	/*font-size: small;
+	font-size: 11px !important;*/
+	font-size: 14px !important;
+	font-weight: normal;
+	/*font-family: "omnes-pro",Sans-Serif;*/
+	font-family: "proxima-nova",Sans-Serif;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+	color: #666666;
+}
+
+h1 {
+	color: #007C95;
+	display: inline;
+	font-size: 2.5em;
+	font-weight: normal;
+	letter-spacing: 0.01em;
+	/*position: absolute;*/
+	width:300px;
+}
+
+h2,h3 {
+	font-family: "Myriad Pro", "Helvetica Neue", Helvetica, Arial,
+		Sans-Serif;
+	text-shadow: 0px 1px 1px silver;
+	padding-left: 20px;
+	padding-top: 20px;
+}
+
+h1, h2, h3 {
+	font-family: "Myriad Pro","Helvetica Neue",Helvetica,Arial,Sans-Serif;
+	text-shadow: 0px 1px 1px silver;
+}
+
+#imgLink {
+	cursor:pointer;
+} 
+
+/*Exhibit*/
+.facetPanel {
+	width:250px;
+}
+#facetPanel {
+	border:none;
+}
+
+.exhibit-tabularView-columnHeader {
+	text-align: left;
+}
+
+.exhibit-tabularView-body {
+	border: 0px !important;
+}
+
+.exhibit-tabularView-body td,th {
+	border: 0px !important;
+}
+
+.exhibit-facet-header-title img {
+	margin-top: 4px;
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+	float: right;
+}
+
+/*MAIN*/
+div.header_logo {
+	background-image: url("../images/lama_logo.gif");
+	background-position: right center;
+	background-repeat: no-repeat;
+	height: 65px;
+	padding-top: 5px;
+	position: relative;
+	width: 100%;
+}
+div.header_title {
+	background-position: left center;
+	position: absolute;
+	top: 5px;
+}
+
+#headerPane {
+	border: none;
+	height: 100px;
+	overflow: hidden;
+}
+
+.line {
+	background-color: #F9B200;
+	border-style: none;
+	border-width: 1px;
+	clear: left;
+	height: 1px;
+	margin: 0.5em 0;
+	overflow: hidden;
+}
+
+td { font-size: 12px !important; line-height: 1.6 }
+th { font-size: 12px !important; }
+
+#metaDataTable td {
+	min-width: 100px !important;
+	border-bottom: 1px solid #ccc;
+}
+
+a { color: #007C95;font-size: 12px !important; }
+a:hover{ text-decoration: underline;font-size: 12px !important; }
+
+.tundra .dijitBorderContainer {
+	background-color: #FFF !important;
+}
+
+.tundra .dijitSplitterH, .tundra .dijitGutterH {
+	background-color: #FFF !important;
+}
+
+.tundra .dijitTreeRowSelected .dijitTreeLabel {
+	background-color: transparent !important;
+	font-weight: bold; 
+}
+.tundra .dijitTreeRowSelected {
+	background-color: rgba(0, 124, 149, 0.2) !important; 
+}
+
+/*MainMap*/
+#mapII {
+	width: 100%;
+	height: 100%;
+}
+
+#map_contentPane .dijitContentPaneSingleChild { 
+ 	overflow: auto; 
+}
+
+#map_contentPane {
+	height:60%;
+}
+
+#map_info_text {
+	font-style: italic;
+	float: right; 
+	margin-top: 10px;
+}
+
+/*T4M*/
+#map {
+	width: 100%;
+	height: 100%;
+}
+
+/*MetaVIZ*/
+#metaVizDetailTable td {
+	vertical-align: top;
+}
+
+.line_grey {
+	background-color: silver;
+	border-bottom-color: silver;
+	border-style: none;
+	border-width: 1px;
+	clear: left;
+	height: 1px;
+	margin: 0.5em 0;
+	overflow: hidden;
+}
+
+/*everything else*/
+
+#preloader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%; 
+	height: 1200px; 
+	margin: 0; 
+	padding: 0;
+	background: #fff;				
+	z-index: 999;
+}
+
+#preloaderContent {
+	position: absolute;
+	border: 2px solid #007C95;
+	color: #666;
+	padding: 25px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+}
+
+.dijitDialogUnderlay {
+	background-color: black;
+	opacity: 0.8;
+}
+
+.dijitDialog {
+	overflow-y:auto;
+}
+
+.btnFilterItemActive, .btnFilterItemInactive {
+	width: 25px;
+	height: 25px;
+	background-color: grey;
+	background-image: url("../images/icons/filter.png");
+	background-size: cover;
+	border: 2px solid white; 
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.btnRectangleItemActive, .btnRectangleItemInactive {
+	width: 25px;
+	height: 25px;
+	background-color: grey;
+	background-image: url("../images/icons/rectangle.png");
+	background-size: cover;
+	border: 2px solid white;
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.btnCursorItemActive, .btnCursorItemInactive {
+	width: 25px;
+	height: 25px;
+	background-color: grey;
+	background-image: url("../images/icons/cursor.png");
+	background-size: cover;
+	border: 2px solid white;
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.btnCrossItemActive, .btnCrossItemInactive {
+	width: 25px;
+	height: 25px;
+	background-color: grey;
+	background-image: url("../images/icons/cross.png");
+	background-size: cover;
+	border: 2px solid white;
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.btnCursorItemActive:hover{ cursor: pointer; }
+.btnCursorItemInactive:hover{ cursor: pointer; }
+.btnRectangleItemActive:hover{ cursor: pointer; }
+.btnRectangleItemInactive:hover{ cursor: pointer; }
+.btnFilterItemActive:hover{ cursor: pointer; } 
+.btnFilterItemInactive:hover{ cursor: pointer; }
+.btnCrossItemActive:hover{ cursor: pointer; } 
+.btnCrossItemInactive:hover{ cursor: pointer; }
+
+.OLpanel {
+	top: 10px;
+	right: 8px;
+}
+
+#resultView tr td:hover {
+	cursor: pointer;
+}
+
+.tundra .dijitInputContainer input {
+	margin: 0.4em 0.1em;
+	margin-left: 5px !important;
+}
+
+#base_borderContainer {
+	height: 97%;
+	width:97%;
+	margin:0px auto;
+	margin-top:30px;
+	/*width: 90%;
+	left: 70px;*/
+}
+
+#magnifier {
+	height: 28px;
+	width: auto;
+	cursor: pointer;
+	border-width: 1px;
+	border-color: #b3b3b3;
+	border-style: solid;
+	padding: 5px;
+	/*margin-top: -1px; 
+	float: right;*/
+}
+
+#f0 {
+	padding-top: 10px
+}

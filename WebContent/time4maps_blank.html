@@ -1,0 +1,217 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Time4Maps</title> 
+		
+		<!-- STYLES -->
+		<link rel="stylesheet" href="js/Dojo-1.9.0/dijit/themes/tundra/tundra.css" media="screen">
+		<link rel="stylesheet" href="css/additional_styles.css" type="text/css"> 
+		<link rel="stylesheet" href="css/style2.css" media="screen">
+		 
+		<script type="text/javascript" src="js/Dojo-1.9.0/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+		<script type="text/javascript" src="js/Exhibit3/lib/jquery-1.7.2.js"></script>
+		
+		<script type="text/javascript">
+			function init() {
+				dojo.require("dijit.layout.ContentPane"); 
+				dojo.require("dijit.layout.BorderContainer");
+				dojo.require("dojo.parser");  
+			}
+		</script>
+	</head>
+	<body class="tundra" onload="init();" style="width:100%;height:100%;">	
+		<div id="base_borderContainer" data-dojo-type="dijit/layout/BorderContainer" style="height:100%;width:100%;left:0px;">
+			<!-- div id="headerPane" style="width:100%;height:100px;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top',design:'headline'">				
+				<div class="header_logo"></div>
+				<div class="header_title">
+					<h1 style="width:600px;">Time4Maps</h1>
+				</div> 
+				<div class="line"></div>
+			</div --->	
+			
+			<div id="map_contentPane" class="" style="height:100%;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">			 
+				<!-- LAYER CHOOSER -->
+				<div id="layerChooser" style="display:none;width:100%;height:100%;">
+					<div id="description" class="content_description" style="left:10px;top:15px;">
+						<h2 id="description_wms_title" style="left:10px;">Visualize layers in Time4Maps</h2>	          
+				    	<div id="cb" ></div>
+					    <div id="load"></div>
+					</div>
+				</div>
+				
+				<div id="time4mapsMap" class="centerPanel" style="display:none;width:100%;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left'">			
+					 <!-- MAP + TIME -->
+					 <div id="time4mapsMap_Left" data-dojo-type="dijit/layout/BorderContainer" style="width:80%;" data-dojo-props="region:'left',splitter:true">
+					 	<div role="navigation" style="height:80%;" id="border-left-top" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top',splitter:true">
+					 		<div id="map"></div>
+					 	</div>			 
+					 	<div role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+					 		<div id="time" style="min-width:600px;">
+								<table style="width:100%; margin-top:5px;">
+									<tr>
+										<td style="width:10%;">
+											<label id="time_start_label">start time</label>
+										</td>
+										<td style="width:42%;">
+											<div id="time_slider" style="float:left;z-index:-12 !important;"></div>
+										</td>
+										<td style="width:10%;">
+											<label id="time_end_label" style="float:left;">end time</label>
+										</td>
+										<td>
+											<table style="width: 23%; margin-top:-17px;">
+												<tr><td>current time step:</td></tr>
+												<tr><td>
+													<input id="stateSelect" style="visibility: hidden;"> 
+		 											<input id="fromDate_Input" />
+												</td></tr>
+											</table> 
+										</td>
+										<td style="width:15%; min-width:100px; text-align:center">
+											<div id="play_div"></div> 
+										</td>
+									</tr>
+								</table> 
+							</div>
+							<div id="printdiv" style="padding-top:10px;margin-left:-5px;width:15%;min-width:100px;text-align:center;float:right;">
+								<div id="print_div"></div>
+							</div>
+					 	</div>
+					 </div>
+					 <!-- END MAP + TIME -->
+					 <!-- INFO -->
+					 <div id="bc_t4m_right" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'center'">
+					 	<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top", splitter:true' style="height:30%">
+							<div id="layerSwitcherCustom" style="position:relative;top:0px;float:right;overflow:visible;"></div>
+						</div>			
+						<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"center"' style="height:30%">
+							<img style="border: none;" id="legend_frame">		 
+						</div>			
+						<div role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"bottom", splitter:true' style="height:40%"> 
+							<!-- FEATURE INFO -->
+							<div id="featureinfo"><label id="feature_label">Click on the map to get feature information.</label></div> 
+						</div>
+					 </div>	
+					 <!-- END INFO -->		 
+				</div> 
+			</div>
+		</div>
+		
+		<!-- BASIC FRAMEWORKS - jQUERY, EXHIBIT, OPENLAYERS -->
+		
+		<script type="text/javascript" src="js/OpenLayers-2.12/OpenLayers.js"></script>
+		<script type="text/javascript" src="js/OpenLayers-2.12/deprecated.js"></script>
+		
+		<script type="text/javascript" src="js/guiFunctions.js"></script>
+		
+		<!-- TIME4MAPS -->
+		<script type="text/javascript" src="js/Time4Maps/required_dojo_scripts.js" ></script>
+		<script type="text/javascript" src="js/time4Maps.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/initialize_scripts.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/map_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/layer_gui_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/feature_info_setting_dynamic.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_logic.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_gui_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_combobox.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/AntiresistLayerSwitcher.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/print.js"></script>
+		 
+		<!-- GEONAMES -->
+		<script type="text/javascript" src="js/map.js"></script>
+		  
+		<script type="text/javascript">
+  			var heatmap = false;
+  			
+		  	function resizeIframe(obj) {
+		    	obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+		  	}
+		
+			function init() { 
+			  	//defined in map_setting.js
+			  	setT4MEventHandlerResizeMap();
+			  	
+			  	//var service = "http://services3.glues.geo.tu-dresden.de:8080/geoserver/glues_wp4m8_co2fertilization_mpi_echam5/wms";
+			  	//var layer = "v_a1_n33tradelivestockproducts";
+			  	
+			  	var service = getURLParam("service");
+			  	var layer = getURLParam("layer");
+			  	
+			  	if (service != "" & layer != "")
+			  		time4Maps.showTime4Maps(service, layer);
+			  	else if (service != "")
+			  		time4Maps.showTime4MapsLayer(service);
+			  	else alert('Please add a service url to the facet url by append "?SERVICE_URL" in the web browser.')
+			  	 
+			    /*if (dojo.byId("time"))
+			    	dojo.byId("time").style.visibility = "visible";
+			    if (dojo.byId("featureinfo"))
+			    	dojo.byId("featureinfo").style.visibility = "visible";*/
+			}
+			
+			function setT4MEventHandlerResizeMap() {
+				require(["dojo/parser", "dojo/ready", "dijit/registry", "dojo/dom", "dojo/dom-style", "dojo/aspect",
+					"dijit/form/CheckBox", "dojo/cookie", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/ContentPane"
+				    ], function(parser, ready, registry, dom, domStyle, aspect) {
+					
+					var splitter_left = registry.byId("time4mapsMap").getSplitter("left");
+					var splitter_top = registry.byId("time4mapsMap_Left").getSplitter("top");
+					
+			        var moveHandle_left = null;
+			        var moveHandle_top = null;
+			        var moveHandle_base = null;
+			        var moveHandle_middle = null;
+			        
+			        //split: map - featureInfo
+			        aspect.after(splitter_left, "_startDrag", function() {
+			        	moveHandle_left = aspect.after(splitter_left.domNode, "onmousemove", function() { 
+			        		if (map != null) { 
+			        			map.updateSize(); 
+			        			//defined in feature_info_setting_dynamic.js 
+			        			map_width = map.getCurrentSize().w; 
+			        			
+			        			for (var i = 0; i < layer_Array.length; i++)
+			        				layer_Array[i].redraw(); 
+			        		} 
+			            });
+			        });  
+			        aspect.after(splitter_left, "_stopDrag", function() {
+			        	moveHandle_left && moveHandle_left.remove();
+			        });
+			        			       
+			        //splitter: map - time info
+			        aspect.after(splitter_top, "_startDrag", function() {
+			        	moveHandle_top = aspect.after(splitter_top.domNode, "onmousemove", function() {
+			                if (map != null) { 
+			                	map.updateSize();
+			                
+			                	//defined in feature_info_setting_dynamic.js 
+			                	map_height = map.getCurrentSize().h;
+			                
+			                	for (var i = 0; i < layer_Array.length; i++)
+			                		layer_Array[i].redraw();  
+			                } 
+			            });
+			        });  
+			        aspect.after(splitter_top, "_stopDrag", function() {
+			        	moveHandle_top && moveHandle_top.remove();
+			        });			        
+					
+				});
+			}
+			
+			function getURLParam(name) {
+				name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp( regexS );
+				var results = regex.exec( window.location.href );
+
+				if ( results == null )
+					return "";
+				else
+					return results[1];
+			}
+		</script>
+	</body>
+</html>

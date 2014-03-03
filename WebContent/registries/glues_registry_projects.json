@@ -1,0 +1,97 @@
+[
+	{ 
+	  "identifier": "glues:registry:projects:sustainablelandmanagement",
+	  "name": "Sustainable Landmanagement",
+	  "description": "The Sustainable Land Management program is an international research program  of the German Ministry of Education and Research (BMBF). The program consists of two Modules, A and B, that work on the topics Interactions between land management, climate change and ecosystem services and Innovative system solutions for sustainable land management.",     	  
+	  "web": "http://nachhaltiges-landmanagement.de/en/",
+	  "children": 
+	  	[ 
+	         {
+	        	 "identifier": "glues:registry:projects:glues",
+	        	 "name": "GLUES",
+				 "description": "GLUES (Global Assessment of Land Use Dynamics, Greenhouse Gas Emissions and Ecosystem Services) is a coordination project of the international research program Sustainable Land Management of the German Ministry of Education and Research (BMBF). Within this funding measure twelve so called regional collaborative projects (RPs) are researching the impacts of climate and socio-economic changes and a corresponding optimization of the use of land and natural resources in different countries and regions.",   	 
+	         	"web": "http://modul-a.nachhaltiges-landmanagement.de/en/module-a/"
+	         },
+	         {
+	        	 "identifier": "glues:registry:projects:regionalprojects",
+	        	 "name": "Regional Projects",
+	        	 "description": "Within the funding measure twelve so called regional collaborative projects (RPs) are researching the impacts of climate and socio-economic changes and a corresponding optimization of the use of land and natural resources in different countries and regions.",
+	        	 "children":
+	        	 	[
+	        	 		{
+				        	 "identifier": "glues:registry:projects:lucci",
+				        	 "name": "LUCCi",
+				        	 "description" : "Land Use and Climate Change Interactions in the Vu Gia Thu Bon River Basin, Central Vietnam.",
+				        	 "web": "http://www.lucci-vietnam.info"	        	  	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:tfo",
+				        	 "name": "TFO",
+				        	 "description": "The Future Okavango: Scientific support for sustainable land and resource management in the Okavango basin.",
+				        	 "web": "http://www.future-okavango.org"				        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:legato",
+				        	 "name": "LEGATO",
+				        	 "description": "Land-use intensity and Ecological EnGineering - Assessment Tools for risks and Opportunities in irrigated rice based production systems.",
+				        	 "web": "http://www.legato-project.net"
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:kulunda",
+				        	 "name": "KULUNDA",
+				        	 "description": "How to prevent the next Global Dust Bowl. Ecological and Economic Strategies for Sustainable Land Management in the Russian Steppes. A Potential Solution to Climate Change.",
+				        	 "web" : "http://www.kulunda.eu"        	   	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:carbiocial",
+				        	 "name": "CarBioCial",
+				        	 "description": "Carbon sequestration, biodiversity and social structures in Southern Amazonia. Models and implementation of carbon-optimized land management strategies.",
+				        	 "web" : "http://www.carbiocial.de"				        	  	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:sumario",
+				        	 "name": "SuMaRiO",
+				        	 "description": "Sustainable Management of River Oases along the Tarim River, China",
+				        	 "web" : "http://www.sumario.de"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:cclandstrad",
+				        	 "name": "CC-LandStraD",
+				        	 "description": "Interdependencies between land-use and climate change – Strategies for a sustainable land-use management in Germany",
+				        	 "web" : "http://www.cc-landstrad.de"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:comtess",
+				        	 "name": "COMTESS",
+				        	 "description": "Sustainable coastal land management: Trade-offs in ecosystem services",
+				        	 "web" : "http://www.comtess.uni-oldenburg.de"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:innovate",
+				        	 "name": "INNOVATE",
+				        	 "description": "Interplay between the multiple uses of water reservoirs via innovative coupling of substance cycles in aquatic and terrestrial ecosystems",
+				        	 "web" : "http://www.innovate.tu-berlin.de"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:sulama",
+				        	 "name": "SuLaMa",
+				        	 "description": "Participatory research to support sustainable land management on the Mahafaly Plateau in South-western Madagascar",
+				        	 "web" : "http://www.sulama.de"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:sascha",
+				        	 "name": "SASCHA",
+				        	 "description": "Sustainable land management and adaptation strategies to climate change for the Western Siberian corn-belt",
+				        	 "web" : "http://www.uni-muenster.de/SASCHA"			        	 	 
+				         },
+				         {
+				        	 "identifier": "glues:registry:projects:surumer",
+				        	 "name": "SURUMER",
+				        	 "description": "Sustainable rubber cultivation in the Mekong Region – Development of an integrative land-use concept in Yunnan Province / China",
+				        	 "web" : "http://www.surumer.uni-hohenheim.de"			        	 	 
+				         }				         
+	        	 	]  	 
+	         }	         
+ 		]
+	}
+]	

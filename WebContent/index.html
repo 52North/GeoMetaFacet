@@ -1,0 +1,476 @@
+﻿<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>GeoMetaFacet</title> 
+		
+		<!-- STYLES -->
+		<link rel="stylesheet" href="js/Dojo-1.9.0/dijit/themes/tundra/tundra.css" media="screen">
+		
+		<link rel="stylesheet" href="css/additional_styles.css" type="text/css"> 
+		<link rel="stylesheet" href="css/heatmap_styles.css" type="text/css"> 
+		
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.1/pure-min.css">
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.1/base-min.css">
+		<link rel="stylesheet" href="css/mini.css">
+		<link rel="stylesheet" href="http://use.typekit.net/c/ed00b8/omnes-pro:n2:n3,proxima-nova:n1:n4:n7.X33:N:2,X35:N:2,Vmv:N:2,W0V:N:2,W0Y:N:2/d?3bb2a6e53c9684ffdc9a9efe1f5b2a62303f0a107c078b501a601d28c8e2edd714516b20f389cdf4d0f7806baf3d9cd5421f23f55150b514ac21ce5fcd0563dc217ff19c42386f81e4224b0e3df2135a11b1bba381da80f34ebb20386ca61589cfed552d3c7749aeae2c1affb17809efad64fcb69c8eb638d84326d8b274d56f758c9b7c2cc3147bd2a2a5dbb0b0385f467e1cc22a2f1e980e3763337ce881a382a20f9cd831158b7c2371eb6804583041eaac24a8b3c2d87c0f9f7f62193f1954a7cdda607c6643b0e4d2c62652877fcca3957f4ef2ac9114b789230ddb9ac67b4fc6add483528473803699c3999bbc62ae0ca8caa9c19a71f5aa525e4e70c4523fb12c52ccf7f224f0d1d4a1044c2af4c233f492d60ef8d4e18f05c0695685be6045eed0dd50856f145f9a39eacb4f3dd87138e6502a0116e09d25cc40bafb8198072a98f14d0cf6dc2fa51efe9b82ad3c49a7866df2a6e8a496c0af569d2c50dc2abc85915961a02412ac0ac48b36202d908d7e2909a8872093c52485ab2d4e48ae168cd79a095100781fa77e0b1f530af644f5793aee5fd4ea719ccce62e8ac46c693125aaa4e35624ca6b7db736c380894025f0c3b8eabe3e34e44d8af11c76b62cd48dfd13179e364b0ea12d8e811b8b4f56dccc394967415737e54b75211bd8fb0e">
+		
+		<link rel="stylesheet" href="css/style2.css" media="screen">
+		<link href="css/card_styles.css" rel="stylesheet" type="text/css" />
+		<link href="css/nav_styles.css" rel="stylesheet" type="text/css" />
+	 
+		<script type="text/javascript" src="js/Dojo-1.9-Build/dojo.js" djConfig="parseOnLoad: false"></script>
+		 
+		<!-- PRELOADER Scripts -->
+		<script type="text/javascript">    
+			
+		    var hidePreloader = function() {
+				// This really hides the preloader
+				var hide = function(){
+					dojo.fadeOut({
+						node: "preloader",
+						duration: 200,
+						onEnd: function(){								
+							dojo.style("preloader", "display", "none");	
+						}
+					}).play();
+				};
+			
+				// Set a timeout to ensure the preloader is visible. 
+				setTimeout(hide, 100);
+			};
+ 
+			function showPreloader(){
+				// Show the preloader centered in the viewport		
+				var ps = dojo.position('preloaderContent');
+				var ws = dojo.window.getBox(); 
+				dojo.style("preloaderContent", "top" , (ws.h/2-ps.h/2) + "px");
+				dojo.style("preloaderContent", "left", (ws.w/2-ps.w/2) + "px");
+				dojo.style("preloaderContent", "visibility" , "visible");
+				dojo.style("preloader", "opacity", "1");
+				dojo.style("preloader", "display", "block");
+			}
+			
+			dojo.addOnLoad(function() { 
+				showPreloader(); 
+				require("dojo/parser", function(parser) {
+					parser.parse();
+				});	 
+				init();
+		        hidePreloader();  
+			});
+		</script> 
+	</head>
+	<body class="tundra" id="gmf_body">
+		<div id="heatmapArea"></div>
+		<div id="MAP_heatmapArea"></div>
+		<div id="T4M_heatmapArea"></div>
+		<div id="MVI_heatmapArea"></div>
+		<div id="INF_heatmapArea"></div> 
+		<div id="SEA_heatmapArea"></div>
+		
+		<!--  PRELOADER -->
+		<div id="preloader">
+			<div id="preloaderContent" style="visibility: hidden;">
+				<strong id="preloaderStrong">Please wait ...   </strong>
+				<img width="20px" height="20px" src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojox/image/resources/images/loading.gif" ><br>
+				<div id="preloaderText">	Initializing application ! </div>
+			</div>
+		</div>
+ 
+ 		<p id="map_info_text" style="padding-right:20px;">Click on a boundingbox to get further information.</p> 
+			
+		<div id="base_borderContainer" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
+			<!-- HEADER -->
+			<!-- div id="headerPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top',  design: 'headline'">				
+				<div id="logo" class="header_logo"></div>
+				<div class="header_title">
+					<h1 id="appTitle" style="width:600px;">GeoMetaFacet</h1>
+				</div> 
+				<div class="line"></div>
+				</div -->
+			 
+			<!-- FACETS -->
+			<div class="facetPanel" id="facetPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter: true, region: 'left'">			
+				<!-- div>
+					<h1 id="appTitle" style="width:600px;">GeoMetaFacet</h1>
+				</div -->
+				<table id="SearchBox" style="width:105%;">
+					<tr >
+						<td>
+							<input id="SearchBoxText" style="width:100%;height:28px;margin-left:0px;" data-dojo-type="dijit/form/TextBox">
+		   				 </td>
+		   				 <td style="height:18px;">
+		   				 	<img id="magnifier" src="images/icons/lupe.png" onClick="search();">
+		   				 </td>
+	   				 </tr>
+				</table>		
+				
+				<!-- Attention: if you change data-ex-facet-label here please do so in facet.js as well -->
+				<div id="f0" 
+					 data-ex-role="exhibit-facet" 
+					 data-ex-facet-class="Exhibit.HierarchicalFacet" 
+					 data-ex-facet-label="Sustainable Landmanagement" 
+					 data-ex-expression=".hierarchylevelname" 
+					 data-ex-uniform-grouping=".hierarchylevelname" 
+					 data-ex-scroll="true" 
+					 data-ex-show-missing="false">
+					 <!-- data-ex-height="155px"  --> 
+				</div> 	
+				<div id="f1" 
+					 data-ex-role="exhibit-facet" 
+					 data-ex-facet-class="Exhibit.HierarchicalFacet" 
+					 data-ex-facet-label="Scenarios and storylines" 
+					 data-ex-expression=".scenario" 
+					 data-ex-uniform-grouping=".scenario" 
+					 data-ex-scroll="true" 
+					 data-ex-show-missing="false">
+					 <!-- data-ex-height="265px" -->
+				</div> 			
+				<div id="f3" 
+					 data-ex-role="exhibit-facet" 
+					 data-ex-expression=".topiccategory" 
+					 data-ex-facet-label="Thematic categorization" 
+					 data-ex-sort-mode="count"
+					 data-ex-show-missing="false">
+					 <!-- data-ex-height="305px" -->
+				</div> 
+				<div id="f2" 
+					 data-ex-role="exhibit-facet" 
+					 data-ex-expression=".datatype" 
+					 data-ex-facet-label="Ressources" 
+					 data-ex-sort-mode="count" 
+					 data-ex-show-missing="false">
+					 <!-- data-ex-height="135px" -->
+				</div>	 
+				<div id="f4" 
+					 data-ex-role="exhibit-facet" 
+					 data-ex-expression=".organization" 
+					 data-ex-facet-label="Organisations" 
+					 data-ex-sort-mode="count" 
+					 data-ex-show-missing="false">
+					 <!-- data-ex-height="150px"-->
+				</div>
+				<div id="f5" style="display:none;"
+					 data-ex-role="exhibit-facet" 
+					 data-ex-expression=".geographicboundingbox" 
+					 data-ex-facet-label="BoundingBoxes" 
+					 data-ex-sort-mode="count" 
+					 data-ex-show-missing="false"
+					 data-ex-height="150px">
+				</div>
+			</div> 
+			<div id="middle_borderContainer" class="centerPanel" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region: 'center'">
+				<!-- MAP CONTAINER -->
+				<!-- p id="map_info_text">Click on a boundingbox to get further information.</p -->
+				<div id="map_contentPane" class="" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region: 'top'">
+					<!-- MAP -->
+					<div id="mapII"></div>
+					
+					<!-- TIME4MAPS -->
+					<!-- LAYER CHOOSER -->
+					<div id="layerChooser" style="display:none">
+						<div id="description" class="content_description" style="left:10px;top:15px;">
+							<h2 id="description_wms_title" style="left:10px;">Visualize layers in Time4Maps</h2>	          
+					    	<div id="cb" ></div>
+						    <div id="load"></div>
+						</div>
+					</div>
+	
+					<!-- T4M MAP -->
+					<div id="time4mapsMap" style="height:100%;display:none;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region: 'center'">
+						
+						<!-- T4M MAP LEFT --> 
+						<div id="time4mapsMap_Left" style="width:80%;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="splitter:true,region: 'left'">						
+				 			<!-- TOP MAP -->	<!--  ,splitter:true  -->
+							<div role="navigation" id="border-left-top" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top"' style="height:80%">
+								<div id="map"></div>
+							</div>
+							
+							<!-- BOTTOM CONTENTINFO - TIME INFORMATION + NAVIGATION + PRINT -->
+							<div id="time4mapsMap_Time" role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"center"' style="">
+								<div id="time" style="min-width:600px;">
+									<table style="width:100%;margin-top:5px;">
+										<tr>
+											<td style="width:10%;">
+												<label id="time_start_label">start time</label>
+											</td>
+											<td style="width:42%;">
+												<div id="time_slider" style="float:left;z-index:-12 !important;"></div>
+											</td>
+											<td style="width:10%;">
+												<label id="time_end_label" style="float:left;">end time</label>
+											</td>
+											<td>
+												<table style="width:23%;margin-top:-17px;">
+													<tr><td>current time step:</td></tr>
+													<tr><td>
+														<input id="stateSelect" style="visibility:hidden;"> 
+			 											<input id="fromDate_Input" />
+													</td></tr>
+												</table> 
+											</td>
+											<td style="width:15%;min-width:100px;text-align:center">
+												<div id="play_div"></div> 
+											</td>
+											<td>
+												<div id="printdiv" style="margin-left:-5px;">
+													<div id="print_div"></div>
+												</div>
+											</td>
+										</tr>
+									</table> 
+								</div>							
+							</div>
+						</div>
+						<!-- T4M MAPS RIGHT -->
+						<div id="bc_t4m_right" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region: 'center'">
+						 	<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top", splitter:true' style="height:30%">
+								<div id="layerSwitcherCustom" style="position:relative;top:0px;float:right;overflow:visible;"></div>
+							</div>			
+							<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"center"' style="height:30%">
+								<img style="border: none;" id="legend_frame">		 
+							</div>			
+							<div id="cp_finfo" role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"bottom", splitter:true' style="height:40%"> 
+								<!-- FEATURE INFO -->
+								<div id="featureinfo"><label id="feature_label">Click on the map to get feature information.</label></div> 
+							</div>
+						</div>
+					</div>			
+
+					<!-- META-VIZ -->
+					<div id="page" style="width:100%;height:100%;display:none;overflow:auto;">
+										
+						<!-- hidden mini cards -->
+						<div id="lineage_mini_cards" class="white-block slide chain" style="left:0px;top:200px;width:220px;"> 
+							<div id="lineage_dataset_mini_cards_container"></div>
+							<div id="lineage_model_mini_cards_container"></div>
+						</div>
+						<!-- div id="usage_mini_cards" class="white-block slide2 chain" style="width:200px;left: 860px; top: 200px;" -->
+						<div id="usage_mini_cards" class="white-block slide2 chain" style="width:200px;left:0px;top:200px;">
+							<div id="usage_dataset_mini_cards_container" style="left:110px;"></div>
+							<div id="usage_model_mini_cards_container" style="left:5px;"></div>
+						</div>
+				
+						<!-- to be filled automatically with content -->
+						<div id="lineage_con" style="position:absolute;top:120px;left:0px;" class="top_pos">
+							<div id="lineage_dataset_cards_container" style="width:250px;">
+							</div>
+							<div id="lineage_model_cards_container"></div>
+						</div> 
+						<div id="detail_container" style="top:50px;" class="top_pos">
+						</div> 
+						<div id="usage_con" style="position:absolute;top:220px;"
+							class="top_pos">
+							<div id="usage_model_cards_container"></div>
+							<div id="usage_dataset_cards_container"></div>
+						</div> 
+						<div id="lines" style="position:absolute;top:50px;left:30px;">
+							<div id="actual_lines" class="chain"></div>
+						</div> 
+						<div id="content"> 
+							<div id="lin_pub_texts">
+								<div class="line_grey" style="clear:left;margin-top:40px;"></div>
+				
+								<div id="lineage_info" style="float:left;width:420px;">
+									<p id="lineage_headline">Lineage</p>
+									
+									<table class="lin_info_table" id="lin_statement" style="clear:left;">
+										<tr>
+											<td class="table_left" id="table_title">PROCESS DESCRIPTION</td>
+											<td></td>
+										</tr>
+										<tr>
+											<td class="table_left" valign="top">STATEMENT</td>
+											<td id="ps_statement">not defined</td>
+										</tr>
+									</table>	
+									
+									<table class="lin_info_table" id="lin_process" style="clear:left;">
+										<tr>
+											<td class="table_left" id="table_title">PROCESS DESCRIPTION</td>
+											<td></td>
+										</tr>
+										<tr>
+											<td class="table_left" valign="top">RATIONALE</td>
+											<td id="ps_rationale">not defined</td>
+										</tr>
+										<tr>
+											<td class="table_left" valign="top">DESCRIPTION</td>
+											<td id="ps_description">not defined</td>
+										</tr>
+									</table>
+									<table class="lin_info_table" id="table_processing">
+										<tr>
+											<td class="table_left" id="table_title">PROCESS PARAMS</td>
+											<td></td>
+										</tr> 
+										<tr>
+											<td class="table_left" valign="top">TIME OF EXECUTION</td>
+											<td id="p_time">not defined</td>
+										</tr>
+										<tr>
+											<td class="table_left" valign="top">SOFTWARE REFERENCE</td>
+											<td id="p_swref">not defined</td>
+										</tr>
+										<tr>
+											<td class="table_left" style="padding-top:20px;">PROCESSOR OF DATA</td>
+											<td id="p_processor" style="padding-top:20px;">not defined</td>
+										</tr>
+									</table> 
+								</div>
+								
+								<div id="publication_info" style="float:left;width:420px;padding-left:40px;">
+									<p id="publication_headline" style="padding-left:0px;">Publication</p>
+									<div id="pubs" style="clear:left;"></div>   
+								</div>		 
+							</div>
+							
+							<div id="children_div" style="z-index:100000000;background-color:white;visibility:hidden;position:absolute;left:100px;top:200px;border:1px solid silver;padding-left:20px;height:410px;width:800px;">
+								<p id="manychildren" style="margin-top:0px;">test</p>
+							</div>
+							<!--div id="hide_and_show" style="position:absolute; width:30px; height:30px; top:10px; left:1000px;"-->
+							<div id="hide_and_show" style="position:absolute;width:30px;height:30px;top:10px;left:0px;">
+								<div id="icon_arrow_left" onmousedown='toggleLineage()'></div>
+								<div id="icon_arrow_right" onmousedown='toggleLineage()' style="visibility:hidden;"></div>
+							</div> 
+						</div> 
+					</div>
+					<!-- end div.page -->
+				</div>
+				<div id="bottom_borderContainer" class="" style="height:40%;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region: 'center'">
+					<!-- RESULT LIST -->
+					<div id="listPanel" class="listPanel" style="width:40%;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region: 'left'">
+						<div style="overflow:auto"
+							 id="tab_list"
+							 data-ex-role="exhibit-view" 
+						     data-ex-view-class="Tabular" 
+						     data-ex-columns=".label"
+							 data-ex-column-labels="Name" 
+							 data-ex-row-styler="zebraStyler">
+						</div>
+					</div>
+					<!-- DETAIL + TREE + LINEAGE-->
+					<div class="centerPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">						
+					 	<div id="tabContainer" data-dojo-type="dijit/layout/TabContainer" selected="true"> 
+					        <div id="tabMetaData" data-dojo-type="dijit/layout/ContentPane" title="General Metadata" tooltip="This dialog shows general metadata of the selected entry.">
+								<!-- DETAILS --> 
+								<div id="infotext"> Please choose a metadata entry of the list on the left side.</div>
+					        </div>
+					        <div id="tabTree" onShow="guiFunctions.setTreeI();"  data-dojo-type="dijit/layout/ContentPane" title="Structure" tooltip="This dialog shows the hierarchy a dataset is embedded in. It shows parents and children of the dataset. This information is only available for datasets. " >
+					        	<!-- TREE -->		 
+					          	<div id="myTree" class="claro"></div>  
+					        </div> 
+					    </div> 
+					</div>
+				</div>
+			</div> 
+		</div>
+		
+		<!-- load dojo -->		
+		<script>
+			var globalCount = 0;
+			var resetAllBool = false;
+			var heatmap = false;
+			
+			function init() {
+				require(["dojo/parser", "dojo/dom", "dojo/dom-construct","dijit/form/TextBox", "dojo/on", "dojo/keys"], function(parser, dom, domConstruct, TextBox, on, keys) {
+					parser.parse();
+	
+					var SearchBox = dijit.byId("SearchBoxText")
+					SearchBox.on("keydown", function(evt) {
+						if (evt.keyCode === keys.ENTER) {
+							if (SearchBox.get("value") != "")
+								GeoNames.search(SearchBox.get("value"));
+							else
+								alert("Searchbox is empty") 
+						}
+					});  
+				});
+				
+				if (get_url_param("heatmap") == "true") { 
+			  		heatmap = true;
+			  	}
+				
+				initMap();
+				
+			  	//defined in map_setting.js
+			  	setEventHandlerResizeMap();		  	
+			  	
+			}
+		</script>
+		
+		<!-- BASIC FRAMEWORKS - jQUERY, EXHIBIT, OPENLAYERS -->
+		<script type="text/javascript" src="js/Exhibit3/exhibit-api.js?bundle=false"></script>	
+		<script type="text/javascript" src="js/Exhibit3/lib/jquery-1.7.2.js"></script>
+		
+		<script type="text/javascript" src="js/OpenLayers-2.12/OpenLayers.js"></script>
+		<script type="text/javascript" src="js/OpenLayers-2.12/deprecated.js"></script>
+		
+		<!-- TREE AND DETAIL PAGE -->
+		<script type="text/javascript" src="js/tree.js"></script> 
+		<script type="text/javascript" src="js/guiFunctions.js"></script>
+		
+		<!-- TIME4MAPS -->
+		<script type="text/javascript" src="js/Time4Maps/required_dojo_scripts.js" ></script>
+		<script type="text/javascript" src="js/time4Maps.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/initialize_scripts.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/map_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/layer_gui_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/feature_info_setting_dynamic.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_logic.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_gui_setting.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/time_combobox.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/AntiresistLayerSwitcher.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/print.js"></script>
+		
+		<!-- METAVIZ -->
+		<script type="text/javascript" src="js/metaviz.js"></script>
+		<script src="js/MetaViz/required_dojo_scripts.js" type="text/javascript"></script>
+		<script src="js/MetaViz/initialize_scripts.js" type="text/javascript"></script>
+		
+		<script src="js/MetaViz/local_tools_creation.js" type="text/javascript"></script>
+		<script src="js/MetaViz/local_tools_logic.js" type="text/javascript"></script>
+		<script src="js/MetaViz/card_creation.js" type="text/javascript"></script>
+		<script src="js/MetaViz/card_position.js" type="text/javascript"></script>
+		<script src="js/MetaViz/line_position.js" type="text/javascript"></script>
+		<script src="js/MetaViz/card_logic.js" type="text/javascript"></script>
+		<script src="js/MetaViz/lineage_filling.js" type="text/javascript"></script>
+		<script src="js/MetaViz/navi_hide_show_logic.js" type="text/javascript"></script>
+		
+		<!-- GEONAMES -->
+		<script type="text/javascript" src="js/map.js"></script>
+		<script type="text/javascript" src="js/GeoNames.js"></script>
+		
+		<!-- SEARCH -->
+		<script type="text/javascript" src="js/search.js"></script>
+		
+		<!-- REGISTRIES -->
+		<script type="text/javascript" src="js/registry.js"></script>
+		
+		<!-- HEATMAP -->
+		<script type="text/javascript" src="js/JSON-js/json2.js"></script> 
+		<script type="text/javascript" src="js/Heatmap/heatmap.js"></script> 
+		<script type="text/javascript" src="js/heatmaps.js"></script>
+		
+		<script type="text/javascript">
+		  
+			search = function() {
+				var SearchBox = dijit.byId("SearchBoxText");
+				if (SearchBox.get("value") != "")
+					GeoNames.search(SearchBox.get("value"));
+				else
+					alert("Searchbox is empty")
+			}
+			//TODO: remove
+  			var zebraStyler = function(item, database, tr) {
+      			//if (tr.rowIndex % 2)  tr.style.background = '#ddd';        			
+      			//else tr.style.background = '#fff'; 
+  			} 
+  			
+		  	function resizeIframe(obj) {
+		    	obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+		  	}
+		</script>
+		
+	</body>
+</html>

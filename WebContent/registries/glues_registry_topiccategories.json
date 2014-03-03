@@ -1,0 +1,104 @@
+[
+	{
+		"identifier":"glues:registry:topiccategory",
+		"name":"Topic categories",
+		"description":"The topic category is a metadata field, which is defined in the ISO 19115 as a high-level geographic data thematic classification. It should assist in the grouping and search of available geographic data sets.",
+		"children":[	 
+			{ 
+				"identifier":"glues:registry:topiccategory:biota",
+				"name":"Biota",
+				"description":"Flora and/or fauna in natural environment. Examples: wildlife, vegetation, biological sciences, ecology, wilderness, sealife, wetlands, habitat."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:boundaries",
+				"name":"Boundaries",
+				"description":"Legal land descriptions. Examples: political and administrative boundaries."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:climatologymeteorologyatmosphere",
+				"name":"Climatology, Meteorology, Atmosphere",
+				"description":"Processes and phenomena of the atmosphere. Examples: cloud cover, weather, climate, atmospheric conditions, climate change, precipitation."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:economy",
+				"name":"Economy",
+				"description":"Economic activities, conditions and employment. Examples: production, labour, revenue, commerce, industry, tourism and ecotourism, forestry, fisheries, commercial or subsistence hunting, exploration and exploitation of resources such as minerals, oil and gas."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:elevation",
+				"name":"Elevation",
+				"description":"Height above or below sea level. Examples: altitude, bathymetry, digital elevation models, slope, derived products."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:environment",
+				"name":"Environment",
+				"description":"Environmental resources, protection and conservation. Examples: environmental pollution, waste storage and treatment, environmental impact assessment, monitoring environmental risk, nature reserves, landscape."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:farming",
+				"name":"Farming",
+				"description":"Rearing of animals and/or cultivation of plants. Examples: agriculture, irrigation, aquaculture, plantations, herding, pests and diseases affecting crops and livestock."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:geoscientificinformation",
+				"name":"Geoscientific Information",
+				"description":"Information pertaining to earth sciences. Examples: geophysical features and processes, geology, minerals, sciences dealing with the composition, structure and origin of the earth's rocks, risks of earthquakes, volcanic activity, landslides, gravity information, soils, permafrost, hydrogeology, erosion."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:health",
+				"name":"Health",
+				"description":"Health, health services, human ecology, and safety. Examples: disease and illness, factors affecting health, hygiene, substance abuse, mental and physical health, health services."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:imagerybasemapsearthcover",
+				"name":"Imagery Base Maps Earth Cover",
+				"description":"Base maps. Examples: land cover, topographic maps, imagery, unclassified images, annotations."
+			}, 
+			{ 
+				"identifier":"glues:registry:topiccategory:inlandwaters",
+				"name":"Inland Waters",
+				"description":"Inland water features, drainage systems and their characteristics. Examples: rivers and glaciers, salt lakes, water utilization plans, dams, currents, floods, water quality, hydrographic charts."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:intelligencemilitary",
+				"name":"Intelligence Military",
+				"description":"Military bases, structures, activities. Examples: barracks, training grounds, military transportation, information collection."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:location",
+				"name":"Location",
+				"description":"Positional information and services. Examples: addresses, geodetic networks, control points, postal zones and services, place names."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:oceans",
+				"name":"Oceans",
+				"description":"Features and characteristics of salt water bodies (excluding inland waters). Examples: tides, tidal waves, coastal information, reefs."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:planningcadastre",
+				"name":"Planning Cadastre",
+				"description":"Information used for appropriate actions for future use of the land. Examples: land use maps, zoning maps, cadastral surveys, land ownership."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:society",
+				"name":"Society",
+				"description":"Characteristics of society and cultures. Examples: settlements, anthropology, archaeology, education, traditional beliefs, manners and customs, demographic data, recreational areas and activities, social impact assessments, crime and justice, census information."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:structure",
+				"name":"Structure",
+				"description":"Man-made construction. Examples: buildings, museums, churches, factories, housing, monuments, shops, towers."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:transportation",
+				"name":"Transportation",
+				"description":"Means and aids for conveying persons and/or goods. Examples: roads, airports/airstrips, shipping routes, tunnels, nautical charts, vehicle or vessel location, aeronautical charts, railways."
+			},
+			{ 
+				"identifier":"glues:registry:topiccategory:utilitiescommunication",
+				"name":"Utilities Communication",
+				"description":"Energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks."
+			}							
+		]
+	}
+]
