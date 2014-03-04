@@ -2,6 +2,8 @@ GeoMetaFacet
 ============
 
 GeoMetaFacet is a web client to explore and visualize geodata and metadata.
+Further information can be found at: http://52north.org/communities/metadata-management/gmf
+Live demo is available at: http://geoportal.glues.geo.tu-dresden.de:8080/GeoMetaFacet/index.html
 
 Structure
 ------------------------
@@ -34,9 +36,9 @@ Installation
 The basic installation steps are
 <ul>
 <li>Download code form GitHub https://github.com/52North/GeoMetaFacet.git</li>
-<li>Deploy the web archives in a servlet container (e.g. Apache Tomcat)</li>
 <li>Configure CSW connection (see below)</li>
-<li>Start application in web browser - ../GeoMetaFacet/index.html</li>
+<li>Deploy the web archives in a servlet container (e.g. Apache Tomcat)</li>
+<li>Start application in web browser - e.g. localhost:8080/GeoMetaFacet/index.html</li>
 </ul>
 
 Configuration
@@ -91,4 +93,4 @@ Will be updated soon
 
 Contact
 ------------------------
-Will be updated soon
+Christin Henzen (christin.henzen@tu-dresden.de)
