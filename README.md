@@ -1,8 +1,8 @@
 GeoMetaFacet
 ============
 
-GeoMetaFacet is a web client to explore and visualize geodata and metadata.
-Further information can be found at: http://52north.org/communities/metadata-management/gmf
+GeoMetaFacet is a web client to explore and visualize geodata and metadata.<br>
+Further information can be found at: http://52north.org/communities/metadata-management/gmf<br>
 Live demo is available at: http://geoportal.glues.geo.tu-dresden.de:8080/GeoMetaFacet/index.html
 
 Structure
