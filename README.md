@@ -42,8 +42,10 @@ The basic installation steps are
 Configuration
 ------------------------
 
-The lineage graph implementation and the generation of the internal used HSQL database need a CSW, database or file connection to request lineage data.
+The lineage graph implementation and the generation of the internal used HSQL database need a CSW, database or file connection to request metadata, such as lineage data.
 The configuration can be set in .../src/tud/geometafacet/helper/Constants.java. The following parameters has to be set:
+If you do not set the metaviz parameter, the application will run normally, but you are not able to call the lineage graph (from metadata details section)
+The parameter for the database generation are only needed, if you want to use your own metadata. Otherwise, you do not have to set these params and use the given metadata examples (see folder gmf).
 
 <ul>
 <li>cswURL - used in tud.metaviz.cnnection.csw.CSWConnection (for lineage graph in csw mode) - should look like this: http://yourdomain/soapServices/CSWStartup</li>
