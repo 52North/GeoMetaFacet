@@ -66,8 +66,8 @@ Simile Exhibit 3.0 (modified scripts by TUD-GIS), https://github.com/simile-widg
   LAB.js, http://labjs.com/ - MIT License <br>
 Dojo 1.9, https://github.com/dojo/dojo/blob/master/LICENSE - BSD License or Academic Free License <br>
 Openlayers 2, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License <br>
-JSON2.js - https://github.com/douglascrockford/JSON - js/blob/master/json2.js <br>
-heatmap.js - https://github.com/pa7/heatmap.js - MIT License
+JSON2.js, https://github.com/douglascrockford/JSON-js/blob/master/json2.js - Public domain <br>
+heatmap.js, https://github.com/pa7/heatmap.js - MIT License
 
 Java Libraries
 ------------------------
