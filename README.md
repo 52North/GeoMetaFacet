@@ -53,7 +53,7 @@ The parameter for the database generation are only needed, if you want to use yo
 <li>jdbcURL - used in tud.metaviz.connection.db.JDBCConnection (for lineage graph in db mode) - should look like this: jdbc:postgresql://databaseurl/username</li>
 <li>dbUser - used in tud.metaviz.connection.db.JDBCConnection (for lineage graph in db mode) - database user</li>
 <li>dbPasswd - used in tud.metaviz.connection.db.JDBCConnection (for lineage graph in db mode) - password of database user</li>
-</ul
+</ul>
 
 Javascript Libraries
 ------------------------
