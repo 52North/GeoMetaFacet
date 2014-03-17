@@ -1,12 +1,9 @@
-/* Any demo specific styling needed for this tutorial only */
 html, body {
-	font-family: sans-serif;
-	/*font-size: small;
-	font-size: 11px !important;*/
-	font-size: 14px !important;
+	font-family: sans-serif; 
+	font-size: 12px !important;
 	font-weight: normal;
-	/*font-family: "omnes-pro",Sans-Serif;*/
-	font-family: "proxima-nova",Sans-Serif;
+	line-height: 1.6;
+	font-family: "proxima-nova",sans-Serif;
     height: 100%;
     margin: 0;
     overflow: hidden;
@@ -19,14 +16,12 @@ h1 {
 	display: inline;
 	font-size: 2.5em;
 	font-weight: normal;
-	letter-spacing: 0.01em;
-	/*position: absolute;*/
+	letter-spacing: 0.01em; 
 	width:300px;
 }
 
-h2,h3 {
-	font-family: "Myriad Pro", "Helvetica Neue", Helvetica, Arial,
-		Sans-Serif;
+h2, h3 {
+	font-family: "Myriad Pro", "Helvetica Neue", Helvetica, Arial,Sans-Serif;
 	text-shadow: 0px 1px 1px silver;
 	padding-left: 20px;
 	padding-top: 20px;
@@ -109,8 +104,8 @@ th { font-size: 12px !important; }
 	border-bottom: 1px solid #ccc;
 }
 
-a { color: #007C95;font-size: 12px !important; }
-a:hover{ text-decoration: underline;font-size: 12px !important; }
+a { color: #007CF5;font-size: 12px !important; }
+a:hover { text-decoration: underline;font-size: 12px !important; }
 
 .tundra .dijitBorderContainer {
 	background-color: #FFF !important;
@@ -125,7 +120,8 @@ a:hover{ text-decoration: underline;font-size: 12px !important; }
 	font-weight: bold; 
 }
 .tundra .dijitTreeRowSelected {
-	background-color: rgba(0, 124, 149, 0.2) !important; 
+	/*background-color: rgba(0, 124, 149, 0.2) !important; */
+	background-color: rgba(249, 178, 0, 0.4) !important;
 }
 
 /*MainMap*/
@@ -146,6 +142,7 @@ a:hover{ text-decoration: underline;font-size: 12px !important; }
 	font-style: italic;
 	float: right; 
 	margin-top: 10px;
+	margin-bottom: 0px;
 }
 
 /*T4M*/
@@ -274,12 +271,13 @@ a:hover{ text-decoration: underline;font-size: 12px !important; }
 	width:97%;
 	margin:0px auto;
 	margin-top:30px;
+	margin-bottom:20px;
 	/*width: 90%;
 	left: 70px;*/
 }
 
 #magnifier {
-	height: 28px;
+	height: 18px;
 	width: auto;
 	cursor: pointer;
 	border-width: 1px;
@@ -292,4 +290,35 @@ a:hover{ text-decoration: underline;font-size: 12px !important; }
 
 #f0 {
 	padding-top: 10px
+}
+
+#feature_label {
+	color: #666;
+	font-family: sans-serif;
+    font-size: small;
+    font-weight: normal; 
+} 
+
+.tooltip {
+  color:#666;
+  width:190px; 
+  z-index:1000001;
+}
+
+.tooltip2 {
+  color:#666;
+  width:100px; 
+  z-index:1000001;
+}
+
+.claro .dijitTooltipContainer{
+  border: 1px solid #F9B200;
+}
+
+#div_searchBox div .tundra .dijitInputContainer input, #SearchBoxText {
+	margin: 10px 6px !important;
+}
+
+#SearchResultOverview {
+	overflow: auto;
 }

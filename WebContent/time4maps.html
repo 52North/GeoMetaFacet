@@ -4,11 +4,15 @@
 		<title>Time4Maps</title> 
 		
 		<!-- STYLES -->
-		<link rel="stylesheet" href="js/Dojo-1.9.0/dijit/themes/tundra/tundra.css" media="screen">
-		<link rel="stylesheet" href="css/additional_styles.css" type="text/css"> 
-		<link rel="stylesheet" href="css/style2.css" media="screen">
+		<link rel="stylesheet" href="js/dojo/themes/tundra/tundra.css" media="screen" type="text/css">
+		<link rel="stylesheet" href="css/general_styles.css" media="screen" type="text/css">  
 		 
-		<script type="text/javascript" src="js/Dojo-1.9.0/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+		<style type="text/css">
+			.dijitComboBox .dijitButtonNode { padding: 0 !important; }
+			.tundra .dijitButtonText { padding: 2px 5px 1px 5px !important; }			
+		</style>  
+		 
+		<script type="text/javascript" src="js/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
 		<script type="text/javascript" src="js/Exhibit3/lib/jquery-1.7.2.js"></script>
 		
 		<script type="text/javascript">
@@ -29,13 +33,13 @@
 				<div class="line"></div>
 			</div>	
 			
-			<div id="map_contentPane" class="" style="height:85%;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">			 
+			<div id="map_contentPane" class="" style="height:75%;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">			 
 				<!-- LAYER CHOOSER -->
 				<div id="layerChooser" style="display:none;width:100%;height:100%;">
 					<div id="description" class="content_description" style="left:10px;top:15px;">
-						<h2 id="description_wms_title" style="left:10px;">Visualize layers in Time4Maps</h2>	          
+						<h2 id="description_wms_title" style="left:10px;">Choose Layer(s)</h2>	          
 				    	<div id="cb" ></div>
-					    <div id="load"></div>
+					    <div id="load" ></div>
 					</div>
 				</div>
 				
@@ -73,7 +77,7 @@
 									</tr>
 								</table> 
 							</div>
-							<div id="printdiv" style="padding-top:10px;margin-left:-5px;width:15%;min-width:100px;text-align:center;float:right;">
+							<div id="printdiv" style="padding-top:0px;margin-left:-5px;width:15%;min-width:100px;text-align:center;float:right;">
 								<div id="print_div"></div>
 							</div>
 					 	</div>
@@ -130,10 +134,7 @@
 			function init() { 
 			  	//defined in map_setting.js
 			  	setT4MEventHandlerResizeMap();
-			  	
-			  	//var service = "http://services3.glues.geo.tu-dresden.de:8080/geoserver/glues_wp4m8_co2fertilization_mpi_echam5/wms";
-			  	//var layer = "v_a1_n33tradelivestockproducts";
-			  	
+			  	 
 			  	var service = getURLParam("service");
 			  	var layer = getURLParam("layer");
 			  	
@@ -141,12 +142,7 @@
 			  		time4Maps.showTime4Maps(service, layer);
 			  	else if (service != "")
 			  		time4Maps.showTime4MapsLayer(service);
-			  	else alert('Please add a service url to the facet url by append "?SERVICE_URL" in the web browser.')
-			  	 
-			    /*if (dojo.byId("time"))
-			    	dojo.byId("time").style.visibility = "visible";
-			    if (dojo.byId("featureinfo"))
-			    	dojo.byId("featureinfo").style.visibility = "visible";*/
+			  	else alert('Please add a service url by append "?service=" in the web browser.') 
 			}
 			
 			function setT4MEventHandlerResizeMap() {

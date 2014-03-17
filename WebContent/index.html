@@ -4,52 +4,19 @@
 		<title>GeoMetaFacet</title> 
 		
 		<!-- STYLES -->
-		<link rel="stylesheet" href="js/Dojo-1.9.0/dijit/themes/tundra/tundra.css" media="screen">
-		
-		<link rel="stylesheet" href="css/additional_styles.css" type="text/css"> 
-		<link rel="stylesheet" href="css/heatmap_styles.css" type="text/css"> 
-		
-		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.1/pure-min.css">
-		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.1/base-min.css">
-		<link rel="stylesheet" href="css/mini.css">
-		<link rel="stylesheet" href="http://use.typekit.net/c/ed00b8/omnes-pro:n2:n3,proxima-nova:n1:n4:n7.X33:N:2,X35:N:2,Vmv:N:2,W0V:N:2,W0Y:N:2/d?3bb2a6e53c9684ffdc9a9efe1f5b2a62303f0a107c078b501a601d28c8e2edd714516b20f389cdf4d0f7806baf3d9cd5421f23f55150b514ac21ce5fcd0563dc217ff19c42386f81e4224b0e3df2135a11b1bba381da80f34ebb20386ca61589cfed552d3c7749aeae2c1affb17809efad64fcb69c8eb638d84326d8b274d56f758c9b7c2cc3147bd2a2a5dbb0b0385f467e1cc22a2f1e980e3763337ce881a382a20f9cd831158b7c2371eb6804583041eaac24a8b3c2d87c0f9f7f62193f1954a7cdda607c6643b0e4d2c62652877fcca3957f4ef2ac9114b789230ddb9ac67b4fc6add483528473803699c3999bbc62ae0ca8caa9c19a71f5aa525e4e70c4523fb12c52ccf7f224f0d1d4a1044c2af4c233f492d60ef8d4e18f05c0695685be6045eed0dd50856f145f9a39eacb4f3dd87138e6502a0116e09d25cc40bafb8198072a98f14d0cf6dc2fa51efe9b82ad3c49a7866df2a6e8a496c0af569d2c50dc2abc85915961a02412ac0ac48b36202d908d7e2909a8872093c52485ab2d4e48ae168cd79a095100781fa77e0b1f530af644f5793aee5fd4ea719ccce62e8ac46c693125aaa4e35624ca6b7db736c380894025f0c3b8eabe3e34e44d8af11c76b62cd48dfd13179e364b0ea12d8e811b8b4f56dccc394967415737e54b75211bd8fb0e">
-		
-		<link rel="stylesheet" href="css/style2.css" media="screen">
-		<link href="css/card_styles.css" rel="stylesheet" type="text/css" />
-		<link href="css/nav_styles.css" rel="stylesheet" type="text/css" />
-	 
-		<script type="text/javascript" src="js/Dojo-1.9-Build/dojo.js" djConfig="parseOnLoad: false"></script>
+		<link rel="stylesheet" href="css/pure-min.css" media="screen" type="text/css"> 
+		<link rel="stylesheet" href="css/base-min.css" media="screen" type="text/css"> 
+		<link rel="stylesheet" href="css/general_styles.css" media="screen" type="text/css">			
+		<link rel="stylesheet" href="css/heatmap_styles.css" media="screen" type="text/css"> 		 
+		<link rel="stylesheet" href="css/card_styles.css" media="screen" type="text/css"> 
+		<link rel="stylesheet" href="css/nav_styles.css" media="screen" type="text/css"> 
+	 	<link rel="stylesheet" href="js/dojo/themes/tundra/tundra.css" media="screen" type="text/css">
+	 	
+		<script type="text/javascript" src="js/dojo/dojo.js" djConfig="parseOnLoad: false"></script>
+		<script type="text/javascript" src="js/preloader.js" djConfig="parseOnLoad: false"></script>
 		 
 		<!-- PRELOADER Scripts -->
 		<script type="text/javascript">    
-			
-		    var hidePreloader = function() {
-				// This really hides the preloader
-				var hide = function(){
-					dojo.fadeOut({
-						node: "preloader",
-						duration: 200,
-						onEnd: function(){								
-							dojo.style("preloader", "display", "none");	
-						}
-					}).play();
-				};
-			
-				// Set a timeout to ensure the preloader is visible. 
-				setTimeout(hide, 100);
-			};
- 
-			function showPreloader(){
-				// Show the preloader centered in the viewport		
-				var ps = dojo.position('preloaderContent');
-				var ws = dojo.window.getBox(); 
-				dojo.style("preloaderContent", "top" , (ws.h/2-ps.h/2) + "px");
-				dojo.style("preloaderContent", "left", (ws.w/2-ps.w/2) + "px");
-				dojo.style("preloaderContent", "visibility" , "visible");
-				dojo.style("preloader", "opacity", "1");
-				dojo.style("preloader", "display", "block");
-			}
-			
 			dojo.addOnLoad(function() { 
 				showPreloader(); 
 				require("dojo/parser", function(parser) {
@@ -79,25 +46,13 @@
  
  		<p id="map_info_text" style="padding-right:20px;">Click on a boundingbox to get further information.</p> 
 			
-		<div id="base_borderContainer" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
-			<!-- HEADER -->
-			<!-- div id="headerPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top',  design: 'headline'">				
-				<div id="logo" class="header_logo"></div>
-				<div class="header_title">
-					<h1 id="appTitle" style="width:600px;">GeoMetaFacet</h1>
-				</div> 
-				<div class="line"></div>
-				</div -->
-			 
+		<div id="base_borderContainer" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'"> 
 			<!-- FACETS -->
 			<div class="facetPanel" id="facetPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter: true, region: 'left'">			
-				<!-- div>
-					<h1 id="appTitle" style="width:600px;">GeoMetaFacet</h1>
-				</div -->
 				<table id="SearchBox" style="width:105%;">
 					<tr >
-						<td>
-							<input id="SearchBoxText" style="width:100%;height:28px;margin-left:0px;" data-dojo-type="dijit/form/TextBox">
+						<td id="div_searchBox">
+							<input id="SearchBoxText" style="width:100%;height:28px;margin-left:0px;line-height:1.0;" data-dojo-type="dijit/form/TextBox">
 		   				 </td>
 		   				 <td style="height:18px;">
 		   				 	<img id="magnifier" src="images/icons/lupe.png" onClick="search();">
@@ -425,17 +380,16 @@
 		
 		<!-- METAVIZ -->
 		<script type="text/javascript" src="js/metaviz.js"></script>
-		<script src="js/MetaViz/required_dojo_scripts.js" type="text/javascript"></script>
-		<script src="js/MetaViz/initialize_scripts.js" type="text/javascript"></script>
-		
-		<script src="js/MetaViz/local_tools_creation.js" type="text/javascript"></script>
-		<script src="js/MetaViz/local_tools_logic.js" type="text/javascript"></script>
-		<script src="js/MetaViz/card_creation.js" type="text/javascript"></script>
-		<script src="js/MetaViz/card_position.js" type="text/javascript"></script>
-		<script src="js/MetaViz/line_position.js" type="text/javascript"></script>
-		<script src="js/MetaViz/card_logic.js" type="text/javascript"></script>
-		<script src="js/MetaViz/lineage_filling.js" type="text/javascript"></script>
-		<script src="js/MetaViz/navi_hide_show_logic.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/MetaViz/required_dojo_scripts.js"></script>
+		<script type="text/javascript" src="js/MetaViz/initialize_scripts.js"></script>		
+		<script type="text/javascript" src="js/MetaViz/local_tools_creation.js"></script>
+		<script type="text/javascript" src="js/MetaViz/local_tools_logic.js"></script>
+		<script type="text/javascript" src="js/MetaViz/card_creation.js"></script>
+		<script type="text/javascript" src="js/MetaViz/card_position.js"></script>
+		<script type="text/javascript" src="js/MetaViz/line_position.js"></script>
+		<script type="text/javascript" src="js/MetaViz/card_logic.js"></script>
+		<script type="text/javascript" src="js/MetaViz/lineage_filling.js"></script>
+		<script type="text/javascript" src="js/MetaViz/navi_hide_show_logic.js"></script>
 		
 		<!-- GEONAMES -->
 		<script type="text/javascript" src="js/map.js"></script>

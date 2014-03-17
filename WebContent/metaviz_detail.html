@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>MetaViz</title>
+
+	<!-- STYLES -->
+	<link rel="stylesheet" href="css/pure-min.css" media="screen" type="text/css"> 
+	<link rel="stylesheet" href="css/base-min.css" media="screen" type="text/css"> 
+	<link rel="stylesheet" href="css/general_styles.css" media="screen" type="text/css">			
+	<link rel="stylesheet" href="css/heatmap_styles.css" media="screen" type="text/css"> 		 
+	<link rel="stylesheet" href="css/card_styles.css" media="screen" type="text/css"> 
+	<link rel="stylesheet" href="css/nav_styles.css" media="screen" type="text/css"> 
+	<link rel="stylesheet" href="js/dojo/themes/tundra/tundra.css" media="screen" type="text/css">
+	
+	<script type="text/javascript" src="js/dojo/dojo.js" djConfig="parseOnLoad: false"></script>
+	<script type="text/javascript" src="js/metaviz.js"></script>
+	<script type="text/javascript" src="js/MetaViz/required_dojo_scripts.js"></script>
+	<script type="text/javascript" src="js/MetaViz/initialize_scripts.js"></script>		
+	<script type="text/javascript" src="js/MetaViz/local_tools_creation.js"></script>
+	<script type="text/javascript" src="js/MetaViz/local_tools_logic.js"></script>
+	<script type="text/javascript" src="js/MetaViz/card_creation.js"></script>
+	<script type="text/javascript" src="js/MetaViz/card_position.js"></script>
+	<script type="text/javascript" src="js/MetaViz/line_position.js"></script>
+	<script type="text/javascript" src="js/MetaViz/card_logic.js"></script>
+	<script type="text/javascript" src="js/MetaViz/lineage_filling.js"></script>
+	<script type="text/javascript" src="js/MetaViz/navi_hide_show_logic.js"></script>
+	
+	<script type="text/javascript" src="js/guiFunctions.js"></script>
+	<script type="text/javascript" src="js/Exhibit3/lib/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/Exhibit3/exhibitOutputFunctions.js"></script>
+	<script type="text/javascript" src="js/preloader.js" djConfig="parseOnLoad: false"></script>
+		
+	
+	<script type="text/javascript">
+ 		var heatmap = false;
+ 		 
+		function init() {  
+		  	var id = getURLParam("id"); 
+		  	
+		  	if (id != "") {
+		  		var mode = null;
+		  		metaViz.dataBaseRequest(mode, id, function(data) { 
+					metaViz.displayMetaViz(data);					
+				}); 
+		  	} 
+		  	else alert('Please add a dataset id to the url by append "?id" in the web browser.')
+		  	  
+		}
+		
+		function getURLParam(name) {
+			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+
+			var regexS = "[\\?&]" + name + "=([^&#]*)";
+			var regex = new RegExp( regexS );
+			var results = regex.exec( window.location.href );
+
+			if ( results == null )
+				return "";
+			else
+				return results[1];
+		}
+		
+		function showFeature(id) {
+			dojo.byId("tabMetaData").style.visibility = "visible";
+		}
+		
+		function hideInfo() {
+			dojo.byId("tabMetaData").style.visibility = "hidden";
+		}
+	</script>	
+	<style>
+		body {
+			overflow-y: auto !important;
+			overflow-x: auto !important;
+		}
+		#tabMetaData {
+			position: absolute; left: 60px; z-index: 300000; width: 690px;
+			background-color: white; top: 115px; padding: 30px; border: 1px solid gray;
+		}
+		
+		#page {
+			height: 100%; display: none; overflow: auto; padding-left: 20px;
+		}
+	</style>
+</head>
+<body class="tundra" onload="init();" id="gmf_body">
+	<div id="tabMetaData" style="visibility:hidden;">
+		<a onclick="hideInfo()" style="float:right;padding-right:10px;padding-left:30px;">hide info</a>
+	</div>	
+	<div id="page" style="">							
+		<!-- hidden mini cards -->
+		<div id="lineage_mini_cards" class="white-block slide chain" style="left:0px;top:200px;width:220px;"> 
+			<div id="lineage_dataset_mini_cards_container"></div>
+			<div id="lineage_model_mini_cards_container"></div>
+		</div>
+		<!-- div id="usage_mini_cards" class="white-block slide2 chain" style="width:200px;left: 860px; top: 200px;" -->
+		<div id="usage_mini_cards" class="white-block slide2 chain" style="width:200px;left:0px;top:200px;">
+			<div id="usage_dataset_mini_cards_container" style="left:110px;"></div>
+			<div id="usage_model_mini_cards_container" style="left:5px;"></div>
+		</div>
+	
+		<!-- to be filled automatically with content -->
+		<div id="lineage_con" style="position:absolute;top:120px;left:0px;" class="top_pos">
+			<div id="lineage_dataset_cards_container" style="width:250px;">
+			</div>
+			<div id="lineage_model_cards_container"></div>
+		</div> 
+		<div id="detail_container" style="top:50px;" class="top_pos">
+		</div> 
+		<div id="usage_con" style="position:absolute;top:220px;"
+			class="top_pos">
+			<div id="usage_model_cards_container"></div>
+			<div id="usage_dataset_cards_container"></div>
+		</div> 
+		<div id="lines" style="position:absolute;top:50px;left:30px;">
+			<div id="actual_lines" class="chain"></div>
+		</div> 
+		<div id="content"> 
+			<div id="lin_pub_texts">
+				<div class="line_grey" style="clear:left;margin-top:40px;"></div>
+	
+				<div id="lineage_info" style="float:left;width:420px;">
+					<p id="lineage_headline">Lineage</p>
+					
+					<table class="lin_info_table" id="lin_statement" style="clear:left;">
+						<tr>
+							<td class="table_left" id="table_title">PROCESS DESCRIPTION</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td class="table_left" valign="top">STATEMENT</td>
+							<td id="ps_statement">not defined</td>
+						</tr>
+					</table>	
+					
+					<table class="lin_info_table" id="lin_process" style="clear:left;">
+						<tr>
+							<td class="table_left" id="table_title">PROCESS DESCRIPTION</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td class="table_left" valign="top">RATIONALE</td>
+							<td id="ps_rationale">not defined</td>
+						</tr>
+						<tr>
+							<td class="table_left" valign="top">DESCRIPTION</td>
+							<td id="ps_description">not defined</td>
+						</tr>
+					</table>
+					<table class="lin_info_table" id="table_processing">
+						<tr>
+							<td class="table_left" id="table_title">PROCESS PARAMS</td>
+							<td></td>
+						</tr> 
+						<tr>
+							<td class="table_left" valign="top">TIME OF EXECUTION</td>
+							<td id="p_time">not defined</td>
+						</tr>
+						<tr>
+							<td class="table_left" valign="top">SOFTWARE REFERENCE</td>
+							<td id="p_swref">not defined</td>
+						</tr>
+						<tr>
+							<td class="table_left" style="padding-top:20px;">PROCESSOR OF DATA</td>
+							<td id="p_processor" style="padding-top:20px;">not defined</td>
+						</tr>
+					</table> 
+				</div>
+				
+				<div id="publication_info" style="float:left;width:420px;padding-left:40px;">
+					<p id="publication_headline" style="padding-left:0px;">Publication</p>
+					<div id="pubs" style="clear:left;"></div>   
+				</div>		 
+			</div>
+			
+			<div id="children_div" style="z-index:100000000;background-color:white;visibility:hidden;position:absolute;left:100px;top:200px;border:1px solid silver;padding-left:20px;height:410px;width:800px;">
+				<p id="manychildren" style="margin-top:0px;">test</p>
+			</div>
+			<!--div id="hide_and_show" style="position:absolute; width:30px; height:30px; top:10px; left:1000px;"-->
+			<div id="hide_and_show" style="position:absolute;width:30px;height:30px;top:10px;left:20px;">
+				<div id="icon_arrow_left" onmousedown='toggleLineage()'></div>
+				<div id="icon_arrow_right" onmousedown='toggleLineage()' style="visibility:hidden;"></div>
+			</div> 
+		</div> 
+	</div>
+							
+</body>
+</html>

@@ -25,7 +25,8 @@ metaViz.hideMetaViz = function() {
 	if (heatmap)
 		metaVizMode = false;
 		
-	dojo.byId("map_info_text").innerHTML = "Click on a boundingbox to get further information.";
+	if (dojo.byId("map_info_text") != null)
+		dojo.byId("map_info_text").innerHTML = "Click on a boundingbox to get further information.";
 	
 	num_lin_ds = 0, num_us_ds = 0;
 	num_lin_mod = 0, num_us_mod = 0;	
@@ -104,7 +105,8 @@ metaViz.showMetaViz = function(id) {
 		mode = null;
 		metaViz.hideMetaViz();
 		
-		dojo.byId("map_info_text").innerHTML = "Click on an item in the list to reset the lineage view to map.";		
+		if (dojo.byId("map_info_text") != null)
+			dojo.byId("map_info_text").innerHTML = "Click on an item in the list to reset the lineage view to map.";		
 				
 		metaViz.dataBaseRequest(mode, id, function(data) { 
 			metaViz.displayMetaViz(data);
@@ -122,16 +124,17 @@ metaViz.showMetaViz = function(id) {
  */
 metaViz.displayMetaViz = function(data) {
 	console.log(data);
-	dojo.byId("time4mapsMap").style.display = "none";
-	dojo.byId("mapII").style.display = "none";
-	var map = dojo.byId("map");
-	//delete children of map
-	if (map) {
-		while (map.hasChildNodes()) {
-			map.removeChild(map.lastChild);
-		}
-	 }
-	
+	if (dojo.byId("time4mapsMap") != null) dojo.byId("time4mapsMap").style.display = "none";
+	if (dojo.byId("mapII") != null) dojo.byId("mapII").style.display = "none";
+	if (dojo.byId("map") != null) {
+		var map = dojo.byId("map");
+		//delete children of map
+		if (map) {
+			while (map.hasChildNodes()) {
+				map.removeChild(map.lastChild);
+			}
+		 }
+	}
 	try {
 		var jsonObject = $.parseJSON(data);
 	} catch(e) {

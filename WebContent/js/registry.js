@@ -12,7 +12,7 @@ var jsonObj;
 
 		var textDiv = domConstruct.create("div", {
 			innerHTML: "",
-			style: "width: 100%; margin-top: 20px; margin-bottom: 20px;"
+			style: "width: 100%; margin-bottom: 20px;"
 		}, globalBody);
 		
 		var tableDiv = domConstruct.create("div",{

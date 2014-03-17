@@ -16,7 +16,7 @@ GeoNames.search = function(value) {
 				q: value,
 				maxRows: 20,
 				isNameRequired: true,
-				username: "hannestressel",
+				username: "",
 				format: "json",
 				callback: "GeoNamesAnswer"
 			}
@@ -40,38 +40,19 @@ function GeoNamesAnswer(data) {
 			id: "GeoNamesResults",
 			style: "width: 100%; margin-bottom: 20px;"
 		}, GeoNames.body);
-		
-		domConstruct.create("th", {
-			innerHTML: "Name",
-			style: "text-align:left; background-color: #F9B200;"
-		}, widget);
-		domConstruct.create("th", {
-			innerHTML: "Country",
-			style: "text-align:left; background-color: #F9B200;"
-		}, widget);
-		domConstruct.create("th", {
-			innerHTML: "Feature Class",
-			style: "text-align:left; background-color: #F9B200;"
-		}, widget);
-		domConstruct.create("th", {
-			innerHTML: "Longitude",
-			style: "text-align:left; background-color: #F9B200;"
-		}, widget);
-		domConstruct.create("th", {
-			innerHTML: "Latitude",
-			style: "text-align:left; background-color: #F9B200;"
-		}, widget);
-
+ 
 		var GeoNameResults = filterCityCountry(data.geonames);
 
-		for (var i=0; i<GeoNameResults.length; i++) {
+		for (var i = 0; i < GeoNameResults.length; i++) {
 			var tr = domConstruct.create("tr", {
-				style: "background-color: #D4E3E5;",
-				ondblclick: function() { //damit man auch schneller Handlungsfaehig ist ....
-					for (var i=0; i<widget.rows.length; i++){
+				style: "background-color: #FFFFFF;border-top:1px solid gray;",
+				ondblclick: function() {  
+					for (var i = 0; i < widget.rows.length; i++) {
 						var row = widget.rows[i];
-						if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)"){
-							map2.setCenter(new OpenLayers.LonLat(row.cells[4].innerHTML, row.cells[3].innerHTML).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(GeoNameResults[i].fcode));
+						if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") {							 
+							var LatLongFcode = row.cells[0].id.split(":"); 
+							map2.setCenter(new OpenLayers.LonLat(Number(LatLongFcode[1]), Number(LatLongFcode[0])).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(LatLongFcode[2]));
+							
 						}
 					}
 
@@ -79,88 +60,38 @@ function GeoNamesAnswer(data) {
 						var dialog = registry.byId("SearchResultOverview");
 						dialog.hide();
 					});
-
 				},
 
 				onclick: function() {				
-					for (var i=0; i<widget.rows.length; i++) {
-  						row = widget.rows[i];
-  						if (i%2){
-  							row.style.backgroundColor = "#eee";
-  						}else
-  							row.style.backgroundColor = "#fff";
+					for (var i = 0; i < widget.rows.length; i++) {
+  						row = widget.rows[i]; 
+  						row.style.backgroundColor = "#fff";
   					}	 
+					
+					//searchTable - resetting colors
+					for (var i = 0; i < searchTable.rows.length; i++) {
+  						row = searchTable.rows[i]; 
+  						row.style.backgroundColor = "#fff";
+  					}
+					
 					this.style.backgroundColor = "rgba(0,124,149,0.2)";
 				}
 			}, widget);
-
+ 
 			domConstruct.create("td", {
-				innerHTML: GeoNameResults[i].name
+				id:  GeoNameResults[i].lat + ":" + GeoNameResults[i].lng + ":" + GeoNameResults[i].fcode,
+				innerHTML: "<b>" + GeoNameResults[i].name + "</b>, " + GeoNameResults[i].countryName + "<br>Datatype: map result<br>Lat/Lon: " + GeoNameResults[i].lat + ", " + GeoNameResults[i].lng
 			}, tr);
-
-			domConstruct.create("td", {
-				innerHTML: GeoNameResults[i].countryName
-			}, tr);
-
-			domConstruct.create("td", {
-				innerHTML: GeoNameResults[i].fcodeName
-			}, tr);
-
-			domConstruct.create("td", {
-				innerHTML: GeoNameResults[i].lat
-			}, tr);
-
-			domConstruct.create("td", {
-				innerHTML: GeoNameResults[i].lng
-			}, tr);
-			
-//			domConstruct.create("td", {
-//				innerHTML: "<b>" + GeoNameResults[i].name + "</b>, " + GeoNameResults[i].countryName + "<br>Datatype: map result<br>Lat/Lon: " + GeoNameResults[i].lat + ", " + GeoNameResults[i].lng
-//			}, tr);
 
 		}
 
-  		for (var i=0; i<widget.rows.length; i++) {
+  		for (var i = 0; i < widget.rows.length; i++) {
   			row = widget.rows[i];
   			if (i%2) {
   				row.style.backgroundColor = "#eee";
   			} else
   				row.style.backgroundColor = "#fff";
   		}	
-		
-		var okBTN = domConstruct.create("div", {
-			style: "width: 100%; height: 30px;"
-		}, GeoNames.body);
-		var cancelBTN = domConstruct.create("div", {
-			style: "width: 100%; height: 30px;"
-		}, GeoNames.body);
-
-		new Button({
-			label: "OK",
-			onClick: function() {
-				for (var i=0; i<widget.rows.length; i++) {
-					var row = widget.rows[i];
-					if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") {
-						map2.setCenter(new OpenLayers.LonLat(row.cells[4].innerHTML, row.cells[3].innerHTML).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(GeoNameResults[i].fcode));
-					}
-				}
-
-				require(["dijit/registry"], function(registry) {
-					var dialog = registry.byId("SearchResultOverview");
-					dialog.hide();
-				});
-			} 
-		}, okBTN);
-
-		new Button({
-			label: "Cancel",
-			onClick: function() {
-				require(["dijit/registry"], function(registry) {
-					var dialog = registry.byId("SearchResultOverview");
-					dialog.hide();
-				});
-			}
-		}, cancelBTN);
 	});
 
 	Search.execute(GeoNames.searchText);

@@ -11,17 +11,20 @@ var metaVizOn = false;
 require(["dojo/Deferred"], function(Deferred) {
 	guiFunctions.showPreloaderCallback = function() {
 		var d = new Deferred(); 
-		// Show the preloader centered in the viewport		
-		var ps = dojo.position('preloaderContent');
-		var ws = dojo.window.getBox(); 
-		dojo.style("preloaderContent", "top" , (ws.h / 2 - ps.h / 2) + "px");
-		dojo.style("preloaderContent", "left", (ws.w / 2 - ps.w / 2) + "px");
-		dojo.style("preloaderContent", "visibility" , "visible");
-		dojo.style("preloader","background", "rgba(255,255,255, 0.8)");
-		dojo.style("preloaderContent", "background", "rgba(255,255,255, 1.0)" );
-		dojo.style("preloader", "opacity", "1");
-		dojo.style("preloader", "display", "block");
-		dojo.byId("preloaderText").innerHTML = "Structure is loading.";
+		
+		if (dojo.byId("preloaderContent") != null) {
+			// Show the preloader centered in the viewport		
+			var ps = dojo.position('preloaderContent');
+			var ws = dojo.window.getBox(); 
+			dojo.style("preloaderContent", "top" , (ws.h / 2 - ps.h / 2) + "px");
+			dojo.style("preloaderContent", "left", (ws.w / 2 - ps.w / 2) + "px");
+			dojo.style("preloaderContent", "visibility" , "visible");
+			dojo.style("preloader","background", "rgba(255,255,255, 0.8)");
+			dojo.style("preloaderContent", "background", "rgba(255,255,255, 1.0)" );
+			dojo.style("preloader", "opacity", "1");
+			dojo.style("preloader", "display", "block");
+			dojo.byId("preloaderText").innerHTML = "Structure is loading.";
+		}
 		setTimeout(function() {
 			d.resolve();
 		}, 100);
@@ -43,18 +46,23 @@ require(["dojo/Deferred"], function(Deferred) {
  * Calls further methods to fill the tab.
  */
 guiFunctions.setItemDetails = function (id) {   
-	time4Maps.hideTime4Maps();
-	metaViz.hideMetaViz();
-	dojo.byId("mapII").style.display = "block";
-	showFeature(id);
 	
-	guiFunctions.setGeneralMetaData(id);
-	guiFunctions.setTabularView(id);
-	//guiFunctions.scrollToSpecificPoint(id);
-	
-	//if tree tab is selected && id is new --> calculate tree again)
-	if ((dijit.byId('tabContainer').selectedChildWidget == dijit.byId('tabTree')) && _id != id) {
-		guiFunctions.setTree(id);
+	if (dojo.byId("map") != null) {
+		time4Maps.hideTime4Maps();
+		metaViz.hideMetaViz();
+		dojo.byId("mapII").style.display = "block";
+		showFeature(id);
+		
+		guiFunctions.setGeneralMetaData(id);
+		guiFunctions.setTabularView(id);
+		//guiFunctions.scrollToSpecificPoint(id);
+		
+		//if tree tab is selected && id is new --> calculate tree again)
+		if ((dijit.byId('tabContainer').selectedChildWidget == dijit.byId('tabTree')) && _id != id) {
+			guiFunctions.setTree(id);
+		}
+	} else {
+		guiFunctions.setGeneralMetaData(id);
 	}
 	
 	_id = id;	
@@ -76,18 +84,18 @@ guiFunctions.setItemDetailsWithoutHiding = function(id) {
 	}
 	
 	showFeature(id);
-	if ((dijit.byId('tabContainer').selectedChildWidget == dijit.byId('tabTree')) && _id != id) {
-		_id = id; 
-		guiFunctions.setTree(_id);	
+	if (dojo.byId('tabContainer') != null) {
+		if ((dijit.byId('tabContainer').selectedChildWidget == dijit.byId('tabTree')) && _id != id) {
+			_id = id; 
+			guiFunctions.setTree(_id);	
+		}
+		_id = id;
+		guiFunctions.setTabularView(id);
+		guiFunctions.setGeneralMetaData(id); 
+	} else if (dojo.byId("tabMetaData") != null) {
+		guiFunctions.setGeneralMetaData(id); 
 	}
-	_id = id;
-	guiFunctions.setTabularView(id);
-	guiFunctions.setGeneralMetaData(id); 
-	
-//	if (metaVizOn) {
-//		dojo.byId("mapII").style.display="none";
-//		dojo.byId("page").style.display="block";
-//	}
+ 
 };
 
 /**
@@ -161,7 +169,8 @@ guiFunctions.removeTableAndTree = function() {
  */
 guiFunctions.removeTable = function() {
 	//table
-	(dojo.byId("infotext")).style.display = "none";
+	if (dojo.byId("infotext") != null)
+		(dojo.byId("infotext")).style.display = "none";
 	var tab = dojo.byId("metaDataTable");
 	if (tab) {
 		while (tab.hasChildNodes()) {
@@ -179,7 +188,8 @@ guiFunctions.removeTable = function() {
  * Method to set the general metadata information according to selected item
  */
 guiFunctions.setGeneralMetaData = function(id) {
-	dijit.byId("tabTree").set("disabled", false);
+	if (dojo.byId("tabTree") != null)
+		dijit.byId("tabTree").set("disabled", false);
 	
 	//remove existing tab
 	guiFunctions.removeTable();
@@ -202,7 +212,7 @@ guiFunctions.setGeneralMetaData = function(id) {
 		if (contentCell1.indexOf("Title") >= 0) {
 			cell2.style.cssText = "font-weight:bold";  
 		} else {
-			cell2.style.cssText = "color:#007C95";
+			cell2.style.cssText = "color:#666666";
 		}
 		
 		row.appendChild(cell);
@@ -301,7 +311,7 @@ guiFunctions.setGeneralMetaData = function(id) {
 		}
 	}
 	
-	if (entry["related service"] && entry["related service"]!="null") {
+	if (entry["related service"] && entry["related service"] != "null" && dojo.byId("map") != null) {
 		var a = document.createElement("a");
 		newAttribute = document.createAttribute("onclick");
 		newAttribute.nodeValue = "time4Maps.showTime4MapsId(\"" + id + "\")";
@@ -432,11 +442,14 @@ guiFunctions.setGeneralMetaData = function(id) {
 		table.appendChild(row); 
 	}
 	
-	if (!(entry["datatype"] == "dataset"))
-		dijit.byId("tabTree").set("disabled", true);
+	if (!(entry["datatype"] == "dataset")) {
+		if (dojo.byId("tabTree") != null)
+			dijit.byId("tabTree").set("disabled", true);
+	}
 	
 	//showing always general information after a new element is choosen
-	dijit.byId("tabContainer").selectChild(dijit.byId("tabMetaData"));
+	if (dojo.byId("tabContainer")) 
+		dijit.byId("tabContainer").selectChild(dijit.byId("tabMetaData"));
 	
 	table.style.display="block";
 	document.getElementById("tabMetaData").appendChild(table);
@@ -461,7 +474,7 @@ guiFunctions.setTree = function(id) {
 	
 	if (entry.datatype != "dataset") {
 		myTree.reload([],[]);
-		dijit.byId("tabTree").innerHTML = "There is no structure for this item. The information is only available for datasets.";
+		dojo.byId("tabTree").innerHTML = "There is no structure for this item. The information is only available for datasets.";
 		return;
 	} 
 			
@@ -471,6 +484,10 @@ guiFunctions.setTree = function(id) {
 	if (grandparent == "" ) {
 		console.log("guiFunctions: no root node of dataset found");
 		myTree.reload([], []);
+		return;
+	} else if (grandparent.children.length == 0) {
+		myTree.reload([], []);
+		dojo.byId("tabTree").innerHTML = "There is no structure for this item. This dataset has no parent or children.";		
 		return;
 	}
 	

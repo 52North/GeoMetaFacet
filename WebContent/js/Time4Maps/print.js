@@ -16,8 +16,8 @@ function openPrintPreview() {
                     <html>\n\
                         <head>\n\
                             <link type='text/css' rel='stylesheet' href='css/print_style.css'>\n\
-                            <link type='text/css' rel='stylesheet' href='js/Dojo-1.9.0/dijit/themes/tundra/tundra.css'>\n\
-                            <link type='text/css' rel='stylesheet' href='js/Dojo-1.9.0/dojox/grid/resources/tundraGrid.css'>\n\
+                            <link type='text/css' rel='stylesheet' href='js/dojo/themes/tundra/tundra.css'>\n\
+                            <link type='text/css' rel='stylesheet' href='js/dojox/grid/resources/tundraGrid.css'>\n\
                         </head>\n\
                         <body class='claro'>\n\
                             <img id='logo' src='././images/lama_logo.gif'></img>\n\

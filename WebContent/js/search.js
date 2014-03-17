@@ -3,6 +3,8 @@
  */
 function Search() {}
 
+var searchTable, mapTable;
+
 /**
  * Executes requests to db with search text written by the user.
  * Search requests include selected facet values.
@@ -73,51 +75,18 @@ function displayResultOverview(data, dataWS, selectionCluster, searchText) {
 			style: "width: 100%;"
 		});
 
-//		domConstruct.create("div", {
-//			innerHTML: "Choose the preferred result",
-//			style: "width: 100%; margin-bottom: 20px;font-size: 14px; color: #007C95; text-align: center;"
-//		}, globalBody);
-		
-		//body for the 2 tabs
-		var body = domConstruct.create("div", {
-			id: "innerBody",
-			style: "width: 100%;"
+		domConstruct.create("div", {
+			innerHTML: "Choose the preferred result",
+			style: "width: 100%; margin-bottom: 20px;font-size: 14px; color: #007C95; text-align: center;"
 		}, globalBody);
-		
+		 
 		var bodyWS = domConstruct.create("div", {
 			id: "innerBodyWS",
 			style: "width: 100%;"
 		}, globalBody);
-		
-		//Tabs ------------------------------------------------------------------------------		
-		var tabContainer = domConstruct.create("div", {
-			style: "width: 100%; height: 100%;"
-		}, globalBody);
-		
-		var tc = new TabContainer({
-	        style: "height: 100%; width: 100%;"
-	    }, tabContainer);
-
-	    var cp1 = new ContentPane({
-	         title: "Filtered results",
-	         content: body
-	    });
-	    tc.addChild(cp1);
-
-	    var cp2 = new ContentPane({
-	         title: "Total results",
-	         content: bodyWS
-	    });
-	    tc.addChild(cp2);  
-
-	    var cp3 = new ContentPane({
-	    	title: "Map Results",
-	    	content: GeoNames.body
-	    });
-	    tc.addChild(cp3);
-		
+		 
 	    //-----------------------------------------------------------------------------------
-	    createTable(data, selectionCluster, body, domConstruct, Button, searchText);
+//	    createTable(data, selectionCluster, body, domConstruct, Button, searchText);
 	    createTable(dataWS, null, bodyWS, domConstruct, Button, searchText);
 	    
 		darkDarkerDarkest(globalBody);
@@ -128,19 +97,11 @@ function createTable(data, selectionCluster, body, domConstruct, Button, searchT
     //Table with results ----------------------------------------------------------------
 	var widget = domConstruct.create("table", {
 		id: "SearchResults",
-		style: "width: 100%; margin-bottom: 20px;"
+		style: "width: 100%;"
 	}, body);
-		
-//	domConstruct.create("th", {
-//		innerHTML: "Attribute",
-//		style: "text-align:left; background-color: #F9B200;"
-//	}, widget);
 	
-//	domConstruct.create("th", {
-//		innerHTML: "No. of results",
-//		style: "text-align:left; background-color: #F9B200;"
-//	}, widget);
-	
+	searchTable = widget;
+		 
 	//Fill table with results -----------------------------------------------------------		
 	for (var i = 0; i < data.length; i++) {
 		if (i == 0) facetName = hierarchylevelnameFacet;
@@ -155,7 +116,11 @@ function createTable(data, selectionCluster, body, domConstruct, Button, searchT
 		}
 	}
 	
-	//Buttons ---------------------------------------------------------------------------
+	var mapResults = GeoNames.body;
+	mapTable = mapResults.childNodes[0];
+	body.appendChild(mapResults);
+	
+	//Buttons ---------------------------------------------------------------------------	
 	var okBTN = domConstruct.create("div", {
 		style: "width: 100%; height: 30px;"
 	}, body);
@@ -166,24 +131,35 @@ function createTable(data, selectionCluster, body, domConstruct, Button, searchT
 	
 	new Button({
 		label: "OK",
-		onClick: function(){
-			for (var i=0; i < widget.rows.length; i++) {
+		onClick: function() {
+			//Facet and details results
+			for (var i = 0; i < widget.rows.length; i++) {
 				var row = widget.rows[i];
 				if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") { 
 					updateFacetsAndResultlist(row, selectionCluster);	 
+				}
+			} 
+			//GeoNames results
+			for (var i = 0; i < mapTable.rows.length; i++) {
+				var row = mapTable.rows[i];
+				if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") {
+					
+					var LatLongFcode = row.cells[0].id.split(":"); 
+					map2.setCenter(new OpenLayers.LonLat(Number(LatLongFcode[1]), Number(LatLongFcode[0])).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(LatLongFcode[2]));
+					
 				}
 			}
 
 			require(["dijit/registry"], function(registry) {
 				var dialog = registry.byId("SearchResultOverview");
 				dialog.hide();
-			});
+			});  
 		} 
 	}, okBTN);
 
 	new Button({
 		label: "Cancel",
-		onClick: function(){
+		onClick: function() {
 			require(["dijit/registry"], function(registry) {
 				var dialog = registry.byId("SearchResultOverview");
 				dialog.hide();
@@ -219,7 +195,7 @@ function createRow(facetName, data, selectionCluster, domConstruct, widget, sear
 		
 		var tr = domConstruct.create("tr", {
 			id : facetName,
-			style: "background-color: #D4E3E5;",
+			style: "background-color: #FFFFFF;border-top:1px solid gray;",
 			ondblclick: function() {  //dbl click to select
 				for (var i = 0; i < widget.rows.length; i++) {
 					var row = widget.rows[i];
@@ -236,16 +212,21 @@ function createRow(facetName, data, selectionCluster, domConstruct, widget, sear
 
 			onclick: function() { 		
 				for (var i = 0; i < widget.rows.length; i++) {
-					row = widget.rows[i];
-					if (i%2) row.style.backgroundColor = "#eee"; 
-					else row.style.backgroundColor = "#fff";
+					row = widget.rows[i];  
+					row.style.backgroundColor = "#fff";
 				} 
+				
+				//map results - resetting colors
+				for (var i = 0; i < mapTable.rows.length; i++) {
+					row = mapTable.rows[i]; 
+					row.style.backgroundColor = "#fff";
+				}	
+				
 				this.style.backgroundColor = "rgba(0,124,149,0.2)"; 
 			}
 		}, widget);
-		
-		if (i%2) tr.style.backgroundColor = "#eee"; 
-		else tr.style.backgroundColor = "#fff";
+		  
+		tr.style.backgroundColor = "#fff";
 	 
 		//fill the list with results
 		if (facetName == scenarioFacet || facetName == hierarchylevelnameFacet || facetName == topicFacet || facetName == datatypeFacet || facetName == organizationFacet) {
@@ -257,9 +238,8 @@ function createRow(facetName, data, selectionCluster, domConstruct, widget, sear
 			var highlighted = data[i].label.replace(re, "<b>" + searchText + "</b>");
 			domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Data type: " + data[i].datatype + "<br>" + data[i].description, style: { cursor: "pointer" } }, tr);
 		}	 
-	}	
+	}		 
 }
-
 
 /**
  * After the user has chosen a result, this method is called.
