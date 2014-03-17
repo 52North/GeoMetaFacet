@@ -1,6 +1,8 @@
 # GeoMetaFacet
 
-GeoMetaFacet is a web client to explore and visualize geodata and metadata.
+GeoMetaFacet  is a web client to explore and visualize geodata. It focuses on a user-friendly and interactive navigation through the metadata and allows the user to quickly get an overview of available data.
+ 
+Core features of GeoMetaFacet are an interactive data lineage graph and a hierarchy tree, which can be used to evaluate available data. Furthermore several map functionalities, e.g. time series data visualization, geographic search with gazetteer Geonames are integrated into the web client.
 
 Further information can be found at: http://52north.org/communities/metadata-management/gmf
 
@@ -51,6 +53,7 @@ The website module uses a collection of Javascript libraries:
 * Openlayers 2, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License
 * JSON2.js, https://github.com/douglascrockford/JSON-js/blob/master/json2.js - Public domain
 * heatmap.js, https://github.com/pa7/heatmap.js - MIT License
+* pure-min.css, https://github.com/yui/pure/blob/master/LICENSE.md - BSD License
 
 ## Java Libraries
 
@@ -66,13 +69,12 @@ The server component uses a collection of Java libraries:
 * jackson-all.1.8.2, http://docs.codehaus.org/display/JACKSON/Home - Apache License
 * jdom, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
 * joda-time-1.6.2, http://joda-time.sourceforge.net/license.html - Apache License
-* jsf-api/jsf-impl/jstl 
 * postgresql-9.1-902.jdbc4, http://www.postgresql.org/download/products/2-drivers-and-interfaces/ - Open source
 * servlet-api - Apache License
 
 ## License
 
-Will be updated soon
+The GeoMetaFacet project is licensed under The Apache Software License, Version 2.0
 
 ## Contact
 
