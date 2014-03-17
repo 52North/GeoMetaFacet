@@ -1,3 +1,20 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package tud.geometafacet.hsql;
 
 import java.sql.Connection;
@@ -204,7 +221,22 @@ public class HSQLConnection2 {
 				
 			//querying a single entry by id	
 			} else if (query.equals(Constants.findOne)) {
-				sql = "SELECT GMF_ID, id, title, description, "
+				if (id.contains(":") || id.contains("-")) {
+					sql = "SELECT GMF_ID, id, title, description, "
+							+ "GROUP_CONCAT (Topics.topiccategory ORDER BY Topics.topiccategory ASC SEPARATOR ';'), "
+							+ "GROUP_CONCAT (Relatedds.relateddataset ORDER BY Relatedds.relateddataset ASC SEPARATOR ';'), "
+							+ "datatype, organization, hierarchylevelname, scenario, "
+							+ "temporalextentbeginposition, temporalextentendposition, "
+							+ "relatedservice, relatedserviceid, relatedlayer, geographicboundingbox " 
+						+ "FROM Details "
+						+ "LEFT JOIN Facets ON Details.GMF_ID = Facets.GMF_ID "
+						+ "LEFT JOIN Relateds ON Details.GMF_ID = Relateds.GMF_ID "
+						+ "LEFT JOIN Topics ON Details.GMF_ID = Topics.GMF_ID "
+						+ "LEFT JOIN Relatedds ON Details.GMF_ID = Relatedds.GMF_ID "
+						+ "WHERE id ='" + id + "' " 
+						+ "GROUP BY GMF_ID, title, description, datatype, organization, scenario, hierarchylevelname, temporalextentbeginposition, temporalextentendposition, relatedservice, relatedserviceid, relatedlayer, geographicboundingbox "; 
+				} else {
+					sql = "SELECT GMF_ID, id, title, description, "
 							+ "GROUP_CONCAT (Topics.topiccategory ORDER BY Topics.topiccategory ASC SEPARATOR ';'), "
 							+ "GROUP_CONCAT (Relatedds.relateddataset ORDER BY Relatedds.relateddataset ASC SEPARATOR ';'), "
 							+ "datatype, organization, hierarchylevelname, scenario, "
@@ -217,7 +249,9 @@ public class HSQLConnection2 {
 						+ "LEFT JOIN Relatedds ON Details.GMF_ID = Relatedds.GMF_ID "
 						+ "WHERE GMF_ID ='" + id + "' " 
 						+ "GROUP BY GMF_ID, title, description, datatype, organization, scenario, hierarchylevelname, temporalextentbeginposition, temporalextentendposition, relatedservice, relatedserviceid, relatedlayer, geographicboundingbox "; 
-				 
+				}
+				System.out.println(sql);
+				
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = ""; 
 				while (rs.next()) { 
@@ -260,7 +294,9 @@ public class HSQLConnection2 {
 							+ "\"uuid\":\"" + rs.getString("id") + "\","
 							+ "\"geographicboundingbox\":\"" + rs.getString("geographicboundingbox") + "\",";			
 					
-					String topicsString = HelpMethods.reReplaceString(rs.getString(5)); 
+					String topicsString = null;
+					if (rs.getString(5) != null) 
+						topicsString = HelpMethods.reReplaceString(rs.getString(5)); 
 					if (topicsString != null) {
 						String[] topicsArray = topicsString.split(";");
 						topicsString = "\"topiccategory\": [";
@@ -296,7 +332,7 @@ public class HSQLConnection2 {
 				if (!dt.equals("-")) whereable += " Datatype = '" + dt + "' AND "; 
 				if (!topic.equals("-")) whereable += " Topiccategory = '" + topic + "' AND ";
 				if (!scen.equals("-")) whereable += " Scenario = '" + scen + "' AND ";
-				if (!orga.equals("-")) whereable += " Organization = '" + scen + "' AND ";
+				if (!orga.equals("-")) whereable += " Organization = '" + orga + "' AND ";
 				if (!bbox.equals("-")) whereable += " Geographicboundingbox = '" + bbox + "' ";	
 				
 				if (topic != "-" || query.equals(Constants.findAllTopics)) sql += " FROM Facets JOIN Topics ON Facets.GMF_ID = Topics.GMF_ID JOIN Details ON Facets.GMF_ID = Details.GMF_ID ";
@@ -310,6 +346,8 @@ public class HSQLConnection2 {
 					sql += " WHERE " + whereable; 
 				}
 				 
+				System.out.println("FINDBYMIXED: " + sql);
+				
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = "[ ";
 				while (rs.next()) 
@@ -433,6 +471,14 @@ public class HSQLConnection2 {
 					result += "\"" + rs.getString(1) + "\","; 
 				result = result.substring(0,result.length()-1) + " ]"; 		
 				rs.close();	
+			} else if (query.equals(Constants.findInternId)) {
+				
+				sql = "SELECT GMF_ID FROM DETAILS WHERE ID='" + id + "'";
+				ResultSet rs = stmt.executeQuery(sql);  
+				while (rs.next())     
+					result = "{ \"id\": \"" + rs.getInt("GMF_ID") + "\" } ";
+				System.out.println("RESULT: " + result);
+				rs.close();	
 				
 			//create sql query for findAlls	
 			} else {
@@ -514,11 +560,14 @@ public class HSQLConnection2 {
 			}  
 		} 
 		
-		//building result string
-		String result = "{ " + "\"id\":\"" + id + "\"," + "\"label\":\"" + HelpMethods.reReplaceString(idTitle.get(id)) + "\" ";			
-		ArrayList<String> gpChildren = relations.get(id);
-		result += traverseChildren(idTitle, relations, gpChildren, "") + " }"; 
-		rs.close();
+		String result = "";
+		if (idTitle.get(id) != null) {
+			//building result string
+			result = "{ " + "\"id\":\"" + id + "\"," + "\"label\":\"" + HelpMethods.reReplaceString(idTitle.get(id)) + "\" ";			
+			ArrayList<String> gpChildren = relations.get(id);
+			result += traverseChildren(idTitle, relations, gpChildren, "") + " }"; 
+			rs.close();
+		}
 		return result;  
 	}
 	

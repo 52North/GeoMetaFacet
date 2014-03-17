@@ -1,3 +1,20 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package tud.geometafacet.hsql.servlet;
 
 import java.io.IOException;
@@ -86,14 +103,13 @@ public class HSQLController extends HttpServlet {
 			dt = dataArray[4];
 			orga = dataArray[5];
 			scen = dataArray[6];
-			id = dataArray[1];
-		
+			id = dataArray[1];	
 		} else if (query.equals(Constants.findSimilarScenarioValues) ||
-				query.equals(Constants.findSimilarDatatypeValues) ||
-				query.equals(Constants.findSimilarHierarchylevelnameValues) ||
-				query.equals(Constants.findSimilarOrganizationValues) ||
-				query.equals(Constants.findSimilarTopiccategoryValues) 
-			) {
+			query.equals(Constants.findSimilarDatatypeValues) ||
+			query.equals(Constants.findSimilarHierarchylevelnameValues) ||
+			query.equals(Constants.findSimilarOrganizationValues) ||
+			query.equals(Constants.findSimilarTopiccategoryValues) ||
+			query.equals(Constants.findInternId)) {
 			id = dataArray[1];	
 		}
 		

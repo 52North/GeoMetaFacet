@@ -1,4 +1,22 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package tud.geometafacet.controlling; 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -32,8 +50,6 @@ import tud.geometafacet.helper.HelpMethods;
  */
 public class RequestControllingJDBC { 
  
-	//TODO change path
-	static String path = "../WebContent/data/db.script";
 	static Connection dbConnection; 
 	static EvaluatingXPath xpe = new EvaluatingXPath(); 
 	   
@@ -95,8 +111,8 @@ public class RequestControllingJDBC {
 		try { 
 			ResultSet result = doDatabaseRequest();
 		   
-		  	FileDocumentMethods.clearFile(path);
-		  	FileDocumentMethods.writeFileLine(InitialDBScript.getInitalDBScript(), path);
+		  	FileDocumentMethods.clearFile(Constants.dbFilePath);
+		  	FileDocumentMethods.writeFileLine(InitialDBScript.getInitalDBScript(), Constants.dbFilePath);
 		  	
 		 	while (result.next()) { 
 		 		if (!result.getString(1).equals("79d2629b-9519-4f9c-b8ff-92538f777f03") && !result.getString(1).equals("560254f4-f9d3-4881-841f-00e1ff4c08e0")
@@ -195,7 +211,7 @@ public class RequestControllingJDBC {
 		 			elementINSERT += getPublication(result);	
 
 		 			//-------- WRITE RESULT
-		 			FileDocumentMethods.writeFileLine(elementINSERT, path);
+		 			FileDocumentMethods.writeFileLine(elementINSERT, Constants.dbFilePath);
 		 			dataCounter++;
 		 		} else if (original2InternId.containsKey(result.getString(1))) {
 		 			String elementINSERT = "";
@@ -211,8 +227,8 @@ public class RequestControllingJDBC {
 		 			} 
 		 			
 		 			//-------- PUBLICATION
-		 			FileDocumentMethods.writeFileLine(getPublication(result), path);
-		 			FileDocumentMethods.writeFileLine(elementINSERT, path); 
+		 			FileDocumentMethods.writeFileLine(getPublication(result), Constants.dbFilePath);
+		 			FileDocumentMethods.writeFileLine(elementINSERT, Constants.dbFilePath); 
 		 			dataCounter++;
 		 		}  
 		 	}
@@ -223,7 +239,7 @@ public class RequestControllingJDBC {
 			     
 			    String elementINSERT = "INSERT INTO HIERARCHY VALUES(" + hierarchyId + "," + entry.getKey() + "," + original2InternId.get(entry.getValue()) + ") ";//\n";
 	 			hierarchyId++;
-	 			FileDocumentMethods.writeFileLine(elementINSERT, path);
+	 			FileDocumentMethods.writeFileLine(elementINSERT, Constants.dbFilePath);
 			}	
 			
 		} catch (SQLException e) { e.printStackTrace(); } 
@@ -457,7 +473,7 @@ public class RequestControllingJDBC {
 	 			}
 			}
 			
-			FileDocumentMethods.writeFileLine(elementINSERT, path); 
+			FileDocumentMethods.writeFileLine(elementINSERT, Constants.dbFilePath); 
 			dataCounter++; 
 		} 
 	}
