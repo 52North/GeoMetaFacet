@@ -12,13 +12,13 @@ Live demo is available at: http://geoportal.glues.geo.tu-dresden.de:8080/GeoMeta
 
 GeoMetaFacet is written in Javascript and Java. The modules and their functionality are briefly described here.
 
-* WebContent - Browser part of the application (Javascript) 
-* gmf - HSQL database (implemented as file, filled with inital data)
-* src - Server components of the application (Java)
-  * geometafacet - core scripts (filling database, evaluating metadata xml documents) + helper classes
-  * heatmap - test implementation of storing user interactions (mouse clicks) and visualize as heatmap (not needed for discovery of geodata). Implemented as servlet.
-  * metaviz - implementation of interactive lineage graph. Scripts for metadata xml evaluation, metadata requests (**needs further CSW or DB connection**). Implemented as servlet.
-  * time4maps - implementation of WMS request for time-variate data visualization. Scripts for requesting and evaluating WMS capabilities documents. Implemented as servlet.
+* ``/WebContent`` - Browser part of the application (Javascript) 
+* ``/gmf`` - HSQL database (implemented as file, filled with inital data)
+* ``/src`` - Server components of the application (Java)
+  * ``/geometafacet`` - core scripts (filling database, evaluating metadata xml documents) + helper classes
+  * ``/heatmap`` - test implementation of storing user interactions (mouse clicks) and visualize as heatmap (not needed for discovery of geodata). Implemented as servlet.
+  * ``/metaviz`` - implementation of interactive lineage graph. Scripts for metadata xml evaluation, metadata requests (**needs further CSW or DB connection**). Implemented as servlet.
+  * ``/time4maps`` - implementation of WMS request for time-variate data visualization. Scripts for requesting and evaluating WMS capabilities documents. Implemented as servlet.
 
 Map client (Time4Maps) and lineage graph (MetaViz) can be used as standalone implementations via parameterized calls.
 
