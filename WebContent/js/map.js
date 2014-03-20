@@ -333,11 +333,7 @@ function onFeatureSelect(feature) {
 *
 *	\param 		feature - the unselected ol feature
 */
-function onFeatureUnSelect(feature) {
-	selectOneBox = true;
-	clearBoundingBoxFilter(); //@see exhibitOutputFunctions
-	selectOneBox = false;
-	
+function onFeatureUnSelect(feature) { 
 	var style = {
 		strokeColor: '#007C95',
 		strokeOpacity: 0.8,
