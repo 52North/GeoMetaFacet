@@ -1,9 +1,11 @@
 MetaViz - Visualizing lineage information in a graph
 ----------------------------------------------------
 
-This widget is only available for GLUES project metadata stored in terra.catalog specific database.
+This widget is available for GLUES project metadata stored in smart.finder specific database
+or for preprocessed data stored in the hsql db.
+Actually, the HSQL mode (usage of internal db) is set. To reset this, change source code: mode = "hsql"; in metaviz.js
 
-Requests to database are limited to internal LAN usage only.
+Requests to the external project database are limited to internal LAN usage only.
 In case of questions, please contact christin.henzen@tu-dresden.de
 
 Otherwise the widget's backend classes (Java) have to be reconfigured for file mode (requesting data from an xml file) or

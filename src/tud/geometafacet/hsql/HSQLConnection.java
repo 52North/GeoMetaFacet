@@ -25,9 +25,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import tud.geometafacet.helper.Constants;
 import tud.geometafacet.helper.HelpMethods;
+import tud.geometafacet.json.JsonObjectBuilder;
+
 
 /**
  * This class handles all database requests. Incoming requests (from servlet) will be prepared and results 
@@ -37,12 +38,19 @@ import tud.geometafacet.helper.HelpMethods;
  * http://www.itblogging.de/java/java-hsqldb-tutorial/
  *
  */
-public class HSQLConnection2 {
+public class HSQLConnection {
 	
+	static Map<String,Object> mappingIdsUuids = new HashMap<String, Object>();
+	static Map<String, Object> datasetList = new HashMap<String, Object>();
+	static Map<String, Object> models = new HashMap<String, Object>();
+	String[] ids;
+	String[]  modelIds;
+	int numberModels = 0;
+ 
 	/**
 	 * Constructor initializing jdbc driver
 	 */
-	public HSQLConnection2() {
+	public HSQLConnection() {
 		try { Class.forName("org.hsqldb.jdbcDriver"); } 
 		catch (ClassNotFoundException e) { System.err.println("Driver not found!"); return; } 
 	}
@@ -65,7 +73,9 @@ public class HSQLConnection2 {
 		Connection con = null;
 		String sql = "";
 		try { 
-			con = DriverManager.getConnection("jdbc:hsqldb:file:C:/Users/ch/workspace3/GeoMetaFacet/gmf/db; shutdown=true", "root", "");
+			//con = DriverManager.getConnection("jdbc:hsqldb:file:C:/Users/ch/workspace3/GeoMetaFacet/gmf/db; shutdown=true", "root", "");
+			con = DriverManager.getConnection("jdbc:hsqldb:file:"+Constants.dbFilePath2 +"; shutdown=true", "root", ""); //path in Constants   //if changed, change path in lineage method
+			
 			Statement stmt = con.createStatement();
 
 			String[] countables = null;
@@ -656,6 +666,392 @@ public class HSQLConnection2 {
 		return result;
 	}
 
-	
+	/**
+	 * This method returns all lineage information needed for metaviz graph
+	 * 
+	 * @param externID - id of data set
+	 * @return json string
+	 * @throws SQLException
+	 */
+	public String lineageForID(String externID) throws SQLException{
+		mappingIdsUuids = new HashMap<String, Object>();
+		datasetList = new HashMap<String, Object>();
+		
+		//CREATING MAPS
+		Map<String,Object> model_data = new HashMap<String, Object>();
+		Map<String,Object> dataset_data = new HashMap<String, Object>();
+		Map<String,Object> detail_data = new HashMap<String, Object>(); 
+		Map<String,Object> all_data = new HashMap<String,Object>();	
+		Map<String,Object> lineage_detail = new HashMap<String,Object>();	
+		Map<String,Object> usage_detail = new HashMap<String,Object>();	
+		
+		//SETTING MAP IDs
+		mappingIdsUuids.put("paramName", "mapping_ids_uuids");
+		model_data.put("paramName", "models");
+		dataset_data.put("paramName", "datasets");
+		detail_data.put("paramName", "detail"); 
+		all_data.put("paramName", "metaViz_data");
+		
+		//connection
+		Connection con = null;
+		con = DriverManager.getConnection("jdbc:hsqldb:file:"+Constants.dbFilePath2 +"; shutdown=true", "root", ""); //if changed, change path in query statement method
+		Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
+		models.put("paramName", "models");
+		//Sources - 	
+		getSources(stmt, externID);
+		//Usage
+		usage_detail = getUsage(stmt, externID);
+		//set dataset data
+		dataset_data.putAll(datasetList); 
+		//lineage details
+		lineage_detail = getLineage(stmt, externID);
+		//Models
+		getModels(stmt, externID, "lineage");
+		model_data.putAll(models);
+		detail_data.put("paramName", "detail");
+		Map<String, Object> detail = new HashMap<String, Object>();
+		detail.put("paramName", "detail");
+		detail.put(externID, getDetailsTo(stmt, externID, externID, ""));
+		all_data.put("detail_data", detail); 
+		detail_data = detail; 
+		mappingIdsUuids.put("detail_0", externID); 
+		
+		//ADDING MAPS TO all_data
+		all_data.put("lineage_detail", lineage_detail);
+		all_data.put("dataset_data", dataset_data);
+		all_data.put("model_data", model_data);
+		all_data.put("detail_data", detail_data);
+		all_data.put("mapping_ids_uuids", mappingIdsUuids); 
+		all_data.put("usage", usage_detail);
+
+		//close connection
+		if (con != null) 
+			try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
+		
+		return (String) JsonObjectBuilder.buildLayer(all_data, "string");	
+	}
+	
+	
+	/**
+	 * This method returns all lineage information (process steps, statement etc)
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param externID - id of dataset
+	 * @return Map<String, Object> with lineage information
+	 * @throws SQLException
+	 */
+	private Map<String, Object> getLineage(Statement stmt,String externID) throws SQLException {
+		String sql = 	 
+				"SELECT Processsteps.Description, Processsteps.Datetime, Processsteps.Rationale, Processsteps.Processor,  "
+				+ " Processinfos.Identifier, Processinfos.Runtimeparameter, Lineage.Description "
+				+ "FROM Details "
+				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
+				+ "LEFT JOIN Processsteps ON Lineage.LID = Processsteps.LID "
+				+ "LEFT JOIN Processinfos ON Processsteps.PSID = Processinfos.PSID "
+				+ "WHERE id ='" + externID + "' " ;
+		ResultSet rs = stmt.executeQuery(sql); 
+		
+		Map<String, Object> lineage = new HashMap<String, Object>();
+		lineage.put("paramName", "lineage_detail");
+		//process steps
+		Map<String, Object> pSteps = new HashMap<String, Object>();
+		Map<String, Object> statement = new HashMap<String, Object>();
+		pSteps.put("paramName", "process_steps");
+		int i = 0;
+
+		while (rs.next()){ //TODO: if there are more steps, more processinfos - change would be  needed
+			Map<String, Object> pStep = new HashMap<String, Object>();
+			pStep.put("paramName", "process_step_"+i);
+			pStep.put("description", rs.getString(1));
+        	pStep.put("dateTime", rs.getString(2));
+        	pStep.put("rationale", rs.getString(3));
+        	pStep.put("processor", rs.getString(4));
+        	
+        	Map<String, Object> processingList = new HashMap<String, Object>();
+        	processingList.put("paramName", "processingList");
+        	Map<String, Object> processing = new HashMap<String, Object>();
+    		processing.put("paramName", "processing_"+i);
+    		processing.put("identifier", rs.getString(5));
+    		processing.put("runTimeParams", rs.getString(6));
+    		//software ref - there is no such thing in xml or db(profilefull)
+    		Map<String, Object> swRefs = new HashMap<String, Object>();
+			swRefs.put("paramName", "sw_refs_"+i);
+			for (int j = 0; j < 1; j++) {
+				//TODO: is swRefs info needed - if yes-> new table
+			} 
+			processing.put("sw_refs", swRefs);
+        	
+			//documentations
+			Map<String, Object> docs = new HashMap<String, Object>();
+			docs.put("paramName", "docs_"+i);
+			docs.putAll(getDocs(stmt,externID));
+			processing.put("docs", docs);
+			processingList.put("processing_"+i, processing);
+			pStep.put("processing_list", processingList);
+        	pSteps.put("process_step_"+i, pStep); 
+			
+        	//statement
+    		statement.put("paramName", "statement");
+    		statement.put("description", rs.getString(7));
+
+			i++;
+		}
+		lineage.put("process_steps", pSteps); 
+		lineage.put("statement", statement); 		
+		return lineage;
+	}
+
+	/**
+	 * This method returns all related documents
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param externID - id of data set
+	 * @return Map<String, Object> with document information
+	 * @throws SQLException
+	 */
+	private Map<String, Object> getDocs(Statement stmt, String externID) throws SQLException{
+		String sql = "SELECT B.Title, B.TEMPORALEXTENTBEGINPOSITION, B.Description " 
+				+ "FROM Details "
+				+ "LEFT JOIN Relatedpub ON Details.GMF_ID = Relatedpub.GMF_ID "
+				+ "LEFT JOIN Details B ON Relatedpub.PUBID = B.GMF_ID "
+				+ "WHERE id ='" + externID + "' " ;
+		ResultSet rs = stmt.executeQuery(sql);
+		
+		int k = 0;
+		Map<String, Object> citation = new HashMap<String, Object>();
+		Map<String, Object> docs = new HashMap<String, Object>();
+		while (rs.next()){
+			citation = new HashMap<String, Object>();
+			citation.put("paramName", "doc_"+k); 	
+			citation.put("title", rs.getString(1));
+		    citation.put("alternateTitle", ""); //no xPathCiAltTitle/alt title in hsql db
+		    citation.put("date", rs.getString(2));
+		    citation.put("id", ""); //no xPathCiIdentifier/identidier in hsql db
+		    citation.put("others", rs.getString(3));
+		    docs.put("doc_"+k, citation);
+			k++;
+		}
+		docs.put("size", k);
+		return docs;
+	}
+	
+	/**
+	 * This method returns all models for lineage or usage type
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param externID - id of data set
+	 * @param type - lineage or usage
+	 * @return Map<String, Object> with lineage/usage model information
+	 * @throws SQLException
+	 */
+	private Map<String, Object> getModels(Statement stmt, String externID, String type) throws SQLException{
+		String sql = "SELECT Identifier, Description, Datetime, Processor "
+				+ "FROM Details "
+				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
+				+ "LEFT JOIN Processsteps ON Lineage.LID = Processsteps.LID "
+				+ "LEFT JOIN Processinfos ON Processsteps.PSID = Processinfos.PSID "
+				+ "WHERE id ='" + externID + "' " ;
+		ResultSet rs = stmt.executeQuery(sql); 
+		
+		Integer i = 0;
+		rs.last();
+		modelIds = new String[rs.getRow()];
+		rs.beforeFirst();
+		while (rs.next()) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("paramName", "model_" + numberModels);
+        	model.put("title", rs.getString(1));
+        	model.put("description", rs.getString(2));
+        	if(!rs.getString(3).equals(""))model.put("dateTime", rs.getString(3));
+        	model.put("organisation", rs.getString(4));
+        	model.put("type", type);
+        	model.put("info", ""); 
+        	if (type.equals("usage")) {
+        		String[] idArr = new String[1];
+				idArr[0] = externID;
+        		model.put("input_datasets", idArr[0]); 
+        	} else{
+        		model.put("input_datasets", ids);
+        	}
+        	String[] ds = new String[1];
+        	ds[0] = externID;
+        	model.put("output_datasets", ds);   
+        	models.put("model_" + numberModels, model);
+        	modelIds[i] = (String) models.get("paramName");       	
+        	mappingIdsUuids.put( type + "_model_"+i, (String) model.get("paramName")); 
+			numberModels++;
+			i++;
+		}
+		return models;
+	}
+	
+	
+	/**
+	 * This method returns all source information / data sets
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param externID - id of data set
+	 * @return Map<String, Object> with source information
+	 * @throws SQLException
+	 */
+	private Map<String, Object> getSources(Statement stmt, String externID) throws SQLException{
+		String sql = "SELECT B.ID, B.TITLE, B.Description, Facets.ORGANIZATION, B.Keywords, "
+				+ "Url.Url, Url.Safe, Url.Info, B.TEMPORALEXTENTBEGINPOSITION, B.TEMPORALEXTENTENDPOSITION, Facets.GEOGRAPHICBOUNDINGBOX, Relationlineagesource.CODE "
+				+ "FROM Details "
+				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
+				+ "LEFT JOIN Processsteps ON Lineage.LID = Processsteps.LID "
+				+ "LEFT JOIN Processinfos ON Processsteps.PSID = Processinfos.PSID "
+				+ "LEFT JOIN Relationlineagesource On Processsteps.PSID = Relationlineagesource.PSID "
+				+ "LEFT JOIN Details B On Relationlineagesource.ID = B.ID "
+				+ "LEFT JOIN Facets ON B.GMF_ID = Facets.GMF_ID "
+				+ "LEFT JOIN Url ON B.GMF_ID = URL.GMF_ID "
+				+ "WHERE id ='" + externID + "' " 
+				+ "AND Relationlineagesource.ID IS NOT NULL" ;
+		ResultSet rs = stmt.executeQuery(sql); 
+		
+		rs.last();
+		ids = new String[rs.getRow()];
+		rs.beforeFirst();
+		int i = 0;
+		while (rs.next()) {
+			if (rs.getString(1) != null) {
+			Map<String, Object> detailContent = new HashMap<String, Object>();
+			detailContent.put("paramName", rs.getString(1));
+			detailContent.put("title",  rs.getString(2));
+			detailContent.put("description",  rs.getString(3));
+			detailContent.put("organisation",  rs.getString(4));
+			detailContent.put("keywords",  rs.getString(5));
+			detailContent.put("type",  "lineage");
+			detailContent.put("save",  rs.getString(7));
+			detailContent.put("info",  rs.getString(8));
+			detailContent.put("view",  rs.getString(6));
+			
+			if(!rs.getString(9).equals(""))
+				detailContent.put("time",  rs.getString(9)+"-"+rs.getString(10));
+			else
+				detailContent.put("time",  "");
+			
+			detailContent.put("extent",  rs.getString(11));
+			detailContent.put("vector", "false");	  
+			detailContent.put("relations_csw",  " "); //TODO:get from db
+			mappingIdsUuids.put("lineage_dataset_"+i, (String) detailContent.get("paramName"));
+			datasetList.put((String) detailContent.get("paramName"), detailContent);    
+			ids[i] = rs.getString(12);
+			i++;
+			}
+		}
+		return datasetList;	
+	}
+	
+	/**
+	 * This method returns details/general information
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param id - id of data set
+	 * @param paramName - unique param name for json string
+	 * @param type - lineage or usage
+	 * @return Map<String, Object> general information about data set
+	 * @throws SQLException
+	 */
+	private Map<String,Object> getDetailsTo(Statement stmt, String id, String paramName, String type) throws SQLException {
+		Map<String, Object> detailContent = new HashMap<String, Object>();
+		String sql = "SELECT Details.TITLE, Details.Description, Facets.ORGANIZATION, Details.Keywords, "
+				+ "Url.Url, Url.Safe, Url.Info, Details.TEMPORALEXTENTBEGINPOSITION, Details.TEMPORALEXTENTENDPOSITION, Facets.GEOGRAPHICBOUNDINGBOX "
+				+ "FROM Details "
+				+ "LEFT JOIN Facets ON Details.GMF_ID = Facets.GMF_ID "
+				+ "LEFT JOIN Url ON Details.GMF_ID = URL.GMF_ID "
+				+ "WHERE id ='" + id + "' " ;
+		ResultSet rs = stmt.executeQuery(sql); 
+
+		while(rs.next()) {
+			detailContent.put("paramName", paramName);
+			detailContent.put("title",  rs.getString(1));
+			detailContent.put("description",  rs.getString(2));
+			detailContent.put("organisation",  rs.getString(3));
+			detailContent.put("keywords",  rs.getString(4));
+			detailContent.put("type",  type);
+			detailContent.put("save",  rs.getString(6));
+			detailContent.put("info",  rs.getString(7));
+			detailContent.put("view",  rs.getString(5));
+			if (!rs.getString(8).equals("")) 
+				detailContent.put("time",  rs.getString(8)+"-"+rs.getString(9));
+			else
+				detailContent.put("time", "");
+			
+			detailContent.put("extent",  rs.getString(10));
+			detailContent.put("vector", "false");	  
+			detailContent.put("relations_csw",  ""); //TODO:get from db
+		}
+		return detailContent; 
+	}
+	
+	/**
+	 * This method returns usage information / references
+	 * 
+	 * @param stmt - Statement from connection
+	 * @param code - id of dataset / source code
+	 * @return Map<String, Object> usage information
+	 * @throws SQLException
+	 */
+	private Map<String, Object> getUsage(Statement stmt,String code) throws SQLException { //TODO:what is it supposed to do? 
+		Map<String,Object> usage_detail = new HashMap<String,Object>();
+		usage_detail.put("paramName", "usage");
+		Map<String,Object> modelsLoc = new HashMap<String,Object>();
+		modelsLoc.put("paramName", "usage_models");
+		String[] modelIdsL = new String[0];
+		modelsLoc.put("usage_model_ids", modelIdsL);	
+		Map<String,Object> mod_ds_relations = new HashMap<String,Object>();
+		mod_ds_relations.put("paramName", "mod_ds_relations");
+
+		//search for models
+		String sql = "SELECT RELATIONMODELS.ID "
+				+ "FROM Details "
+				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
+				+ "LEFT JOIN RELATIONMODELS ON Lineage.LID = RELATIONMODELS.LID "
+				+ "WHERE id ='" + code + "' " 
+				+ "AND RELATIONMODELS.ID IS NOT NULL" ;
+		ResultSet rs = stmt.executeQuery(sql); 
+		
+		int i = 0;
+		while (rs.next()) { 
+			String id = rs.getString(1);
+			Map<String, Object> detailContent = getDetailsTo(stmt, id, id, "usage");
+			String[] dsArr = new String[1];
+			dsArr[0] = id;
+			getModels(stmt, id, "usage");
+ 
+			if (i == 0) {
+				String[] mo = new String[1];
+				mo[0] = "usage_model_0";
+				modelsLoc.put("usage_model_ids", mo);	 
+				
+                Map<String, Object> map0 = new HashMap<String, Object>();
+                map0.put("paramName", "usage_models_0"); 
+                map0.put("dataset_ids", dsArr);
+                mod_ds_relations.put("map0", map0);
+				mod_ds_relations.put("usage_model_0", "model_0");
+			}  
+			if (i == 1) {
+				String[] mo = new String[2];
+				mo[0] = "usage_model_0";
+				mo[1] = "usage_model_1"; 
+				modelsLoc.remove("usage_model_ids");
+				modelsLoc.put("usage_model_ids", mo);	 
+                Map<String, Object> map1 = new HashMap<String, Object>();
+                map1.put("paramName", "usage_models_1"); 
+                map1.put("dataset_ids", dsArr);
+                mod_ds_relations.put("map1",map1);
+				mod_ds_relations.put("usage_model_1", "model_1");
+				mappingIdsUuids.put("usage_model_1", "model_0");
+			}			
+			
+			mappingIdsUuids.put("usage_dataset_"+i, (String) detailContent.get("paramName"));
+			datasetList.put((String) detailContent.get("paramName"), detailContent);       	       
+        	i++;
+		}
+		usage_detail.put("models", modelsLoc);
+		usage_detail.put("mod_ds_relations", mod_ds_relations);
+		return usage_detail;	
+	}
 }

@@ -113,7 +113,7 @@ public class HSQLController extends HttpServlet {
 			id = dataArray[1];	
 		}
 		
-		HSQLConnection2 hc = new HSQLConnection2(); 
+		HSQLConnection hc = new HSQLConnection(); 
 		String jsonString = hc.queryStatement(query, id, hvl, scen, orga, topic, dt, bbox);
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();

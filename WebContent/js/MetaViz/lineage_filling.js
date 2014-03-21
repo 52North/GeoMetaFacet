@@ -1,4 +1,19 @@
-
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
 function fillLineage() {
  
   var statement;
@@ -15,10 +30,8 @@ function fillLineage() {
 	  mStore.fetchItemByIdentity({ identity: "process_step_0", onItem: function(item, request) { pStep_data = item; }});
 	  if (pStep_data != null) { 
 		  dojo.byId('ps_rationale').innerHTML = pStep_data.rationale;
-		  dojo.byId('ps_description').innerHTML = pStep_data.description;
-		  //dojo.byId('p_description').innerHTML
-		  dojo.byId('p_time').innerHTML = pStep_data.dateTime;
-		  //dojo.byId('p_swref').innerHTML
+		  dojo.byId('ps_description').innerHTML = pStep_data.description; 
+		  dojo.byId('p_time').innerHTML = pStep_data.dateTime; 
 		  dojo.byId('p_processor').innerHTML = pStep_data.processor; 
 		  dojo.byId('pubs').innerHTML = "";
   	  

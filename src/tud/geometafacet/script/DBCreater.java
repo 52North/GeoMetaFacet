@@ -17,6 +17,8 @@
 
 package tud.geometafacet.script;
  
+import java.util.concurrent.TimeUnit;
+
 import tud.geometafacet.controlling.RequestControllingJDBC;
 
 /**
@@ -24,7 +26,7 @@ import tud.geometafacet.controlling.RequestControllingJDBC;
  * This class provides a script to request CSW database and catalogue data
  * and store it in the intern HSQL database.
  * 
- * @author Christin Henzen. Professorship of Geoinformation Systems
+ * @author Christin Henzen, Bernd Grafe. Professorship of Geoinformation Systems
  */
 public class DBCreater {
 
@@ -33,7 +35,8 @@ public class DBCreater {
 	 * @param args
 	 */
 	public static void main(String[] args) { 
-		getData(); 
+		//getData(); 
+		getDataWithTime();
 	}
 	
 	/**
@@ -44,5 +47,24 @@ public class DBCreater {
 		RequestControllingJDBC.getAllRecords();
 		RequestControllingJDBC.getDistributedCatalogData();
 		RequestControllingJDBC.closeConnection();	 
+	} 
+	
+	public static void getDataWithTime() {		
+		long startTime = System.currentTimeMillis();
+		System.out.println("init connection...");
+		RequestControllingJDBC.initConnection();
+		long duration = System.currentTimeMillis() - startTime;
+		System.out.println("done - time(min): " + TimeUnit.MILLISECONDS.toMinutes(duration));
+		System.out.println("getAllRecords...");
+		RequestControllingJDBC.getAllRecords();
+		duration = System.currentTimeMillis() - startTime;
+		System.out.println("done - time(min): " + TimeUnit.MILLISECONDS.toMinutes(duration));
+		System.out.println("getDistributedCatalogData...");
+		RequestControllingJDBC.getDistributedCatalogData();
+		duration = System.currentTimeMillis() - startTime;
+		System.out.println("done - time(min): " + TimeUnit.MILLISECONDS.toMinutes(duration));
+		RequestControllingJDBC.closeConnection();	 
+		duration = System.currentTimeMillis() - startTime;
+		System.out.println("total - time(min): " + TimeUnit.MILLISECONDS.toMinutes(duration));
 	} 
 }

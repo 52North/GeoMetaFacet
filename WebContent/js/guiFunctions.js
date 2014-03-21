@@ -34,6 +34,23 @@ require(["dojo/Deferred"], function(Deferred) {
 });
 
 /**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
+/**
  * call for preloader function should look like this
  */
 //guiFunctions.showPreloaderCallback().then(function() {
@@ -51,12 +68,12 @@ guiFunctions.setItemDetails = function (id) {
 		time4Maps.hideTime4Maps();
 		metaViz.hideMetaViz();
 		dojo.byId("mapII").style.display = "block";
+		 
 		showFeature(id);
-		
 		guiFunctions.setGeneralMetaData(id);
 		guiFunctions.setTabularView(id);
 		//guiFunctions.scrollToSpecificPoint(id);
-		
+		  
 		//if tree tab is selected && id is new --> calculate tree again)
 		if ((dijit.byId('tabContainer').selectedChildWidget == dijit.byId('tabTree')) && _id != id) {
 			guiFunctions.setTree(id);
@@ -113,17 +130,12 @@ guiFunctions.setTabularView = function(id) {
 	// tabularView
 	var table2 = document.getElementsByClassName("exhibit-tabularView-body");
 	
-	if(lastposition > table2[0].rows.length) {
+	if (lastposition > table2[0].rows.length) {
 		lastposition = 0;
 		return;
 	}
-	//set the color of the preselected item back to normal
-//	if (table2[0].rows[lastposition+1].rowIndex % 2) {
-//		table2[0].rows[lastposition+1].style.background = '#ddd';
-//	} else {
-		table2[0].rows[lastposition+1].style.background = '#fff';
-//	}
-	//style color of selected item and set preselected item back to normal
+
+	table2[0].rows[lastposition+1].style.background = '#fff'; 
 	for (var i = 0; i < currentTabularViewItems.length; i++) {		
 		if (currentTabularViewItems[i].id == id && table2[0].rows[i] != undefined) {
 			lastposition = i;
@@ -263,7 +275,6 @@ guiFunctions.setGeneralMetaData = function(id) {
 		cell.appendChild(cellText);
 		row.appendChild(cell);
 		var cell2 = document.createElement("td");
-		//var metaData = "<a onclick=\"window.open(\'http://catalog.glues.geo.tu-dresden.de:8080/terraCatalog/Query/ShowCSWInfo.do?fileIdentifier="+entry.id+"\');\">Show detailed metadata in catalog</a>";
 		var metaData = "<a onclick=\"window.open(\'" + entry.url + "\');\">Show detailed metadata in catalog</a>";
 		cell2.innerHTML = metaData;
 		row.appendChild(cell2);

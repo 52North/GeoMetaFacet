@@ -1,4 +1,20 @@
-    
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
   var actual_id; 
   
   //-------------- moving tools in dep. of mouse move -------------------------------------------
@@ -156,8 +172,12 @@
   function focus_element(id) {
 	var mappings;
     mStore.fetchItemByIdentity({ identity: "mapping_ids_uuids", onItem: function(item, request) { mappings = item; }});
-    var mapped_id = mStore.getValues(mappings, id); 
     
+    var mapped_id = mStore.getValues(mappings, id); 
+
+    var entry = httpGet(findInternId + "/" + mapped_id);
+    mapped_id = entry.id;
+ 
     metaVizOn = true;
     
     guiFunctions.setItemDetailsWithoutHiding(mapped_id);

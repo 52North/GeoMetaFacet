@@ -17,6 +17,9 @@
 
 package tud.metaviz.controlling;
   
+import java.sql.SQLException;
+
+import tud.geometafacet.hsql.HSQLConnection; 
 import tud.metaviz.connection.Connection;
 import tud.metaviz.connection.csw.CSWConnection;
 import tud.metaviz.connection.db.JDBCConnection;
@@ -26,11 +29,12 @@ import tud.metaviz.connection.file.FileConnection;
  * 
  * This class handles request from frontend and intializes further processing.
  *
- * @author Christin Henzen. Professorship of Geoinformation Systems
+ * @author Christin Henzen, Bernd Grafe. Professorship of Geoinformation Systems
  */
 public class RequestControlling { 
  
 	static Connection connection = CSWConnection.getInstance(); //new CSWConnection();
+	static Boolean hsqlSwitch = false;
 	
 	/**
 	 * Method to get JSON string for details of certain metadata entry.
@@ -39,7 +43,18 @@ public class RequestControlling {
 	 * @return
 	 */
 	public String getDetailsTo(String id) { 
-		return connection.getRecordDetails(id);
+		if (hsqlSwitch) {
+			System.out.println("hsql = true");
+			try {
+				HSQLConnection hc = new HSQLConnection(); 
+				return hc.lineageForID(id);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else  
+			return connection.getRecordDetails(id);				 
+		
+		return null;	
 	}
 
 	/**
@@ -70,5 +85,15 @@ public class RequestControlling {
 		if (mode.equals("db")) connection = JDBCConnection.getInstance();
 		else if (mode.equals("csw")) connection = CSWConnection.getInstance();
 		else if (mode.equals("file")) connection = FileConnection.getInstance();
+	}
+	
+	/**
+	 * Method to change detailsTo request to hsql
+	 * true/false
+	 * 
+	 * @param hsql - set on/off
+	 */
+	public static void setHSQL(Boolean hsql) {
+		if (hsql == true) hsqlSwitch = true;
 	}
 }

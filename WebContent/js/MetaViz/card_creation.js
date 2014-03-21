@@ -1,3 +1,20 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
   var lineage_model_cards = 0;
   var usage_model_cards = 0;
    
@@ -71,7 +88,7 @@
     if (view_type == "lineage_dataset")     html_card += "<div id=\"" + "lineage_dataset_" + lineage_dataset_cards + "\" style=\"top:" + (lineage_dataset_cards - 1) * card_size_with_buffer  + "px;\" class=\"description_card\" onmouseover=\"show_tools(\'" + "lineage_dataset_" + lineage_dataset_cards + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "lineage_dataset_" + lineage_dataset_cards + "\')\">"; 
     else if (view_type == "usage_dataset")  html_card += "<div id=\"" + "usage_dataset_" + usage_dataset_cards + "\" style=\"top:" + (usage_dataset_cards - 1) * card_size_with_buffer  + "px;\"  class=\"description_card\" onmouseover=\"show_tools(\'" + "usage_dataset_" + usage_dataset_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "usage_dataset_" + usage_dataset_cards + "\')\">";
     else if (view_type == "lineage_model")  html_card += "<div id=\"" + "lineage_model_" + lineage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "lineage_model_" + lineage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
-    else if (view_type == "usage_model")    html_card += "<div id=\"" + "usage_model_" +  usage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "usage_model_" + usage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "usage_model_" + usage_model_cards + "\')\">";
+    else if (view_type == "usage_model")    html_card += "<div id=\"" + "usage_model_" +  usage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "usage_model_" + usage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
     else if (view_type == "detail")         html_card += "<div id=\"" + "detail_0" + "\" class=\"description_card_colored_petrol\" onmouseover=\"show_tools(\'detail_0" + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "detail_0" + "\')\">";
  
     // getting icons if card doesn't contain model information
@@ -119,15 +136,14 @@
        if (title[0].length > 50) tit = title[0].substring(0,50) + "...";  
        else tit = title[0];
        
-       if (view_type == "lineage_model" || view_type == "usage_model") html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" style=\"font-size:12px;left:10px;\" onmousedown=\"focus_element(\'" + view_type + "_" + id + "\')\">" + tit + "</p>"; 
+       if (view_type == "lineage_model" || view_type == "usage_model") html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" style=\"font-size:12px;left:10px;\">" + tit + "</p>"; 
        else html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" style=\"font-size:12px;\" onmousedown=\"focus_element(\'" + view_type + "_" + id + "\')\">" + tit + "</p>"; 
     } else {
-    	if (view_type == "lineage_model" || view_type == "usage_model") html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" style=\"left:10px;\" onmousedown=\"focus_element(\'" + view_type + "_" + id + "\')\">" + title + "</p>";  
-    	else html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\"onmousedown=\"focus_element(\'" + view_type + "_" + id + "\')\">" + title + "</p>";  
+    	if (view_type == "lineage_model" || view_type == "usage_model") html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" style=\"left:10px;\">" + title + "</p>";  
+    	else html_description += "<p id=\"" + view_type + "_" + id + "_title\" class=\"object_title\" onmousedown=\"focus_element(\'" + view_type + "_" + id + "\')\">" + title + "</p>";  
     }
     if (organisation != null && organisation[0].length > 36) {
        if (organisation[0].length > 55) organisation[0]= organisation[0].substring(0,50) + "..."; 
-       //organisation[0] = organisation[0].substring(0,36) + "<br />" + organisation[0].substring(36,organisation[0].length);
        
        if (view_type == "lineage_model" || view_type == "usage_model") html_description += "<p id=\"" + view_type + "_" + id + "_organisation\" class=\"object_organisation\" style=\"left:10px;\">" + organisation + "</p>";
        else html_description += "<p id=\"" + view_type + "_" + id + "_organisation\" class=\"object_organisation\">" + organisation + "</p>"; 
@@ -158,8 +174,8 @@
     
     if (view_type == "lineage_dataset") html_card += "<div id=\"" + "lineage_dataset_mini_" + (lineage_dataset_mini_cards - 1) + "\" class=\"description_card\" style=\"width:65px;height:50px;top:" + ((lineage_dataset_mini_cards - 1) * 70 + 10)  + "px;\" onmouseover=\"show_tools(\'" + "lineage_dataset_mini_" + (lineage_dataset_mini_cards-1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "lineage_dataset_" + lineage_dataset_cards + "\')\">"; 
     else if (view_type == "usage_dataset") html_card += "<div id=\"" + "usage_dataset_mini_" + (usage_dataset_mini_cards - 1) + "\" class=\"description_card\" style=\"width:65px;height:50px;top:" + ((usage_dataset_mini_cards - 1) * 70 + 10) + "px;\" onmouseover=\"show_tools(\'" + "usage_dataset_mini_" + (usage_dataset_mini_cards-1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "usage_dataset_" + usage_dataset_cards + "\')\">";
-    else if (view_type == "lineage_model") html_card += "<div id=\"" + "lineage_model_mini_" + (lineage_model_mini_cards - 1) + "\" class=\"description_card_petrol\" style=\"width:65px;height:50px;\" onmouseover=\"show_tools(\'" + "lineage_model_mini_" + (lineage_model_mini_cards - 1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "lineage_model_" + lineage_model_cards + "\')\">";
-    else if (view_type == "usage_model") html_card += "<div id=\"" + "usage_model_mini_" +  (usage_model_mini_cards - 1) + "\" class=\"description_card_petrol\" style=\"width:65px;height:50px;\" onmouseover=\"show_tools(\'" + "usage_model_mini_" + (usage_model_mini_cards - 1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "usage_model_" + usage_model_cards + "\')\">";
+    else if (view_type == "lineage_model") html_card += "<div id=\"" + "lineage_model_mini_" + (lineage_model_mini_cards - 1) + "\" class=\"description_card_petrol\" style=\"width:65px;height:50px;\" onmouseover=\"show_tools(\'" + "lineage_model_mini_" + (lineage_model_mini_cards - 1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
+    else if (view_type == "usage_model") html_card += "<div id=\"" + "usage_model_mini_" +  (usage_model_mini_cards - 1) + "\" class=\"description_card_petrol\" style=\"width:65px;height:50px;\" onmouseover=\"show_tools(\'" + "usage_model_mini_" + (usage_model_mini_cards - 1) + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
     else if (view_type == "detail") html_card += "<div id=\"" + "detail_0_mini" + "\" class=\"description_card_colored_petrol\" style=\"width:65px;height:50px;\" onmouseover=\"show_tools(\'detail_0_mini" + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
  
     if (view_type.indexOf('model') != -1) html_card += generateIconset(true, is_vector, is_time_aware, false);   //icons (false = mini size)  

@@ -32,7 +32,7 @@ import tud.metaviz.controlling.RequestControlling;
  * Servlet implementation class MetavizController
  * This class handles frontend requests to csw/db.
  * 
- * @author Christin Henzen. Professorship of Geoinformation Systems
+ * @author Christin Henzen, Bernd Grafe. Professorship of Geoinformation Systems
  * 
  */ 
 @WebServlet("/MetavizController")
@@ -53,8 +53,11 @@ public class MetavizController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		String mode = (String) request.getParameter("mode"); 		
+		String mode = (String) request.getParameter("mode"); 		
 //		if (mode != null) RequestControlling.setMode(mode); 
+		
+		if (mode.equals("hsql"))
+			RequestControlling.setHSQL(true);
 		RequestControlling.setMode("db");
 		
 		String id = (String) request.getParameter("id");

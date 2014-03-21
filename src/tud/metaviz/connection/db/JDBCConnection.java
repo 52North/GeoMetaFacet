@@ -230,6 +230,7 @@ public class JDBCConnection implements Connection {
 	                mod_ds_relations.put("map1",map1);
 					mod_ds_relations.put("usage_model_1", "model_1");
 					mappingIdsUuids.put("usage_model_1", "model_0");
+					mappingIdsUuids.put("usage_model_0", "model_1");
 				}			
 				
 				mappingIdsUuids.put("usage_dataset_"+i, (String) detailContent.get("paramName"));

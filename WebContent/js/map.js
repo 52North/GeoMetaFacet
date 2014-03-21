@@ -1,3 +1,20 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 var map2 = null; // OL Map Variable
 var vector = null; // OL Layer Vector
 var selectFeature = null; // OL SelectFeature Control
@@ -312,7 +329,7 @@ function getFeatureIDListFromFeatureID(FeatureID){
 *	\param 		feature - the selected ol feature
 */
 function onFeatureSelect(feature) {
-	selectOneBox = true;
+	//selectOneBox = true;
 	if (lastSelectedFeature != null) 
 		onFeatureUnSelect(lastSelectedFeature);  
 	var selectstyle = {
@@ -505,7 +522,7 @@ function selectBox(bounds) {
 	}
 
 	vector.redraw();
-	selectOneBox = true;
+	//selectOneBox = true;
 	createResultView(vector.selectedFeatures);  
 	filterButton = 1;
 	selectFeature.box = false;

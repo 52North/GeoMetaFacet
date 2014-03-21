@@ -46,19 +46,19 @@ import tud.geometafacet.helper.HelpMethods;
  * Data is requested from a catalogue db and distributed catalogues 
  * and stored in an intern HSQL database.
  *
- * @author Christin Henzen. Professorship of Geoinformation Systems
+ * @author Christin Henzen, Bernd Grafe. Professorship of Geoinformation Systems
  */
 public class RequestControllingJDBC { 
  
 	static Connection dbConnection; 
 	static EvaluatingXPath xpe = new EvaluatingXPath(); 
 	   
-	static Integer dataCounter = 0, topicId = 0, hierarchyId = 0, publicationId = 0;	
+	static Integer dataCounter = 0, topicId = 0, hierarchyId = 0, publicationId = 0, lineageID=0, processstepID=0, processinfoID=0;	
 	static Map<String, String> original2InternId = new HashMap<String, String>(); 
 	static Map<String, String> internId2Topic = new HashMap<String, String>(); 
 	static Map<String, Integer> publicationTitle2Id = new HashMap<String, Integer>();
 	static Map<String, String> publicationId2DsId = new HashMap<String, String>(); 
-	static Map<String, String> parentChildRest = new HashMap<String, String>();
+	static Map<String, String> parentChildRest = new HashMap<String, String>(); 
 	
 	/**
 	 * Initializes DB connection. Using a Postgres DB.
@@ -207,6 +207,9 @@ public class RequestControllingJDBC {
 		 				} 
 		 			}  
 		 			 
+		 			//--------LINEAGE
+		 			elementINSERT += getLineage(result);
+		 			
 		 			//-------- PUBLICATION
 		 			elementINSERT += getPublication(result);	
 
@@ -477,5 +480,116 @@ public class RequestControllingJDBC {
 			dataCounter++; 
 		} 
 	}
+	
+	
+	/**
+	 * This method evaluates a metadata xml string and parses lineage information + sources etc. that is stored in
+	 * the lineage part of the xml.
+	 * 
+	 * @param result - the db request result
+	 * @return HSQL formatted database string for inserting lineage information in db
+	 * @throws SQLException
+	 */
+	public static String getLineage(ResultSet result) throws SQLException {	
+		String elementInsert = "";
+		NodeList resultNode = FileDocumentMethods.createDocument(result.getString(12)).getChildNodes();
+		
+		//Lineage - table
+		String lineageDescription = (String) xpe.getXPathResult(Constants.xPathStatement2, new String(), resultNode);
+		lineageDescription = HelpMethods.prepareString(lineageDescription);
+		if (lineageDescription != "" || ((NodeList) xpe.getXPathResult(Constants.xPathProcessSteps, new NodeSet(), resultNode)).getLength() > 0) {
+			elementInsert += "\n INSERT INTO LINEAGE VALUES(" + lineageID + "," + dataCounter + ",'" + lineageDescription + "')";
+			
+			//ProcessStep - table
+			NodeList processSteps = (NodeList) xpe.getXPathResult(Constants.xPathProcessSteps, new NodeSet(), resultNode);
+			for (int i = 0; i < processSteps.getLength(); i++) {
+				String pStepDescription = (String) xpe.getXPathResult(Constants.xPathPSDescription2, new String(), processSteps.item(i).getChildNodes());
+				pStepDescription = HelpMethods.prepareString(pStepDescription);
+				String pStepDateTime= (String) xpe.getXPathResult(Constants.xPathPSDateTime, new String(), processSteps.item(i).getChildNodes());
+				String pStepRationale= (String) xpe.getXPathResult(Constants.xPathPSRationale, new String(), processSteps.item(i).getChildNodes());
+				String pStepProcessor= (String) xpe.getXPathResult(Constants.xPathPSProcessorOrganisation, new String(), processSteps.item(i).getChildNodes());
+				pStepProcessor = HelpMethods.prepareString(pStepProcessor); 
+				elementInsert += "\n INSERT INTO PROCESSSTEPS VALUES(" + processstepID + "," + lineageID + ",'" + pStepDescription + "','" + pStepDateTime + "','" + pStepRationale + "','" + pStepProcessor +"')";
+				
+				//ProcessInfo - table
+				NodeList processInfos = (NodeList) xpe.getXPathResult(Constants.xPathPInfos, new NodeSet(), resultNode);
+				for (int j = 0; j < processInfos.getLength(); j++) {
+					String pIdentifier = (String) xpe.getXPathResult(Constants.xPathPIdentifier, new String(), processInfos.item(j).getChildNodes()); 
+					String pRuntimeParameter = (String) xpe.getXPathResult(Constants.xPathPRuntimeParams, new String(), processInfos.item(j).getChildNodes());
+					elementInsert += "\n INSERT INTO PROCESSINFOS VALUES(" + processinfoID + "," + processstepID + ",'" + pIdentifier + "','" + pRuntimeParameter + "')";
+					//Create SoftwareReferences as in (Constants.xPathPSWReference)/EvaluationLineage - there are no "gmd:softwareReference" entries in xml's(profilefull)
+					processinfoID ++;
+				}
+				
+				//Related Sources - table
+				NodeList linSources = (NodeList) xpe.getXPathResult(Constants.xPathSource, new NodeSet(), resultNode);
+				for (int k = 0; k < linSources.getLength(); k++){
+					String sourceCode = (String) xpe.getXPathResult(Constants.xPathSourceIdentifier, new String(), linSources.item(k).getChildNodes()); ;
+					String id = getIDfromSourceCode(sourceCode);
+					elementInsert += "\n INSERT INTO RELATIONLINEAGESOURCE VALUES(" + processstepID + ",'" + id + "','" + sourceCode + "')";	
+				}
+				processstepID ++;
+			}
+			
+			//Related Models - table
+			String dsCode = (String) xpe.getXPathResult(Constants.xPathRSIdentifier, new String(), resultNode);
+			elementInsert+=getModelInsert(dsCode);
+			
+			lineageID ++;
+		}
+		return elementInsert;
+	}
  
+	/**
+	 * This method returns id for given source code
+	 * 
+	 * @param sourceCode - source code
+	 * @return id for source code
+	 * @throws SQLException
+	 */
+	private static String getIDfromSourceCode (String sourceCode) throws SQLException{
+		Statement stmt;
+		String id = "";
+		stmt = dbConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet result = stmt.executeQuery(
+				"SELECT tc_md.profilefull " +
+				"FROM tc30.tc_md, tc30.tc_resourceidentifier " +
+				"WHERE tc_resourceidentifier.resourceidentifier='" + sourceCode + "' " +
+				"AND tc_md.idmd=tc_resourceidentifier.idmdresid;");
+		
+		while(result.next()){
+		NodeList resultNode = FileDocumentMethods.createDocument(result.getString(1)).getChildNodes();
+		id = (String) xpe.getXPathResult(Constants.xPathIdentifier, new String(), resultNode);
+		}
+		return id;
+	}
+	
+	/**
+	 * This method returns a string for inserting model information for given identifier
+	 * 
+	 * @param code - identifier code
+	 * @return String for inserting models
+	 * @throws SQLException
+	 */
+	public static String getModelInsert (String code) throws SQLException{
+		Statement stmt;
+		String id = "";
+		String elementInsert ="";
+		
+		stmt = dbConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet result = stmt.executeQuery(
+			"SELECT DISTINCT tc_md.profilefull " +
+			"FROM tc30.tc_md, tc30.tc_source " +
+			"WHERE tc_source.sourcecode='" + code + "' " +
+			"AND tc_md.idmd=tc_source.idmdsource " +
+			"AND tc_md.parentidentifier is NULL;");
+		
+		while (result.next()) { 
+			NodeList resultNode = FileDocumentMethods.createDocument(result.getString(1)).getChildNodes();
+			 id = (String) xpe.getXPathResult(Constants.xPathIdentifier, new String(), resultNode);
+			 
+			 elementInsert += "\n INSERT INTO RELATIONMODELS VALUES(" + lineageID + ",'" + id + "')";	
+		}
+		return elementInsert;
+	}
 }
