@@ -12,6 +12,7 @@
  */
 //SH
 var rowCounter = 0;
+var tempRequest = "";
 
 Exhibit.TabularView = function(containerElmt, uiContext) {
     var view = this;
@@ -326,7 +327,24 @@ Exhibit.TabularView.prototype._getSortedItems = function(items, asc) {
  *
  */
 Exhibit.TabularView.prototype._reconstruct = function() {
-    var self, collection, database, bodyDiv, items, originalSize, currentSet, sortColumn, sorter, table, tr, createColumnHeader, i, renderItem, start, end, generatePagingControls;
+	//check selected facet value @see exhibitOutputFunctions.js
+    var selectedTopics = getTopicSelection(); 
+    var selectedDatatypes = getDatatypeSelection(); 
+    var selectedOrganizations = getOrganizationSelection();
+    var selectedScenarios = getScenarioSelection();
+    var selectedHierarchylevelnames = getHierarchylevelnameSelection();
+    var selectedBoundingboxes = getBoundingboxSelection();
+	
+	//check and return null if the same request is made - prevents multiple recosntructions of the tab view
+    //console.log("TabularView - reconstruct");
+    if(tempRequest == selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes ){
+    	console.log("same request - skipped for " + tempRequest);
+    	return null;
+    } else {
+    	tempRequest = selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes;
+    }
+	
+	var self, collection, database, bodyDiv, items, originalSize, currentSet, sortColumn, sorter, table, tr, createColumnHeader, i, renderItem, start, end, generatePagingControls;
     self = this;
     collection = this.getUIContext().getCollection();
     database = this.getUIContext().getDatabase();
@@ -336,15 +354,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
 
     //CH: neu
     var items;
-     
-    //check selected facet value @see exhibitOutputFunctions.js
-    var selectedTopics = getTopicSelection(); 
-    var selectedDatatypes = getDatatypeSelection(); 
-    var selectedOrganizations = getOrganizationSelection();
-    var selectedScenarios = getScenarioSelection();
-    var selectedHierarchylevelnames = getHierarchylevelnameSelection();
-    var selectedBoundingboxes = getBoundingboxSelection();
-    
     //preparing database request - order of attributes is important!
     //if no no selection is made - a simple "getAll" request is done
     if (selectedTopics == "-" && selectedDatatypes == "-" && selectedOrganizations == "-" && selectedScenarios == "-" && selectedHierarchylevelnames == "-" && selectedBoundingboxes == "-") { 

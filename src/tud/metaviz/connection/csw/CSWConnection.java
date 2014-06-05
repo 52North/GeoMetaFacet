@@ -47,6 +47,7 @@ import tud.metaviz.evaluating.common.EvaluatingSourcesModels;
 import tud.geometafacet.xpath.EvaluatingXPath;  
 import tud.metaviz.evaluating.csw.EvaluatingUsage;
 import tud.geometafacet.helper.Constants;
+import tud.geometafacet.helper.INTERN;
 import tud.geometafacet.helper.HelpMethods;
 import tud.geometafacet.json.JsonObjectBuilder;
  
@@ -203,7 +204,7 @@ public class CSWConnection implements Connection {
 
 		GetRecordsResponse gResponse = new GetRecordsResponse();
 		IServiceInvoker invoker = new HttpPostInvoker();
-		invoker.initialize(Constants.cswURL);
+		invoker.initialize(INTERN.cswURL);
 		try {
 			invoker.invoke(lRequest, gResponse);
 		} catch (SystemException e) {
@@ -229,7 +230,7 @@ public class CSWConnection implements Connection {
 				.setIdentifier(lIdentifiers);
 		GetRecordByIdResponse lResponse = new GetRecordByIdResponse();
 		IServiceInvoker invoker = new HttpPostInvoker();
-		invoker.initialize(Constants.cswURL);
+		invoker.initialize(INTERN.cswURL);
 		try {
 			invoker.invoke(lRequest, lResponse);
 		} catch (SystemException e) {

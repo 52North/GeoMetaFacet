@@ -25,9 +25,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import tud.geometafacet.helper.Constants;
 import tud.geometafacet.helper.HelpMethods;
 import tud.geometafacet.json.JsonObjectBuilder;
+import tud.geometafacet.start.Container;
 
 
 /**
@@ -37,12 +39,14 @@ import tud.geometafacet.json.JsonObjectBuilder;
  * Extended example
  * http://www.itblogging.de/java/java-hsqldb-tutorial/
  *
+ *@author Christin Henzen, Bernd Grafe. Professorship of Geoinformation Systems
+ *
  */
 public class HSQLConnection {
 	
-	static Map<String,Object> mappingIdsUuids = new HashMap<String, Object>();
-	static Map<String, Object> datasetList = new HashMap<String, Object>();
-	static Map<String, Object> models = new HashMap<String, Object>();
+	Map<String,Object> mappingIdsUuids = new HashMap<String, Object>();
+	Map<String, Object> datasetList = new HashMap<String, Object>();
+	Map<String, Object> models = new HashMap<String, Object>();
 	String[] ids;
 	String[]  modelIds;
 	int numberModels = 0;
@@ -70,10 +74,16 @@ public class HSQLConnection {
 	 * @return result string 
 	 */
 	public String queryStatement(String query, String id, String hvl, String scen, String orga, String topic, String dt, String bbox) {
+
+		//first page call - get saved Strings from Container
+		if(Container.first)return Container.getResult(query);
+		
 		Connection con = null;
 		String sql = "";
 		try { 
-			//con = DriverManager.getConnection("jdbc:hsqldb:file:C:/Users/ch/workspace3/GeoMetaFacet/gmf/db; shutdown=true", "root", "");
+			//get connection from Container instead of creating new connections for every request
+			if (Container.conn!=null)con = Container.conn;
+			else
 			con = DriverManager.getConnection("jdbc:hsqldb:file:"+Constants.dbFilePath2 +"; shutdown=true", "root", ""); //path in Constants   //if changed, change path in lineage method
 			
 			Statement stmt = con.createStatement();
@@ -82,6 +92,13 @@ public class HSQLConnection {
 			String selectable = "", whereable = "";
 			String resultCode = "", result = "";
 			Boolean countAll = false;
+			
+			if (!query.equals(Constants.countAllScenarios)) scen = scen.replaceAll(";", "' OR Scenario ='");
+			if (!query.equals(Constants.countAllOrganizations)) orga = orga.replaceAll("\\.\\.", "' OR Organization ='");
+			if (!query.equals(Constants.countAllTopiccategories)) topic = topic.replaceAll("\\.\\.", "' OR Topiccategory ='");
+			if (!query.equals(Constants.countAllDatatypes)) dt = dt.replaceAll(";", "' OR Datatype ='");
+			if (!query.equals(Constants.countAllBoundingboxes)) bbox = bbox.replaceAll("<", "' OR Geographicboundingbox ='");
+			if (!query.equals(Constants.countAllHierarchylevelnames)) hvl = hvl.replaceAll(";", "' OR Hierarchylevelname ='");
 		 
 			//countAlls
 			if (query.equals(Constants.countAllHierarchylevelnames)) {
@@ -166,12 +183,12 @@ public class HSQLConnection {
 				if (!bbox.equals("-")) whereable += " Geographicboundingbox = '" + bbox + "' ";				
 			} 
 			
-			scen = scen.replaceAll(";", "' OR Scenario ='");
-			orga = orga.replaceAll("\\.\\.", "' OR Organization ='");
-			topic = topic.replaceAll("\\.\\.", "' OR Topiccategory ='");
-			dt = dt.replaceAll(";", "' OR Datatype ='");
-			bbox = bbox.replaceAll("<", "' OR Geographicboundingbox ='");
-			hvl = hvl.replaceAll(";", "' OR Hierarchylevelname ='");
+//			scen = scen.replaceAll(";", "' OR Scenario ='");
+//			orga = orga.replaceAll("\\.\\.", "' OR Organization ='");
+//			topic = topic.replaceAll("\\.\\.", "' OR Topiccategory ='");
+//			dt = dt.replaceAll(";", "' OR Datatype ='");
+//			bbox = bbox.replaceAll("<", "' OR Geographicboundingbox ='");
+//			hvl = hvl.replaceAll(";", "' OR Hierarchylevelname ='");
 			
 			//create sql query for countAlls
 			if (countAll) {	
@@ -192,7 +209,7 @@ public class HSQLConnection {
 					sql += " WHERE " + whereable; 
 				}
 				
-				System.out.println(sql);
+				//System.out.println(sql);
 				
 				ResultSet rs = stmt.executeQuery(sql);
 	
@@ -260,7 +277,7 @@ public class HSQLConnection {
 						+ "WHERE GMF_ID ='" + id + "' " 
 						+ "GROUP BY GMF_ID, title, description, datatype, organization, scenario, hierarchylevelname, temporalextentbeginposition, temporalextentendposition, relatedservice, relatedserviceid, relatedlayer, geographicboundingbox "; 
 				}
-				System.out.println(sql);
+				//System.out.println(sql);
 				
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = ""; 
@@ -288,6 +305,24 @@ public class HSQLConnection {
 //								+ "AND RELATEDS.GMF_ID = = DETAILS.GMF_ID";
 //					}
 					
+					String relatedDS = "";
+					if (rs.getString("datatype").equals("publication")) { 
+						String sql4 = "SELECT DETAILS.GMF_ID, DETAILS.TITLE "
+								+ "FROM DETAILS JOIN RELATEDPUB ON DETAILS.GMF_ID = RELATEDPUB.GMF_ID "
+								+ "WHERE PUBID= " + id;
+						
+						ResultSet rs4 = stmt.executeQuery(sql4); 
+						
+						relatedDS = "\"related datasets\": [ ";  
+						while(rs4.next()) {
+							relatedDS += "\"" + rs4.getInt("GMF_ID") +  "+" + HelpMethods.reReplaceString(rs4.getString("TITLE")) + "\", "; 
+						}
+						
+						rs4.close();
+						if (relatedDS.equals("related datasets: [ ")) relatedDS = "";
+						else relatedDS = relatedDS.substring(0, relatedDS.length()-2) + " ], ";
+					}
+					
 					result += "{ "
 							+ "\"id\":\"" + rs.getInt("GMF_ID") + "\","
 							+ "\"label\":\"" + HelpMethods.reReplaceString(rs.getString("title")) + "\","
@@ -302,7 +337,8 @@ public class HSQLConnection {
 							+ "\"related service id\":\"" + serviceid + "\","
 							+ "\"related layer\":\"" + rs.getString("relatedlayer") + "\"," 
 							+ "\"uuid\":\"" + rs.getString("id") + "\","
-							+ "\"geographicboundingbox\":\"" + rs.getString("geographicboundingbox") + "\",";			
+							+ "\"geographicboundingbox\":\"" + rs.getString("geographicboundingbox") + "\","
+							+ relatedDS;			
 					
 					String topicsString = null;
 					if (rs.getString(5) != null) 
@@ -318,7 +354,7 @@ public class HSQLConnection {
 					}    
 					result = result.substring(0, result.length()-1) + " }"; 
 					
-					System.out.println("FINDONE: " + result);
+					//System.out.println("FINDONE: " + result);
 				} 
 				rs.close(); //close result set 
 				
@@ -335,7 +371,7 @@ public class HSQLConnection {
 				result += "]";
 				rs.close(); 
 				
-				System.out.println(result);
+				//System.out.println(result);
 			} else if (query.equals(Constants.findByMixed)) {	
 				sql = "SELECT DISTINCT GMF_ID, title, datatype "; 
 				if (!hvl.equals("-")) whereable = " Hierarchylevelname = '" + hvl + "' AND ";
@@ -345,10 +381,12 @@ public class HSQLConnection {
 				if (!orga.equals("-")) whereable += " Organization = '" + orga + "' AND ";
 				if (!bbox.equals("-")) whereable += " Geographicboundingbox = '" + bbox + "' ";	
 				
-				if (topic != "-" || query.equals(Constants.findAllTopics)) sql += " FROM Facets JOIN Topics ON Facets.GMF_ID = Topics.GMF_ID JOIN Details ON Facets.GMF_ID = Details.GMF_ID ";
-				 
-				else sql += " FROM Facets JOIN Details ON Facets.GMF_ID = Details.GMF_ID "; 
-				
+				if (topic != "-" || query.equals(Constants.findAllTopics)) { 
+					sql += " FROM Details LEFT JOIN Facets ON Facets.GMF_ID = Details.GMF_ID LEFT JOIN Topics ON Facets.GMF_ID = Topics.GMF_ID ";					
+				} else { 
+					sql += " FROM Details LEFT JOIN Facets ON Details.GMF_ID = Facets.GMF_ID "; 
+				}
+			 
 				if (!whereable.equals("")) {
 					whereable = whereable.trim();
 					if (whereable.lastIndexOf("AND") + 3 == whereable.length())
@@ -356,7 +394,7 @@ public class HSQLConnection {
 					sql += " WHERE " + whereable; 
 				}
 				 
-				System.out.println("FINDBYMIXED: " + sql);
+				//System.out.println("FINDBYMIXED: " + sql);
 				
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = "[ ";
@@ -374,7 +412,8 @@ public class HSQLConnection {
 				if (!scen.equals("-")) whereable += " Scenario = '" + scen + "' AND ";
 				if (!orga.equals("-")) whereable += " Organization = '" + scen + "' AND "; 	
 				
-				if (topic != "-" || query.equals(Constants.findAllTopics)) sql += " FROM Facets JOIN Topics ON Facets.GMF_ID = Topics.GMF_ID JOIN Details ON Facets.GMF_ID = Details.GMF_ID ";
+				//if (topic != "-" || query.equals(Constants.findAllTopics)) sql += " FROM Facets JOIN Topics ON Facets.GMF_ID = Topics.GMF_ID JOIN Details ON Facets.GMF_ID = Details.GMF_ID ";
+				if (topic != "-" || query.equals(Constants.findAllTopics)) sql += " FROM Details JOIN Facets ON Details.GMF_ID = Facets.GMF_ID LEFT JOIN Topics ON Details.GMF_ID = Topics.GMF_ID ";
 				else sql += " FROM Facets JOIN Details ON Facets.GMF_ID = Details.GMF_ID "; 
 				 
 				if (!whereable.equals("")) {
@@ -384,6 +423,8 @@ public class HSQLConnection {
 					sql += " WHERE " + whereable; 
 				}
 				 
+				//System.out.println("FINDMIXEDBOX: " + sql);
+				
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = "[ ";
 				while (rs.next()) 
@@ -397,7 +438,8 @@ public class HSQLConnection {
 			
 			} else if (query.equals(Constants.findTree)) { 
 				result = findTree(id, stmt);
-					
+				
+			//Find Similarities - SearchBox		
 			} else if (query.equals(Constants.findSimilarLimited)) {
 				sql = "SELECT DISTINCT GMF_ID, title, datatype, description ";  
 				if (!hvl.equals("-")) whereable = " Hierarchylevelname = '" + hvl + "' AND ";
@@ -419,9 +461,8 @@ public class HSQLConnection {
 					sql += " WHERE ";
 				
 				sql += "UPPER(title) LIKE UPPER('%" + id + "%')";
-				 
-				ResultSet rs = stmt.executeQuery(sql); 
-				
+				sql = checkSQL(sql,id);
+				ResultSet rs = stmt.executeQuery(sql); 			
 				result = "[ ";
 				while (rs.next()) 
 					result += "{ \"id\": \"" + rs.getInt(1) + "\", \"label\": \"" + HelpMethods.reReplaceString(rs.getString(2)) + "\", \"datatype\": \"" + rs.getString(3) + "\", \"description\":\"" + rs.getString(4) + "\" },"; 
@@ -432,8 +473,8 @@ public class HSQLConnection {
 			} else if (query.equals(Constants.findSimilarScenarioValues)) {
 				
 				sql = "SELECT DISTINCT SCENARIO FROM FACETS WHERE SCENARIO LIKE '%" + id + "%'";
+				sql = checkSQL(sql,id);
 				ResultSet rs = stmt.executeQuery(sql); 
-				 
 				result = "[ ";
 				while (rs.next())     
 					result += "\"" + rs.getString(1) + "\","; 
@@ -443,8 +484,8 @@ public class HSQLConnection {
 			} else if (query.equals(Constants.findSimilarDatatypeValues)) {
 				
 				sql = "SELECT DISTINCT DATATYPE FROM FACETS WHERE UPPER(DATATYPE) LIKE UPPER('%" + id + "%')";
-				ResultSet rs = stmt.executeQuery(sql); 
-				 
+				sql = checkSQL(sql,id);
+				ResultSet rs = stmt.executeQuery(sql);  
 				result = "[ ";
 				while (rs.next())     
 					result += "\"" + rs.getString(1) + "\","; 
@@ -454,8 +495,8 @@ public class HSQLConnection {
 			} else if (query.equals(Constants.findSimilarHierarchylevelnameValues)) {
 				
 				sql = "SELECT DISTINCT HIERARCHYLEVELNAME FROM FACETS WHERE UPPER(HIERARCHYLEVELNAME) LIKE UPPER('%" + id + "%')";
+				sql = checkSQL(sql,id);
 				ResultSet rs = stmt.executeQuery(sql); 
-				 
 				result = "[ ";
 				while (rs.next())     
 					result += "\"" + rs.getString(1) + "\","; 
@@ -465,6 +506,7 @@ public class HSQLConnection {
 			} else if (query.equals(Constants.findSimilarOrganizationValues)) {
 				
 				sql = "SELECT DISTINCT ORGANIZATION FROM FACETS WHERE UPPER(ORGANIZATION) LIKE UPPER('%" + id + "%')";
+				sql = checkSQL(sql,id);
 				ResultSet rs = stmt.executeQuery(sql);  
 				result = "[ ";
 				while (rs.next())     
@@ -475,19 +517,21 @@ public class HSQLConnection {
 			} else if (query.equals(Constants.findSimilarTopiccategoryValues)) {
 				
 				sql = "SELECT DISTINCT TOPICCATEGORY FROM TOPICS WHERE UPPER(TOPICCATEGORY) LIKE UPPER('%" + id + "%')";
+				sql = checkSQL(sql,id);
 				ResultSet rs = stmt.executeQuery(sql);  
 				result = "[ ";
 				while (rs.next())     
 					result += "\"" + rs.getString(1) + "\","; 
 				result = result.substring(0,result.length()-1) + " ]"; 		
 				rs.close();	
+				
 			} else if (query.equals(Constants.findInternId)) {
 				
 				sql = "SELECT GMF_ID FROM DETAILS WHERE ID='" + id + "'";
 				ResultSet rs = stmt.executeQuery(sql);  
 				while (rs.next())     
 					result = "{ \"id\": \"" + rs.getInt("GMF_ID") + "\" } ";
-				System.out.println("RESULT: " + result);
+				//System.out.println("RESULT: " + result);
 				rs.close();	
 				
 			//create sql query for findAlls	
@@ -507,7 +551,7 @@ public class HSQLConnection {
 				ResultSet rs = stmt.executeQuery(sql); 
 				result = "[ ";
 				while (rs.next()) { 
-					if (!rs.getString(1).equals(""))
+					if (rs.getString(1) != null && !rs.getString(1).equals(""))
 						result += "\"" + rs.getString(1) + "\","; 
 				}
 				result = result.substring(0, result.length()-1);
@@ -520,8 +564,8 @@ public class HSQLConnection {
 			stmt.close(); 	 
 			return result;
 		} catch (SQLException e) { e.printStackTrace(); } finally {
-			if (con != null) 
-				try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
+//			if (con != null) 
+//				try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
 		}
 		return null;
 	}
@@ -694,6 +738,9 @@ public class HSQLConnection {
 		
 		//connection
 		Connection con = null;
+		//get connection from Container instead of creating new connections for every request
+		if (Container.conn!=null)con = Container.conn;
+		else
 		con = DriverManager.getConnection("jdbc:hsqldb:file:"+Constants.dbFilePath2 +"; shutdown=true", "root", ""); //if changed, change path in query statement method
 		Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
@@ -707,7 +754,7 @@ public class HSQLConnection {
 		//lineage details
 		lineage_detail = getLineage(stmt, externID);
 		//Models
-		getModels(stmt, externID, "lineage");
+		getModels(stmt, externID, "lineage", externID);
 		model_data.putAll(models);
 		detail_data.put("paramName", "detail");
 		Map<String, Object> detail = new HashMap<String, Object>();
@@ -726,10 +773,12 @@ public class HSQLConnection {
 		all_data.put("usage", usage_detail);
 
 		//close connection
-		if (con != null) 
-			try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
-		
-		return (String) JsonObjectBuilder.buildLayer(all_data, "string");	
+//		if (con != null) 
+//			try { con.close(); } catch (SQLException e) { e.printStackTrace(); } 
+
+		String json = (String) JsonObjectBuilder.buildLayer(all_data, "string");
+		System.out.println(json);
+		return json;	
 	}
 	
 	
@@ -840,47 +889,64 @@ public class HSQLConnection {
 	 * This method returns all models for lineage or usage type
 	 * 
 	 * @param stmt - Statement from connection
-	 * @param externID - id of data set
+	 * @param modelID - id of data set
 	 * @param type - lineage or usage
 	 * @return Map<String, Object> with lineage/usage model information
 	 * @throws SQLException
 	 */
-	private Map<String, Object> getModels(Statement stmt, String externID, String type) throws SQLException{
+	private Map<String, Object> getModels(Statement stmt, String modelID, String type, String mainID) throws SQLException{
 		String sql = "SELECT Identifier, Description, Datetime, Processor "
 				+ "FROM Details "
 				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
 				+ "LEFT JOIN Processsteps ON Lineage.LID = Processsteps.LID "
 				+ "LEFT JOIN Processinfos ON Processsteps.PSID = Processinfos.PSID "
-				+ "WHERE id ='" + externID + "' " ;
+				+ "WHERE id ='" + modelID + "' " ;
 		ResultSet rs = stmt.executeQuery(sql); 
 		
 		Integer i = 0;
 		rs.last();
 		modelIds = new String[rs.getRow()];
+	
 		rs.beforeFirst();
 		while (rs.next()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("paramName", "model_" + numberModels);
-        	model.put("title", rs.getString(1));
-        	model.put("description", rs.getString(2));
-        	if(!rs.getString(3).equals(""))model.put("dateTime", rs.getString(3));
-        	model.put("organisation", rs.getString(4));
+        	if(rs.getString(1)!=null)model.put("title", rs.getString(1));
+        	else model.put("title", "");
+        	if(rs.getString(2)!=null)model.put("description", rs.getString(2));
+        	else model.put("description", "");
+        	if(rs.getString(3)!=null){
+        		if(!rs.getString(3).equals(""))model.put("dateTime", rs.getString(3));
+        	}else model.put("dateTime", "");
+        	if(rs.getString(4)!=null)model.put("organisation", rs.getString(4));
+        	else model.put("organisation", "");
         	model.put("type", type);
         	model.put("info", ""); 
         	if (type.equals("usage")) {
-        		String[] idArr = new String[1];
-				idArr[0] = externID;
-        		model.put("input_datasets", idArr[0]); 
+        		String[] idArr = getInputforModel(stmt,modelID, mainID);
+        		model.put("input_datasets", idArr); 
         	} else{
         		model.put("input_datasets", ids);
         	}
         	String[] ds = new String[1];
-        	ds[0] = externID;
-        	model.put("output_datasets", ds);   
-        	models.put("model_" + numberModels, model);
-        	modelIds[i] = (String) models.get("paramName");       	
-        	mappingIdsUuids.put( type + "_model_"+i, (String) model.get("paramName")); 
-			numberModels++;
+        	ds[0] = modelID;
+        	model.put("output_datasets", ds);  
+        	//check if usage dataset is the same as input for model(lineage)
+        	/*for (int j=0; j<ids.length;j++){
+        		if(ids[j].equals(modelID)){
+        			model.put("linked_2_modelInput", 1);
+        			break;
+        		}
+        		 else model.put("linked_2_modelInput", 0);
+        	}*/ //now in get DetailsTo()
+         	models.put("model_" + numberModels, model);
+        	modelIds[i] = (String) models.get("paramName");
+        	if( type.equals("usage")){
+        		mappingIdsUuids.put( type + "_model_"+numberModels, (String) model.get("paramName")); 
+        		numberModels++;
+        	}else mappingIdsUuids.put( type + "_model_"+i, (String) model.get("paramName")); 
+        	//TODO:  . why usagemodel1=model0 and usagemodel0=model1 - wrong vis with i=numberModel
+			
 			i++;
 		}
 		return models;
@@ -937,7 +1003,7 @@ public class HSQLConnection {
 			detailContent.put("relations_csw",  " "); //TODO:get from db
 			mappingIdsUuids.put("lineage_dataset_"+i, (String) detailContent.get("paramName"));
 			datasetList.put((String) detailContent.get("paramName"), detailContent);    
-			ids[i] = rs.getString(12);
+			ids[i] = rs.getString(1);
 			i++;
 			}
 		}
@@ -982,6 +1048,20 @@ public class HSQLConnection {
 			detailContent.put("extent",  rs.getString(10));
 			detailContent.put("vector", "false");	  
 			detailContent.put("relations_csw",  ""); //TODO:get from db
+			
+			
+			for (int j=0; j<ids.length;j++){
+				
+				if(ids[j]!=null){
+        			if(ids[j].equals(id)){
+        				detailContent.put("linked_2_modelInput", 1);
+        				break;
+        			}
+        			else detailContent.put("linked_2_modelInput", 0);
+				}
+        	}
+			
+			
 		}
 		return detailContent; 
 	}
@@ -994,7 +1074,7 @@ public class HSQLConnection {
 	 * @return Map<String, Object> usage information
 	 * @throws SQLException
 	 */
-	private Map<String, Object> getUsage(Statement stmt,String code) throws SQLException { //TODO:what is it supposed to do? 
+	private Map<String, Object> getUsage(Statement stmt,String code) throws SQLException {
 		Map<String,Object> usage_detail = new HashMap<String,Object>();
 		usage_detail.put("paramName", "usage");
 		Map<String,Object> modelsLoc = new HashMap<String,Object>();
@@ -1019,7 +1099,7 @@ public class HSQLConnection {
 			Map<String, Object> detailContent = getDetailsTo(stmt, id, id, "usage");
 			String[] dsArr = new String[1];
 			dsArr[0] = id;
-			getModels(stmt, id, "usage");
+			getModels(stmt, id, "usage", code);
  
 			if (i == 0) {
 				String[] mo = new String[1];
@@ -1032,18 +1112,23 @@ public class HSQLConnection {
                 mod_ds_relations.put("map0", map0);
 				mod_ds_relations.put("usage_model_0", "model_0");
 			}  
-			if (i == 1) {
-				String[] mo = new String[2];
-				mo[0] = "usage_model_0";
-				mo[1] = "usage_model_1"; 
+			if (i >0) {
+				String[] mo = new String[i+1];
+				for (int j = 0 ; j<mo.length;j++){
+					mo[j]="usage_model_"+j;
+					
+				}
+				//mo[0] = "usage_model_0";
+				//mo[1] = "usage_model_1"; 
 				modelsLoc.remove("usage_model_ids");
 				modelsLoc.put("usage_model_ids", mo);	 
                 Map<String, Object> map1 = new HashMap<String, Object>();
-                map1.put("paramName", "usage_models_1"); 
+                map1.put("paramName", "usage_models_"+i); 
                 map1.put("dataset_ids", dsArr);
-                mod_ds_relations.put("map1",map1);
-				mod_ds_relations.put("usage_model_1", "model_1");
-				mappingIdsUuids.put("usage_model_1", "model_0");
+                mod_ds_relations.put("map"+i,map1);
+				mod_ds_relations.put("usage_model_"+i, "model_"+i);
+				//if(i==1)mappingIdsUuids.put("usage_model_1", "model_0");
+				
 			}			
 			
 			mappingIdsUuids.put("usage_dataset_"+i, (String) detailContent.get("paramName"));
@@ -1053,5 +1138,70 @@ public class HSQLConnection {
 		usage_detail.put("models", modelsLoc);
 		usage_detail.put("mod_ds_relations", mod_ds_relations);
 		return usage_detail;	
+	}
+	
+	/**
+	 * converts the sql string to search for all keywords if id/keyword(s) are separated with space sign " "
+	 * 
+	 * @param sql - generated sql for searching
+	 * @param id - search words for id
+	 * @return new sql if id has several keywords
+	 */
+	private String checkSQL (String sql, String id){
+		String newSQL ="";	
+		if (id.split(" ").length<2){
+			return sql;
+		} else {
+			String [] keywords = id.split(" ");	
+			String [] sqlSplit = sql.split("WHERE");
+			String rightHandStatement = sqlSplit[1].replace(id, "whatAPlaceHolder"); 
+		
+			newSQL = sqlSplit[0]; //saves the left handed statement 
+			newSQL += " WHERE " + rightHandStatement.replace( "whatAPlaceHolder", keywords[0]); //adds first keyword to the right handed statement 
+			//add "AND" keywords 
+			for (int i=1; i<keywords.length;i++){
+				newSQL += " AND " + rightHandStatement.replace( "whatAPlaceHolder", keywords[i]);	
+			}	
+		}
+		
+		return newSQL;
+	}
+	
+	/**
+	 * returns list of input id's for given usage model and adds input datasets to datasat_data
+	 * 
+	 * @param stmt
+	 * @param modelID
+	 * @return
+	 * @throws SQLException
+	 */
+	private String[] getInputforModel (Statement stmt,  String modelID, String mainID) throws SQLException{
+		
+		String sql = "SELECT B.ID "
+				+ "FROM Details "
+				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
+				+ "LEFT JOIN Processsteps ON Lineage.LID = Processsteps.LID "
+				+ "LEFT JOIN Processinfos ON Processsteps.PSID = Processinfos.PSID "
+				+ "LEFT JOIN Relationlineagesource On Processsteps.PSID = Relationlineagesource.PSID "
+				+ "LEFT JOIN Details B On Relationlineagesource.ID = B.ID "
+				+ "WHERE id ='" + modelID + "' " 
+				+ "AND Relationlineagesource.ID IS NOT NULL" ;
+
+		ResultSet rs = stmt.executeQuery(sql); 
+		rs.last();
+		String [] inputIds = new String[rs.getRow()];
+		rs.beforeFirst();
+		int i = 0;
+		while(rs.next()){
+			inputIds[i] = rs.getString(1);
+			if(!rs.getString(1).equals(mainID) ){
+				Map<String, Object> detailContent = getDetailsTo(stmt, rs.getString(1), rs.getString(1), "usage_input");//usage_dataset_"+numberModels+"_input
+				
+				datasetList.put((String) detailContent.get("paramName"), detailContent); 
+			}
+			
+			i++;
+		}
+		return inputIds;
 	}
 }

@@ -41,6 +41,14 @@
   z-index:3;
 }
 
+#input_container {
+  position:absolute;
+  left:210px;
+  width:220px;
+  height:100px;
+  z-index:3;
+}
+
 /* ---------- different (mini sized) card boxes ----------------------- */
 
 #lineage_dataset_mini_cards_container {
@@ -95,6 +103,21 @@ div.description_card {
   cursor:pointer;
 }
 
+div.input_card { 
+  background-color:#FFF; 
+  margin-left:0px;
+  margin-top:5px;
+  margin-bottom:5px;
+  border-width:1px;
+  border-style:solid; 
+  border-color:#007C95; 
+  position:relative;
+  width:255px;
+  height:40px;
+  position:absolute;
+  cursor:pointer;
+}
+
 div.description_card_petrol {
   background-color:rgba(100, 255, 0, 0.2); 
   margin-left:0px;
@@ -108,6 +131,7 @@ div.description_card_petrol {
   width:225px;
   height:90px;
   position:absolute;
+  cursor:pointer;
 /*   cursor:pointer; */
 }
 

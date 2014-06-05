@@ -96,18 +96,21 @@ require([ "dojo/_base/window", "dojo/data/ItemFileReadStore", "dijit/tree/Forest
 		showRoot:false,
 	}, "myTree");
  
-		//when item is clicked reload tree with new item
+	//when item is clicked reload tree with new item
 	//reset details view, scroll to dataset in result list and 
 	//reset map function
-	dojo.connect(tree_obj, 'onClick', function(item, node, evt) { 
-		if (heatmap)
-			addFacetClick(evt);
-		
-		time4Maps.hideTime4Maps();
-		metaViz.hideMetaViz();
-		guiFunctions.showMap();
-		guiFunctions.scrollToSpecificPoint(item.id);
-		guiFunctions.setTabularView(item.id);
-		guiFunctions.setGeneralMetaData(item.id); 
+	dojo.connect(tree_obj, 'onClick', function(item, node, evt) {
+		if (typeof hierarchyPage!="undefined" && hierarchyPage==true) {
+			guiFunctions.setGeneralMetaData(item.id); 
+		} else {
+			if (heatmap)
+				addFacetClick(evt);	
+			time4Maps.hideTime4Maps();
+			metaViz.hideMetaViz();
+			guiFunctions.showMap();
+			guiFunctions.scrollToSpecificPoint(item.id);
+			guiFunctions.setTabularView(item.id);
+			guiFunctions.setGeneralMetaData(item.id); 	
+		}
 	});
 }); 		    

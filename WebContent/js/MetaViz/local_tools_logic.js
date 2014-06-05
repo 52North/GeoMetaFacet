@@ -20,8 +20,8 @@
   //-------------- moving tools in dep. of mouse move -------------------------------------------
   //-> getting right tool in dep. of overed card an its properties - sets position of tool and style visible
   //-- id - String id of dataset, model, service
-  function show_tools(id, has_info, has_viewing, has_store) {     
-    actual_id = id; 
+  function show_tools(id, has_info, has_viewing, has_store) {     	  
+	actual_id = id; 
     var tool_id;
      
     var move_Pos0 = 36;   //lin ds mini
@@ -112,7 +112,7 @@
     }  
   
     if (id.indexOf('mini') == -1) dojo.byId(tool_id).style.top = dojo.byId(id).offsetTop +30 + "px";     
-    else dojo.byId(tool_id).style.top = dojo.byId(id).offsetTop +40 + "px";
+    else dojo.byId(tool_id).style.top = dojo.byId(id).offsetTop + 40 + "px";
     }   
   } 
   
@@ -126,8 +126,7 @@
     dojo.byId("tools_view").style.visibility = "hidden";
     dojo.byId("tools_save").style.visibility = "hidden";
   }
-  
-  
+   
   //-------------- actions pushing a tool button -------------------------------------------
   
   function show_view_menu() {

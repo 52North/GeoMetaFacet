@@ -57,10 +57,11 @@
 		  	var id = getURLParam("id"); 
 		  	var mode = getURLParam("mode"); 
 		  	if (id != "") {
+		  		metaViz.showMetaViz(id);
 		  		//var mode = null;
-		  		metaViz.dataBaseRequest(mode, id, function(data) { 
-					metaViz.displayMetaViz(data);					
-				}); 
+		  		//metaViz.dataBaseRequest(mode, id, function(data) { 
+				//	metaViz.displayMetaViz(data);	 
+				//}); 
 		  	} 
 		  	else alert('Please add a dataset id to the url by append "?id" in the web browser.')
 		  	  
@@ -130,9 +131,11 @@
 			class="top_pos">
 			<div id="usage_model_cards_container"></div>
 			<div id="usage_dataset_cards_container"></div>
+			<div id="input_container"></div>
 		</div> 
 		<div id="lines" style="position:absolute;top:50px;left:30px;">
 			<div id="actual_lines" class="chain"></div>
+			<div id="input_lines" ></div>
 		</div> 
 		<div id="content"> 
 			<div id="lin_pub_texts">

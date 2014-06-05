@@ -1,5 +1,24 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
 
 var currentTabularViewItems;
+var projectLoaded = false;
+var scenarioLoaded = false;
+
 /**
  * gets current items of tabular view
  * 
@@ -7,7 +26,8 @@ var currentTabularViewItems;
  * @param items
  */
 function getItemsOfTabularView(items) {
-	currentTabularViewItems =  items;
+	if (!selectOneBox)
+		currentTabularViewItems = items;
 }
 
 /**
@@ -16,22 +36,18 @@ function getItemsOfTabularView(items) {
  * @param requestDetail - metadata filter
  * @returns {String}
  */
-function httpGet(requestDetail) { 
-	console.log(requestDetail);
+function httpGet(requestDetail) {  
 	var requestUrl = dbHost + requestDetail;
 	var response = "";
- 
+	//console.log("hier: " +requestDetail);
 	$.ajax({
 	    type: "GET",
-	    async: false,
-	    //url: requestUrl,  
-	    url: 'HSQLController',
-	    //neu
+	    async: false,   
+	    url: 'HSQLController', 
 	    dataType: "json",
 	    data: {
 	    	data: requestDetail
-	    },
-	    //ende neu
+	    }, 
 	    success: function(msg) { 
 	    	response = msg; 
 	    	if (requestDetail == findAllIds) {
@@ -43,12 +59,10 @@ function httpGet(requestDetail) {
 	    		//set no of filtered values //skip bbox request, because duplicates are eliminated
 	    		filteredItemsCount = response.length;
 	    },
-	    error: function(err) { 
-	        console.log(err);
+	    error: function(err) {  
 		    if (err.status == 200) {
 			     
-		    } else { console.log('Error:' + err.responseText + '  Status: ' + err.status); }
-		    
+		    } else { console.log('Error:' + err.responseText + '  Status: ' + err.status); }		    
 		    response = err.responseText; 
 	    }
 	});
@@ -72,13 +86,12 @@ function httpGetJSON(fileUrl) {
 	    success: function(msg) { 
 	    	response = msg;	    	
 	    },
-	    error: function(err) {
-	        console.log(err);
-		    if (err.status == 200) { 
-			    console.log(err); 
-		    } else { 
-		    	console.log('Error:' + err.responseText + '  Status: ' + err.status);
-		    }
+	    error: function(err) { 
+//		    if (err.status == 200) { 
+//			    console.log(err); 
+//		    } else { 
+//		    	console.log('Error:' + err.responseText + '  Status: ' + err.status);
+//		    }
 	    }
 	});
 	return response; 
@@ -118,18 +131,33 @@ function clearBoundingBoxFilter() {
  * @returns {String} selected topic facet values, separated with ;
  */
 function getTopicSelection() {
+	var selectedTopics = ""; //topics as string, separated with ";"
+	if (typeof fixedTopic != "undefined" && fixedTopic != "") {
+		selectedTopics = fixedTopic;
+		list = selectedTopics.split("..");
+		require(["dojo/html", "dojo/dom", "dojo/domReady!"],
+			function(html, dom, on) {
+				text = "<div><span class='exhibit-facet-header-title'>selected Thematic categorization</span></div><table>";
+				for (var i = 0; 0 < list.length; i++) {
+					if (list[i] == undefined) break;
+					text += "<tr><td>" + list[i] + "</td></tr>";			
+				}
+				text += "</table>";
+			    html.set(dom.byId("f3"), text);
+			});
+		
+		return selectedTopics;
+	}
 	//check selected topics
-    var selectedTopics = ""; //topics as string, separated with ";"
     if (exhibit._registry._registry.facet.f3 != null && exhibit._registry._registry.facet.f3._valueSet._count > 0) {
 	    //list selected facet values as { value1: true, value2: true }
-	    var valueObj = exhibit._registry._registry.facet.f3._valueSet._hash;
-	    
+	    var valueObj = exhibit._registry._registry.facet.f3._valueSet._hash; 
 	    for (property in valueObj) {
 	    	selectedTopics += property + ";";
 	    } 
 	    selectedTopics = selectedTopics.substring(0, selectedTopics.length-1);	    
     } 
-    if (selectedTopics == "") selectedTopics = "-";
+    if (selectedTopics == "") selectedTopics = "-"; 
     return selectedTopics;
 }  
 
@@ -139,8 +167,7 @@ function getTopicSelection() {
  * @param topicArray - array of facet value that should be selected
  */
 function setTopicSelection(topicArray) { 
-	var selection = new Object();
-	
+	var selection = new Object();	
 	if (exhibit._registry._registry.facet.f3 != null) {
 		for (var i = 0; i < topicArray.length; i++) {
 			selection[topicArray[i]] = true; 
@@ -158,8 +185,26 @@ function setTopicSelection(topicArray) {
  * @returns {String} selected datatype facet values, separated with ;
  */
 function getDatatypeSelection() {
+	var selectedDatatypes = ""; //data types as string, separated with ";"
+	if (typeof fixedDataType != "undefined" && fixedDataType != "") {
+		selectedDatatypes = fixedDataType;
+		selectedDatatypes = replaceAll( "&#45;","-",selectedDatatypes);
+		list = selectedDatatypes.split("..");
+		require(["dojo/html", "dojo/dom", "dojo/domReady!"],
+			function(html, dom, on) {
+				text = "<div><span class='exhibit-facet-header-title'>selected Resources</span></div><table>";
+				for (var i = 0; 0 < list.length; i++) {
+					if (list[i] == undefined) break;     
+					text += "<tr><td>" + list[i] + "</td></tr>";			
+				}
+				text += "</table>";
+			    html.set(dom.byId("f2"), text);
+			});
+		selectedDatatypes = replaceAll("\\.\\.",";",selectedDatatypes);
+		console.log(selectedDatatypes);
+		return selectedDatatypes;
+	}
     //check selected data types
-    var selectedDatatypes = ""; //data types as string, separated with ";"
     if (exhibit._registry._registry.facet.f2 != null && exhibit._registry._registry.facet.f2._valueSet._count > 0) {
 	    //list selected facet values as { value1: true, value2: true }
 	    var valueObj = exhibit._registry._registry.facet.f2._valueSet._hash;
@@ -202,8 +247,7 @@ function getBoundingboxSelection() {
     var selectedBoundingboxes = ""; //organizations as string, separated with ";"
     if (exhibit._registry._registry.facet.f5 != null && exhibit._registry._registry.facet.f5._valueSet._count > 0) {
 	    //list selected facet values as { value1: true, value2: true }
-	    var valueObj = exhibit._registry._registry.facet.f5._valueSet._hash;
-	   
+	    var valueObj = exhibit._registry._registry.facet.f5._valueSet._hash; 
 	    for (property in valueObj) {
 	    	selectedBoundingboxes += property + "<";
 	    } 
@@ -219,8 +263,10 @@ function getBoundingboxSelection() {
  * @param boundingboxArray - array of facet values that should be selected
  */
 var blockBoxUpdate = false;
-function setBoundingboxSelection(boundingboxArray) {
-	console.log("set box selection");
+function setBoundingboxSelection(boundingboxArray) {  
+	exhibit._registry._registry.facet.f5._valueSet._count = 0;
+	exhibit._registry._registry.facet.f5._valueSet._hash = {};
+	
 	var selection = new Object();
 
 	if (exhibit._registry._registry.facet.f5 != null) {
@@ -243,8 +289,23 @@ function setBoundingboxSelection(boundingboxArray) {
  * @returns {String} selected organization facet values, separated with ;
  */
 function getOrganizationSelection() {
+	var selectedOrganizations = ""; //organizations as string, separated with ";"
+	if (typeof fixedOrganization != "undefined" && fixedOrganization!=""){
+		selectedOrganizations = fixedOrganization;		
+		list = selectedOrganizations.split("..");
+		require(["dojo/html", "dojo/dom", "dojo/domReady!"],
+			function(html, dom, on) {
+				text = "<div><span class='exhibit-facet-header-title'>selected Organization</span></div><table>";
+				for (var i = 0; 0 < list.length; i++) {
+					if (list[i] == undefined) break;
+					text += "<tr><td>" + list[i] + "</td></tr>";			
+				}
+				text += "</table>";
+			    html.set(dom.byId("f4"), text);
+			});
+		return selectedOrganizations;
+	} 
     //check selected organizations
-    var selectedOrganizations = ""; //organizations as string, separated with ";"
     if (exhibit._registry._registry.facet.f4 != null && exhibit._registry._registry.facet.f4._valueSet._count > 0) {
 	    //list selected facet values as { value1: true, value2: true }
 	    var valueObj = exhibit._registry._registry.facet.f4._valueSet._hash;
@@ -265,7 +326,6 @@ function getOrganizationSelection() {
  */
 function setOrganizationSelection(organizationArray) { 
 	var selection = new Object();
-
 	if (exhibit._registry._registry.facet.f4 != null) {
 		for (var i = 0; i < organizationArray.length; i++) {
 			selection[organizationArray[i]] = true;  
@@ -285,6 +345,22 @@ function setOrganizationSelection(organizationArray) {
  */
 var selectedScenarios = ""; //scenario as string, separated with ";"
 function getScenarioSelection() {
+	if (typeof fixedScenario != "undefined" && fixedScenario != "") {
+		selectedScenarios = fixedScenario;
+		list = selectedScenarios.split("..");
+		require(["dojo/html", "dojo/dom", "dojo/domReady!"],
+			function(html, dom, on) {
+				text = "<div><span class='exhibit-facet-header-title'>selected Scenarios or storylines</span></div><table>";
+				for (var i = 0; 0 < list.length; i++) {
+					if (list[i] == undefined) break;     
+					text += "<tr><td>" + list[i] + "</td></tr>";			
+				}
+				text += "</table>";
+			    html.set(dom.byId("f1"), text);
+			});
+		selectedScenarios = replaceAll("\\.\\.",";",selectedScenarios);
+		return selectedScenarios;
+	}
     //check selected scenarios
     if (scenarioUpdateFlag) {
     	selectedScenarios = "";
@@ -371,13 +447,28 @@ function getScenarioTreeNames() {
  */
 var selectedHierarchylevelnames = ""; //scenario as string, separated with ";"
 function getHierarchylevelnameSelection() {
+	if (typeof fixedHierarchylvl != "undefined" && fixedHierarchylvl != "") {
+		selectedHierarchylevelnames = fixedHierarchylvl;		
+		list = selectedHierarchylevelnames.split("..");
+		require(["dojo/html", "dojo/dom", "dojo/domReady!"],
+			function(html, dom, on) {
+				text = "<div><span class='exhibit-facet-header-title'>selected Sustainable Land Management</span></div><table>";
+				for (var i = 0; 0 < list.length; i++) {
+					if (list[i] == undefined) break;     
+					text += "<tr><td>" + list[i] + "</td></tr>";			
+				}
+				text += "</table>";
+			    html.set(dom.byId("f0"), text);
+			});
+		selectedHierarchylevelnames = replaceAll("\\.\\.",";",selectedHierarchylevelnames);
+		return selectedHierarchylevelnames;
+	}
 	if (projectUpdateFlag) {
-		selectedHierarchylevelnames = ""
+		selectedHierarchylevelnames = "";
 	    //check selected hierarchylevels
 	    if (exhibit._registry._registry.facet.f0 != null && exhibit._registry._registry.facet.f0._selections.length > 0) {
 		    //list selected facet values as { value1: true, value2: true }
-		    var valueObj = exhibit._registry._registry.facet.f0._selections;
-		    
+		    var valueObj = exhibit._registry._registry.facet.f0._selections; 
 		    for (var i = 0; i < valueObj.length; i++) {
 		    	childrenNames = "";
 		    	selectedHierarchylevelnames += getDeepestChildren(valueObj[i].value, getProjectTree());
@@ -398,8 +489,7 @@ function getHierarchylevelnameSelection() {
  * @param hierarchylevelnameArray - array of projects that should be selected
  */
 function setHierarchylevelnameSelection(hierarchylevelnameArray) { 
-	var selection = [];
-	
+	var selection = []; 
 	if (exhibit._registry._registry.facet.f0 != null) {
 		for (var i = 0; i < hierarchylevelnameArray.length; i++) {
 			var selected = new Object();
@@ -469,13 +559,16 @@ function traverseChildrenNames(tree) {
  * @returns the project tree object as json object with children in arrays
  */
 function getProjectTree() { 
-	var projectTree = httpGetJSON(projectRegistryUrl);
-	if (projectTree instanceof Object) {
-		console.log("Project tree loaded as object."); 
-	} else {
-		console.log("Project tree loaded as string.");
-		projectTree = $.parseJSON(projectTree);
-	} 	
+	if (!projectLoaded){
+		projectLoaded=true;
+		projectTree = httpGetJSON(projectRegistryUrl);
+		if (projectTree instanceof Object) {
+			console.log("Project tree loaded as object."); 
+		} else {
+			console.log("Project tree loaded as string.");
+			projectTree = $.parseJSON(projectTree);
+		} 	
+	}
 	return projectTree[0];
 }
  
@@ -485,12 +578,15 @@ function getProjectTree() {
  * @returns the scenario tree object as json object with children in arrays
  */
 function getScenarioTree() {
-	var scenarioTree = httpGetJSON(scenarioRegistryUrl);
-	if (scenarioTree instanceof Object) {
-		console.log("Scenario tree loaded as object.");
-	} else {
-		console.log("Scenario tree loaded as string.");
-		scenarioTree = $.parseJSON(scenarioTree);
+	if(!scenarioLoaded){
+		scenarioLoaded=true;
+		scenarioTree = httpGetJSON(scenarioRegistryUrl);
+		if (scenarioTree instanceof Object) {
+			console.log("Scenario tree loaded as object.");
+		} else {
+			console.log("Scenario tree loaded as string.");
+			scenarioTree = $.parseJSON(scenarioTree);
+		}
 	}
 	return scenarioTree[0]; 
 }
@@ -581,10 +677,8 @@ function getInitValues(facet) {
 //-- CONSTANTS --------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-var dbHost = "http://141.30.100.165:3000/metadata/";
-//var dbHost = "http://localhost:3000/metadata/";
-
-var scenarioRegistryUrl = "././registries/glues_registry_scenarios.json"; //"http://localhost:8080/GeoMetaFacet/registries/glues_registry_scenarios.json";
+var dbHost = "http://141.30.100.165:3000/metadata/"; 
+var scenarioRegistryUrl = "././registries/glues_registry_scenarios.json"; 
 var projectRegistryUrl = "././registries/glues_registry_projects.json";
 
 var projectTree;
@@ -609,7 +703,7 @@ var datatypeFacet = "datatype";
 var findAllDatatypes = "findAllDatatypes"; 
 var findAllDatatypesById = "findAllDatatypesById";
 var countAllDatatypes = "countAllDatatypes";
-var dtFacet = "Ressources";
+var dtFacet = "Resources";
 
 var organizationFacet = "organization"; 
 var findAllOrganizations = "findAllOrganizations";
@@ -617,7 +711,7 @@ var findAllOrganizationsById = "findAllOrganizationsById";
 var countAllOrganizations = "countAllOrganizations";
 var orgaFacet = "Organizations";
 
-var hierarchylevelnameFacet = "Sustainable Landmanagement";
+var hierarchylevelnameFacet = "Sustainable Land Management";
 var findHierarchylevelnames = "findHierarchylevelnames"; 
 var findAllHierarchylevelnamesById = "findAllHierarchylevelnamesById";
 var countAllHierarchylevelnames = "countAllHierarchylevelnames";
@@ -641,6 +735,8 @@ var findSimilarHierarchylevelnameValues = "findSimilarHierarchylevelnameValues";
 var findSimilarTopiccategoryValues = "findSimilarTopiccategoryValues";
 var findSimilarDatatypeValues = "findSimilarDatatypeValues";
 var findSimilarOrganizationValues = "findSimilarOrganizationValues";
+
+var findInternId = "findInternId";
 
 //displayed count values @see: exhibit collection summary widget
 var allItemsCount = 0; //all items of database 

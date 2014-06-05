@@ -27,6 +27,7 @@ var searchTable, mapTable;
  * Search requests include selected facet values.
  */
 Search.execute = function(searchText) {
+	console.log(searchText);
 		
 	//check selected facet value @see exhibitOutputFunctions.js
     var selectedTopics = getTopicSelection(); 
@@ -44,15 +45,28 @@ Search.execute = function(searchText) {
     selectionCluster.push(selectedDatatypes);
     selectionCluster.push(selectedOrganizations);
     selectionCluster.push(selectedBoundingboxes);
-       
-    //get results in consideration of user facet selection  
-    var resultEntries = httpGet(findSimilarLimited + "/" + searchText + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios);
-    var resultScenarios = httpGet(findSimilarScenarioValues + "/" + searchText + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations);
-    var resultHvls = httpGet(findSimilarHierarchylevelnameValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations);
-    var resultTopics = httpGet(findSimilarTopiccategoryValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedDatatypes + "/" + selectedOrganizations);
-    var resultDatatypes = httpGet(findSimilarDatatypeValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedOrganizations);
-    var resultOrganizations = httpGet(findSimilarOrganizationValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes);
     
+    
+    if ("/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios == "/-/-/-/-/-"){
+    	//get results without consideration of user facet selection
+        var resultWSEntries = httpGet(findSimilarLimited + "/" + searchText + "/-/-/-/-/-");
+        var resultWSScenarios = httpGet(findSimilarScenarioValues + "/" + searchText + "/-/-/-/-");
+        var resultWSHvls = httpGet(findSimilarHierarchylevelnameValues + "/" + searchText + "/-/-/-/-");
+        var resultWSTopics = httpGet(findSimilarTopiccategoryValues + "/" + searchText + "/-/-/-/-");
+        var resultWSDatatypes = httpGet(findSimilarDatatypeValues + "/" + searchText + "/-/-/-/-");
+        var resultWSOrganizations = httpGet(findSimilarOrganizationValues + "/" + searchText + "/-/-/-/-");
+    } else {
+    	 //get results in consideration of user facet selection  
+        var resultEntries = httpGet(findSimilarLimited + "/" + searchText + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios);
+        var resultScenarios = httpGet(findSimilarScenarioValues + "/" + searchText + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations);
+        var resultHvls = httpGet(findSimilarHierarchylevelnameValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations);
+        var resultTopics = httpGet(findSimilarTopiccategoryValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedDatatypes + "/" + selectedOrganizations);
+        var resultDatatypes = httpGet(findSimilarDatatypeValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedOrganizations);
+        var resultOrganizations = httpGet(findSimilarOrganizationValues + "/" + searchText + "/" + selectedScenarios + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes);
+    }
+    
+    
+   
     //push all results into one array
     var resultCluster = [];
     resultCluster.push(resultHvls);
@@ -62,13 +76,7 @@ Search.execute = function(searchText) {
     resultCluster.push(resultOrganizations);
     resultCluster.push(resultEntries);
     
-    //get results without consideration of user facet selection
-    var resultWSEntries = httpGet(findSimilarLimited + "/" + searchText + "/-/-/-/-/-");
-    var resultWSScenarios = httpGet(findSimilarScenarioValues + "/" + searchText + "/-/-/-/-");
-    var resultWSHvls = httpGet(findSimilarHierarchylevelnameValues + "/" + searchText + "/-/-/-/-");
-    var resultWSTopics = httpGet(findSimilarTopiccategoryValues + "/" + searchText + "/-/-/-/-");
-    var resultWSDatatypes = httpGet(findSimilarDatatypeValues + "/" + searchText + "/-/-/-/-");
-    var resultWSOrganizations = httpGet(findSimilarOrganizationValues + "/" + searchText + "/-/-/-/-");
+    
       
     //push all results into one array
     var resultWSCluster = [];
@@ -162,7 +170,8 @@ function createTable(data, selectionCluster, body, domConstruct, Button, searchT
 				if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") {
 					
 					var LatLongFcode = row.cells[0].id.split(":"); 
-					map2.setCenter(new OpenLayers.LonLat(Number(LatLongFcode[1]), Number(LatLongFcode[0])).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(LatLongFcode[2]));
+					map2.getView().setCenter(transform(Number(LatLongFcode[1]), Number(LatLongFcode[0])));
+					map2.getView().setZoom(manageLevelOfZoom(LatLongFcode[2]));
 					
 				}
 			}
@@ -247,13 +256,46 @@ function createRow(facetName, data, selectionCluster, domConstruct, widget, sear
 	 
 		//fill the list with results
 		if (facetName == scenarioFacet || facetName == hierarchylevelnameFacet || facetName == topicFacet || facetName == datatypeFacet || facetName == organizationFacet) {
-			var re = new RegExp(searchText, 'ig');
-			var highlighted = data[i].replace(re, "<b>" + searchText + "</b>");
-			domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Facet: " + facetName, style: { cursor: "pointer" }  }, tr);
+			//search for more keywords if a space sign is detected to highlight all keywords properly 
+			//if more than 1 keyword - and show keywords properly with lower and upper case etc
+			if (searchText.split(" ").length > 1){
+				var keywords = searchText.split(" ");
+				var highlighted = data[i];
+				for (var x=0;  x<keywords.length; x++){
+					var re = new RegExp(keywords[x],'ig');
+					var result= highlighted.match(re);
+					highlighted = highlighted.replace(re, "<b>" + result + "</b>");	
+					
+				}
+				domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Facet: " + facetName, style: { cursor: "pointer" }  }, tr);
+			}else {
+				var re = new RegExp(searchText, 'ig');
+				var result= data[i].match(re);
+				var highlighted = data[i].replace(re, "<b>" + result + "</b>");
+				domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Facet: " + facetName, style: { cursor: "pointer" }  }, tr);	
+			}
+
 		} else { 
-			var re = new RegExp(searchText,'ig');
-			var highlighted = data[i].label.replace(re, "<b>" + searchText + "</b>");
-			domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Data type: " + data[i].datatype + "<br>" + data[i].description, style: { cursor: "pointer" } }, tr);
+			
+			//if more than 1 keyword - and show keywords properly with lower and upper case etc
+			if (searchText.split(" ").length > 1){
+				var keywords = searchText.split(" ");
+				var highlighted = data[i].label;
+				for (var x=0;  x<keywords.length; x++){
+					var re = new RegExp(keywords[x],'ig');
+					var result= highlighted.match(re);
+					highlighted = highlighted.replace(re, "<b>" + result + "</b>");	
+					
+				}
+				domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Data type: " + data[i].datatype + "<br>" + data[i].description, style: { cursor: "pointer" } }, tr);
+			} else {
+				var re = new RegExp(searchText,'ig');
+				var result= data[i].label.match(re);
+				var highlighted = data[i].label.replace(re, "<b>" + result + "</b>");
+				domConstruct.create("td", { id: data[i], innerHTML: highlighted + "<br>Data type: " + data[i].datatype + "<br>" + data[i].description, style: { cursor: "pointer" } }, tr);
+			}
+			
+			
 		}	 
 	}		 
 }
@@ -335,6 +377,10 @@ function updateFacetsAndResultlist(row, selectionCluster) {
 			exhibit._registry._registry.facet.f4._valueSet._count = 0;
 			exhibit._registry._registry.facet.f4._valueSet._hash = {};
 			exhibit._registry._registry.facet.f4._notifyCollection();
+			
+			exhibit._registry._registry.facet.f5._valueSet._count = 0;
+			exhibit._registry._registry.facet.f5._valueSet._hash = {};
+			exhibit._registry._registry.facet.f5._notifyCollection();
 		}
 		
 		//fill detailed view -> general metadata and tree

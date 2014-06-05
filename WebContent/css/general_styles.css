@@ -102,6 +102,7 @@ th { font-size: 12px !important; }
 #metaDataTable td {
 	min-width: 100px !important;
 	border-bottom: 1px solid #ccc;
+	vertical-align: top;
 }
 
 a { color: #007CF5;font-size: 12px !important; }

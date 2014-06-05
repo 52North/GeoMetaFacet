@@ -35,6 +35,7 @@ import tud.metaviz.evaluating.common.EvaluatingLineage;
 import tud.metaviz.evaluating.common.EvaluatingSourcesModels;
 import tud.geometafacet.xpath.EvaluatingXPath;
 import tud.geometafacet.helper.Constants;
+import tud.geometafacet.helper.INTERN;
 import tud.geometafacet.helper.HelpMethods; 
 import tud.geometafacet.helper.FileDocumentMethods;
 import tud.geometafacet.json.JsonObjectBuilder;
@@ -82,9 +83,9 @@ public class JDBCConnection implements Connection {
 		try {
 			Class.forName("org.postgresql.Driver");	
 			dbConnection = DriverManager.getConnection(
-					Constants.jdbcURL, 
-					Constants.dbUser, 
-					Constants.dbPasswd);
+					INTERN.jdbcURL, 
+					INTERN.dbUser, 
+					INTERN.dbPasswd);
 		} catch (ClassNotFoundException e) { e.printStackTrace(); 
 		} catch (SQLException e) { e.printStackTrace(); }
 	}

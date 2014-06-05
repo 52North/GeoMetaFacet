@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * Copyright 2012 52Â°North Initiative for Geospatial Open Source Software GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ GeoNames.search = function(value) {
 				q: value,
 				maxRows: 20,
 				isNameRequired: true,
-				username: "hannestressel",
+				username: "tud_gis",
 				format: "json",
 				callback: "GeoNamesAnswer"
 			}
@@ -68,8 +68,8 @@ function GeoNamesAnswer(data) {
 						var row = widget.rows[i];
 						if (row.style.backgroundColor === "rgba(0, 124, 149, 0.2)") {							 
 							var LatLongFcode = row.cells[0].id.split(":"); 
-							map2.setCenter(new OpenLayers.LonLat(Number(LatLongFcode[1]), Number(LatLongFcode[0])).transform(map2.displayProjection, map2.projection), manageLevelOfZoom(LatLongFcode[2]));
-							
+							map2.getView().setCenter(transform(Number(LatLongFcode[1]), Number(LatLongFcode[0])));
+							map2.getView().setZoom(manageLevelOfZoom(LatLongFcode[2]));
 						}
 					}
 

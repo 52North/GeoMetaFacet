@@ -37,10 +37,15 @@ function fromDateChanged(newFrom_DojoDate) {
 		dojo.byId("featureInfo_frame").src = "featureInfo_compare.jsp?url="
 				+ service_url + "&url2=" + service_url2 + "&version2="
 				+ service_version2 + "&query_layers2="
-				+ layer_Array2[vis_layer_number2].name
+				//+ layer_Array2[vis_layer_number2].name
+				+ layer_Array2[vis_layer_number2].params.LAYERS
+				
 				+ "&request=GetFeatureInfo&service=WMS" + "&version="
 				+ service_version + "&query_layers="
-				+ layer_Array[vis_layer_number].name + "&crs=" + service_srs
+				//+ layer_Array[vis_layer_number].name 
+				+ layer_Array[vis_layer_number].params.LAYERS
+				
+				+ "&crs=" + service_srs
 				+ "&bbox=" + map.getExtent().toBBOX() + "&width=450&height=300"
 				+ "&I=" + last_event.xy.x + "&J=" + last_event.xy.y + "&time="
 				+ cutDate(dijit.byId('time_slider').get('value'));

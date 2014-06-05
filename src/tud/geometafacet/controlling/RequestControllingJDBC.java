@@ -37,6 +37,7 @@ import de.conterra.suite.catalog.client.invoker.IServiceInvoker;
 import de.conterra.suite.catalog.client.request.GetRecordsRequest;
 import tud.geometafacet.xpath.EvaluatingXPath;
 import tud.geometafacet.helper.Constants;
+import tud.geometafacet.helper.INTERN;
 import tud.geometafacet.helper.FileDocumentMethods;
 import tud.geometafacet.helper.EvaluationMethods; 
 import tud.geometafacet.helper.HelpMethods;
@@ -66,7 +67,7 @@ public class RequestControllingJDBC {
 	public static void initConnection() { 
 		try {
 			Class.forName("org.postgresql.Driver"); 
-		 	dbConnection = DriverManager.getConnection("jdbc:postgresql://" + Constants.dbEndpoint, Constants.dbUser, Constants.dbPasswd);
+		 	dbConnection = DriverManager.getConnection("jdbc:postgresql://" + INTERN.dbEndpoint, INTERN.dbUser, INTERN.dbPasswd);
 		} catch (ClassNotFoundException e) { e.printStackTrace(); 
 		} catch (SQLException e) { e.printStackTrace(); }
 	}

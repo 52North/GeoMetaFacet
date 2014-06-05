@@ -116,6 +116,14 @@ public class CapabilitiesRequest {
 				responseBody = httpclient.execute(httpget, responseHandler);
 			} catch (ClientProtocolException e) { e.printStackTrace();
 			} catch (IOException e) { e.printStackTrace(); } 
+		  
+			responseBody = responseBody.replaceAll("\\(", "");
+			responseBody = responseBody.replaceAll("\\)", "");
+			
+			responseBody = responseBody.replaceAll("\\<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?\\>", "");
+			responseBody = responseBody.replaceAll("\\<!\\[CDATA\\[", "");
+			responseBody = responseBody.replaceAll("\\]\\]\\>", "");
+			responseBody = responseBody.replaceAll("\\–", ""); 
 			
 			return responseBody;
 		} finally {

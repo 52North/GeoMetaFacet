@@ -19,10 +19,13 @@
 
 var first = true;
 var surface;
+var surface_height;
+var toggleGroup;
+var tempGroup;
 
 function setLines() {  
-  var surface_height, num_ds;
-  var lineage_ds_left, lineage_model_left, lineage_model_width, usage_ds_left, usage_model_left, usage_model_width;
+  var num_ds;
+  var lineage_ds_left, lineage_model_left, lineage_model_width, usage_ds_left, usage_model_left, usage_model_width, usage_dataset_width, usage_dataset_height, lineage_model_corner;
   var detail_left; 
   var detail_width = 250;//300;
   var id_string, mod_id_string;
@@ -36,6 +39,9 @@ function setLines() {
       usage_model_left = 930;       
       usage_ds_left = 965; 
       usage_model_width = 75; 
+      usage_dataset_width=65;
+      usage_dataset_height=45;
+      lineage_model_corner=100;
   } else { 
       lineage_ds_left = 60;
       lineage_model_left = 100;
@@ -44,15 +50,26 @@ function setLines() {
       usage_ds_left = 780; 
       lineage_model_width = 75;
       usage_model_width = 230;
+      usage_dataset_width=250;
+      usage_dataset_height=85;
+      lineage_model_corner=70;
   }     
    
   //delete old surface - if there is one
   if (first == false &&  dojo.byId("actual_lines").hasChildNodes()) dojo.byId('actual_lines').removeChild(dojo.byId('actual_lines').firstChild);
   else { first = false; }
-                                                                               
-  if (num_lin_ds > num_us_ds) surface_height = num_lin_ds * card_size_with_buffer;
-  else if (num_lin_ds == 0 && num_us_ds == 0) surface_height = card_size_with_buffer;
+ 
+  
+  if(maxInput>num_lin_ds && maxInput>num_us_ds)
+	  surface_height = maxInput * card_size_with_buffer;  
+  else if (num_lin_ds > num_us_ds) 
+	  surface_height = num_lin_ds * card_size_with_buffer;
+  else if (num_lin_ds == 0 && num_us_ds == 0) 
+	  surface_height = card_size_with_buffer;
   else surface_height = num_us_ds * card_size_with_buffer;
+   
+  surface_height = surface_height + 2000; //we need a lil bit more space for linked arrows
+
   
   if (num_us_ds > 0) 
 	  surface = dojox.gfx.createSurface(dojo.byId('actual_lines'), 1100, surface_height);
@@ -76,7 +93,8 @@ function setLines() {
   for (var i = 0; i < num_ds; i++) {  
       var ds_top_pos = getTopPosition(id_string+i);      
       var mod_top_pos = getTopPosition(mod_id_string);  
-      surface.createLine({x1:lineage_ds_left, y1:ds_top_pos+offset, x2:lineage_model_left, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();        
+      //surface.createLine({x1:lineage_ds_left, y1:ds_top_pos+offset, x2:lineage_model_left, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();        
+      drawArrow({start: {x : lineage_ds_left, y :ds_top_pos+offset}, end: {x:lineage_model_left,y:mod_top_pos+offset}});
   }  
   
   if (num_ds == 0) { 
@@ -85,46 +103,57 @@ function setLines() {
   }
   
   // + lines lin_mod - detail  
-  if (dojo.byId('lineage_model_0') != null) surface.createLine({x1:lineage_model_left+lineage_model_width, y1:mod_top_pos+offset, x2:detail_left-30, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();    
+  if (dojo.byId('lineage_model_0') != null) //surface.createLine({x1:lineage_model_left+lineage_model_width, y1:mod_top_pos+offset, x2:detail_left-30, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();    
+  drawArrow({start: {x : lineage_model_left+lineage_model_width, y :mod_top_pos+offset}, end: {x:detail_left-30,y:mod_top_pos+offset}});
 
-  var models;
-  mStore.fetchItemByIdentity({ identity: "usage_models", onItem: function(item, request) { models = item; }});  
-  var model_array = models.usage_model_ids;
-  
   if (lineage_hidden == false) {
     id_string = "usage_dataset_mini_"; 
   } else {
     id_string = "usage_dataset_";       
   } 
  
-  for (var k = 0; (k < models.usage_model_ids.length) && (models.usage_model_ids.length > 0); k++) { 
-	  var mapping_JSON;  
-      mStore.fetchItemByIdentity({ identity: "mod_ds_relations", onItem: function(item, request) { mapping_JSON = item; }});  
+  toggleGroup = surface.createGroup();
+  
+  //line detail -> usage model / usage-model->usage dataset
+  for (var k = 0; k<num_us_mod; k++) { 
+      var us_mod_top_pos = getTopPosition(id_string+k);
+      var ds_top_pos = getTopPosition(id_string+k); 
+      var detail_top_pos = getTopPosition("detail_0");      
       
-      var mod_top_pos = getTopPosition(model_array[k]);
-      var ds_array = mStore.getValues(mapping_JSON, "usage_model_"+k);  
-      var num_ds = ds_array.length;  
-      //lines to detail to each usage model
-      var detail_top_pos = getTopPosition("detail_0");             
-      surface.createLine({x1:detail_left+detail_width-20, y1:detail_top_pos+offset, x2:usage_model_left-usage_model_width, y2:mod_top_pos+offset-5}).setStroke({color: "black", style: "Dot"}).moveToFront();   
+      //surface.createLine({x1:detail_left+detail_width-20, y1:detail_top_pos+offset, x2:usage_model_left-usage_model_width, y2:mod_top_pos+offset-5}).setStroke({color: "black", style: "Dot"}).moveToFront();   
+      toggleGroup.add(drawArrow({color: "black" , arrowHeight:10, arrowWidth:2, start: {x:detail_left+detail_width-20,y:detail_top_pos+offset}, end: {x : usage_model_left-usage_model_width, y : us_mod_top_pos+offset-5}}));
+         
+      //surface.createLine({x1:usage_ds_left, y1:ds_top_pos+offset, x2:usage_model_left, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();
+      drawArrow({start: {x : usage_model_left, y :us_mod_top_pos+offset}, end: {x:usage_ds_left,y:ds_top_pos+offset}});
+      
+      //check for link
+      var _defaultStroke = {
+    	  color : "black",
+    	  style : "dot",
+    	  width : 1
+      };
+      
+      for(var m=0; m<linked_ds.length;m++) {
+    	  if(linked_ds[m]=="usage_dataset_"+k) {
+    		  var deepest = getTopPosition(id_string+(num_us_mod-1));
+    		  var group = surface.createGroup();
+    		  group.createPath()
+    	      .moveTo(usage_ds_left+usage_dataset_width,ds_top_pos+offset)
+    	      .lineTo(usage_ds_left+usage_dataset_width+50,ds_top_pos+offset)
+    	      .lineTo(usage_ds_left+usage_dataset_width+50,deepest + (usage_dataset_height*2))
+    	      .lineTo(lineage_model_left-20,deepest + (usage_dataset_height*2))
+    	      .lineTo(lineage_model_left-20,mod_top_pos+offset)
+    	      .setStroke(_defaultStroke)
+    	      ;  
+    		  drawArrow({start: {x:lineage_model_left-20,y:mod_top_pos+offset}, end: {x : lineage_model_left, y : mod_top_pos+offset}});   
+    	  } 
+      }
+  }
 
-	  for (var i = 0; i < num_ds; i++) { 
-		  var ds_top_pos;
-		  if (lineage_hidden == false) {
-			  var no = getIdNumber(ds_array[i]);
-			  ds_top_pos = getTopPosition("usage_dataset_mini_"+no); 
-		  } else {
-			  ds_top_pos = getTopPosition(ds_array[i]);  
-		  }                   
-		  surface.createLine({x1:usage_ds_left, y1:ds_top_pos+offset, x2:usage_model_left, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();          
-      } //end for (ds)      
-  } //end for (models) 
-  //surface.createLine({x1:1070, y1:100, x2:1070, y2:1000}).setStroke({color: "black", style: "Dot"}).moveToFront();
- 
 }
 
 function getTopPosition(id) {  
-  if (id.indexOf("usage_model") > -1 && id.indexOf("_0") < 0 && id.indexOf("_1") < 0) id += "_0";
+  //if (id.indexOf("usage_model") > -1 && id.indexOf("_0") < 0 && id.indexOf("_1") < 0) id += "_0"; // <- whats that? 
   if (id === "model_0") id = "usage_model_0";
  
   //new
@@ -139,4 +168,48 @@ function getTopPosition(id) {
   } else {
 	return 0;
   }
+}
+
+//draw an arrow to surface
+function drawArrow(p) {
+    //Create a group that can be manipulated as a whole
+    var group = surface.createGroup();
+    var x1 = p.start.x,
+        y1= p.start.y,
+        x2 = p.end.x,
+        y2= p.end.y;
+    var _arrowHeight = p.arrowHeight || 10;
+    var _arrowWidth = p.arrowWidth || 2;
+    var len = Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
+    var _defaultStroke = {
+        color : p.color || "black",
+        style : p.style ||"dot",
+        width : 1
+    };
+    
+    //Add a line to the group
+    group.createLine({
+        x1 : 0, y1 : 0,
+        x2 : 0+len, y2 : 0
+    }).setStroke(p.stroke || _defaultStroke);
+
+    //add triangle path
+    group.createPath()
+    .moveTo(len-_arrowHeight,0)
+    .lineTo(len-_arrowHeight,-_arrowWidth)
+    .lineTo(len,0)
+    .lineTo(len-_arrowHeight,_arrowWidth)
+    .lineTo(len-_arrowHeight,0)
+    .setStroke(p.stroke || _defaultStroke)
+    .setFill(p.stroke ? p.stroke.color : _defaultStroke.color );
+
+    var _rot = Math.asin((y2-y1)/len)*180/Math.PI;
+    if (x2 <= x1) {_rot = 180-_rot;}
+
+    //Translate and rotate the entire group as a whole
+    group.setTransform([
+        dojox.gfx.matrix.translate(x1,y1),
+        dojox.gfx.matrix.rotategAt(_rot,0,0)
+    ]);
+   return group;
 }

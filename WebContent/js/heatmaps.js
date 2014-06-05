@@ -21,6 +21,7 @@ var facetMiddleSplitter = {}, listDetailSplitter = {}, mapFInfoSplitter = {}, ma
 var infoMode = false, searchMode = false, metaVizMode = false, time4MapsMode = false; //getting modes for middle frame
 var timeStamps = {};
 var taskTimes = {}, taskCounter = 1, taskOn = false;
+var tempString="";
 
 window.onload = function() {
 	if (heatmap) {	
@@ -236,10 +237,119 @@ function get_url_param(name) {
 	var regexS = "[\\?&]"+name+"=([^&#]*)";
 	var regex = new RegExp( regexS );
 	var results = regex.exec( window.location.href );
-
+	
 	if (results == null)
 		return "";
-	else
-		return results[1];
+	else{
+		tempString="";
+
+		tempString=replaceAll("%20"," ",results[1]);
+
+		tempString=prepareString(tempString);
+		console.log("PREPARED:" + tempString);
+		//tempString=replaceAll(",",";",tempString);
+		return tempString;
+	}
+		
 }
+
+function replaceAll(find, replace, str) {
+	  return str.replace(new RegExp(find, 'g'), replace);
+	}
+
+function replaceTempString(find, replace) {
+	tempString = tempString.replace(new RegExp(find, 'g'), replace);
+	return tempString;
+	}
+
+
+function prepareString(){
+	 replaceTempString("&", "&#38;"); 
+	 replaceTempString("'", "&lsquo;");
+	 replaceTempString("\"", "&quot;");
+	 replaceTempString("\\(", "&#40;");
+	 replaceTempString("\\)", "&#41;");
+	 replaceTempString(",", "&#44;");
+	 replaceTempString(":", "&#58;");
+	 replaceTempString("%", "&#37;");
+	 replaceTempString("\\[", "&#91;");
+	 replaceTempString("\\]", "&#93;");
+	 replaceTempString("  ", " ");
+	 replaceTempString("@", "&#64;");
+	 replaceTempString("\\+", "&#42;");
+	 replaceTempString("\\n", " ");
+	 replaceTempString("\\\n", " ");
+	 replaceTempString("-", "&#45;");
+	 replaceTempString("ä", "ae");
+	 replaceTempString("ö", "oe");
+	 replaceTempString("ü", "ue");
+	 replaceTempString("Ä", "Ae");
+	 replaceTempString("Ö", "Oe");
+	 replaceTempString("Ü", "Ue");
+	 replaceTempString("Â", "A");
+	 replaceTempString("â", "a");
+	 replaceTempString("é", "e");
+	 replaceTempString("è", "e");
+	 replaceTempString("á", "a");
+	 replaceTempString("à", "a");
+	 replaceTempString("ó", "o");
+	 replaceTempString("ò", "o");
+	 replaceTempString("õ", "o");
+	 replaceTempString("ß", "&#x00df;");
+	 replaceTempString("é", "e");
+     replaceTempString("ë", "e");
+     replaceTempString("è", "e");
+     replaceTempString("ê", "e");
+     replaceTempString("ô", "o");
+     replaceTempString("À", "A");
+     replaceTempString("Å", "A");
+     replaceTempString("Á", "A");
+     replaceTempString("Â", "A");
+     replaceTempString("Ç", "C");
+     replaceTempString("È", "E");
+     replaceTempString("É", "E");
+     replaceTempString("Ê", "E");
+     replaceTempString("Ë", "E");
+     replaceTempString("à", "a");
+     replaceTempString("á", "a");
+     replaceTempString("â", "a");
+     replaceTempString("å", "a");
+     replaceTempString("æ", "ae");
+     replaceTempString("ç", "c");
+     replaceTempString("Ô", "O");
+     replaceTempString("Ã", "A");
+     replaceTempString("ã", "a");
+     replaceTempString("Ã", "A");
+     replaceTempString("ã", "a");
+     replaceTempString("Ñ", "N");
+     replaceTempString("ñ", "n");
+     replaceTempString("Õ", "O");
+     replaceTempString("õ", "o");
+     replaceTempString("Æ", "Ae");
+     replaceTempString("ò", "o");
+     replaceTempString("ó", "o");
+     replaceTempString("ø", "o");
+     replaceTempString("Ò", "O");
+     replaceTempString("Ó", "O");
+     replaceTempString("Ø", "O");
+     replaceTempString("ì", "i");
+     replaceTempString("í", "i");
+     replaceTempString("î", "i");
+     replaceTempString("Ì", "I");
+     replaceTempString("Í", "I");
+     replaceTempString("Î", "I");
+     replaceTempString("ù", "u");
+     replaceTempString("ú", "u");
+     replaceTempString("û", "u");
+     replaceTempString("Ù", "U");
+     replaceTempString("Ú", "U");
+	 replaceTempString("\\*", "");
+	 replaceTempString("\"", "'");
+	
+	return tempString;
+}
+
+
+
+		
  

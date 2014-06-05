@@ -91,7 +91,8 @@ div.exhibit-facet-value-inner {
 
 a.exhibit-facet-value-link {
     text-decoration: none;
-    color: #007C95;
+    /*color: #007C95;*/
+    color: #007CF5;
 }
 a.exhibit-facet-value-link:hover {
     text-decoration: underline;

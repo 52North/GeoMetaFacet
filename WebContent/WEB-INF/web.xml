@@ -54,4 +54,9 @@
     <servlet-name>HSQL</servlet-name>
     <url-pattern>/HSQLController</url-pattern>
   </servlet-mapping>
+  <listener>
+    <listener-class>
+       tud.geometafacet.start.StartController
+    </listener-class>
+</listener>
 </web-app>

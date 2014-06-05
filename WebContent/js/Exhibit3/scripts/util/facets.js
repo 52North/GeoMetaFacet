@@ -24,19 +24,19 @@ Exhibit.FacetUtilities.constructFacetFrame = function(forFacet, div, facetLabel,
     var dom, resizableDivWidget;
     //SH
     var a = "";
-    if (facetLabel == "Sustainable Landmanagement")
+    if (facetLabel == hierarchylevelnameFacet)
     	a = '<img id="info" src="images/icons/info.png" onclick="registries.displayOverview(1)">';
 	else
-	if (facetLabel == "Scenarios and storylines")
+	if (facetLabel == scenarioFacet)
     	a = '<img id="info" src="images/icons/info.png" onclick="registries.displayOverview(2)">';
 	else
-    if (facetLabel == "Thematic categorization")
+    if (facetLabel == themeFacet)
     	a = '<img id="info" src="images/icons/info.png" onclick="registries.displayOverview(3)">';
     else
-	if (facetLabel == "Data types")
+	if (facetLabel == dtFacet)
     	a = '<img id="info" src="images/icons/info.png" onclick="registries.displayOverview(4)">';
 	else
-    if (facetLabel == "Organisations")
+    if (facetLabel == orgaFacet)
        	a = '<img id="info" src="images/icons/info.png" onclick="registries.displayOverview(5)">';
     //end SH
     

@@ -58,11 +58,10 @@ public class MetavizController extends HttpServlet {
 		
 		if (mode.equals("hsql"))
 			RequestControlling.setHSQL(true);
-		RequestControlling.setMode("db");
-		
+			 
 		String id = (String) request.getParameter("id");
 		RequestControlling controller = new RequestControlling();
-		controller.getRecordList();
+//		controller.getRecordList();
 		String jsonString;
 		jsonString = controller.getDetailsTo(id); 
 	 	response.setContentType("text/html");

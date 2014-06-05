@@ -127,6 +127,8 @@ public class RequestControlling {
 		String response = "";
 		String url = wmsUrl;
 		
+		layers = layers.replaceAll(" ","%20");
+		
 		if (wmsUrl.contains("?")) { 
 			url = url.substring(0, url.indexOf("?")) + "?";			
 		} else url += "?";

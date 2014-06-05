@@ -57,7 +57,7 @@
             dojo.byId("usage_model_cards_container").innerHTML += card_html;
             dojo.byId("usage_model_mini_cards_container").innerHTML +=  mini_card_html;          
             positionModel("usage_model_"+(usage_model_cards-1));
-            positionModel("usage_model_mini_"+(usage_model_mini_cards-1)); 
+            //positionModel("usage_model_mini_"+(usage_model_mini_cards-1)); 
         }
         
        //it is a dataset 
@@ -88,9 +88,8 @@
     if (view_type == "lineage_dataset")     html_card += "<div id=\"" + "lineage_dataset_" + lineage_dataset_cards + "\" style=\"top:" + (lineage_dataset_cards - 1) * card_size_with_buffer  + "px;\" class=\"description_card\" onmouseover=\"show_tools(\'" + "lineage_dataset_" + lineage_dataset_cards + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "lineage_dataset_" + lineage_dataset_cards + "\')\">"; 
     else if (view_type == "usage_dataset")  html_card += "<div id=\"" + "usage_dataset_" + usage_dataset_cards + "\" style=\"top:" + (usage_dataset_cards - 1) * card_size_with_buffer  + "px;\"  class=\"description_card\" onmouseover=\"show_tools(\'" + "usage_dataset_" + usage_dataset_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "usage_dataset_" + usage_dataset_cards + "\')\">";
     else if (view_type == "lineage_model")  html_card += "<div id=\"" + "lineage_model_" + lineage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "lineage_model_" + lineage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
-    else if (view_type == "usage_model")    html_card += "<div id=\"" + "usage_model_" +  usage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "usage_model_" + usage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\">";
+    else if (view_type == "usage_model")    html_card += "<div id=\"" + "usage_model_" +  usage_model_cards + "\" class=\"description_card_petrol\" onmouseover=\"show_tools(\'" + "usage_model_" + usage_model_cards + "\', \'"  + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"showInputs(\'" + "usage_model_" + usage_model_cards + "\')\">";
     else if (view_type == "detail")         html_card += "<div id=\"" + "detail_0" + "\" class=\"description_card_colored_petrol\" onmouseover=\"show_tools(\'detail_0" + "\', \'" + has_info + "\',\'" + has_viewing + "\',\'" + has_store + "\')\" onmousedown=\"focus_element(\'" + "detail_0" + "\')\">";
- 
     // getting icons if card doesn't contain model information
     if (view_type.indexOf('model') == -1) html_card += generateIconset(false, is_vector, is_time_aware, true);   //icons (true = normal size)   
     else html_card += generateIconset(true, is_vector, is_time_aware, true); 
