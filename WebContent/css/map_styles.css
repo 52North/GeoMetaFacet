@@ -1,0 +1,35 @@
+.mapToolIcon{
+	position: absolute;
+	top: 40px;
+	right: 20px;
+
+	width: 25px;
+	height: 25px;
+	background-color: grey;
+	background-size: cover;
+	border: 2px solid white;
+	border-radius: 4px;
+	z-index: 2;
+}
+
+.mapToolIcon_active{
+	background-color: rgba(249,178,0,0.6);
+}
+
+#btnCursor{
+	display: none;
+	background-image: url("../images/icons/cursor.png");
+}
+
+#btnRectangle{
+	display: none;
+	background-image: url("../images/icons/rectangle.png");
+	margin-top: 40px;
+}
+
+#btnFilter{
+	display: none;
+	background-image: url("../images/icons/filter.png");
+	margin-top: 80px;
+}
+
