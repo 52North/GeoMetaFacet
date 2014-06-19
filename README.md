@@ -32,9 +32,8 @@ The basic installation steps are
 
 ## Configuration
 
-The lineage graph implementation and the generation of the internal used HSQL database need a CSW, database or file connection to request metadata, such as lineage data.
-The configuration can be set in ``.../src/tud/geometafacet/helper/Constants.java``. The following parameters has to be set: If you do not set the metaviz parameter, the application will run normally, but you are not able to call the lineage graph (from metadata details section).
-The parameter for the database generation are only needed, if you want to use your own metadata. Otherwise, you do not have to set these params and use the given metadata examples (see folder ``gmf``).
+For the generation of the internal used HSQL database you need a CSW, database or file connection to request metadata, such as lineage data. The configuration can be set in ``.../src/tud/geometafacet/helper/Constants.java``. 
+The parameters for the database generation are only needed, if you want to use your own metadata. Otherwise, you do not have to set these params and use the given metadata examples (see folder ``gmf``).
 
 * ``cswURL`` - used in tud.metaviz.cnnection.csw.CSWConnection (for lineage graph in csw mode) - should look like this: http://yourdomain/soapServices/CSWStartup
 * ``dbEndpoint`` - used in tud.geometafacet.controlling.RequestControllingJDBC (for db generation) - should look like this: http://yourdomain/username
@@ -50,7 +49,7 @@ The website module uses a collection of Javascript libraries:
 * jQuery, https://jquery.org/license/ - MIT License
 * LAB.js, http://labjs.com/ - MIT License
 * Dojo 1.9, https://github.com/dojo/dojo/blob/master/LICENSE - BSD License or Academic Free License
-* Openlayers 2, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License
+* Openlayers 3, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License
 * JSON2.js, https://github.com/douglascrockford/JSON-js/blob/master/json2.js - Public domain
 * heatmap.js, https://github.com/pa7/heatmap.js - MIT License
 * pure-min.css, https://github.com/yui/pure/blob/master/LICENSE.md - BSD License
