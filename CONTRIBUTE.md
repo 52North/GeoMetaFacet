@@ -14,7 +14,7 @@ Team Members
 
 Christin Henzen @christinhenzen
 Hannes Tressel @sennahlessert
-Bernd Grafe @bernd
+Bernd Grafe @Ahamann
 Daniel Kadner @danielkadner
 Daniel Nüst @nuest
  
