@@ -18,7 +18,7 @@ This project includes:
 	jQuery, https://jquery.org/license/ - MIT License
 	LAB.js, http://labjs.com/ - MIT License
 	Dojo 1.9, https://github.com/dojo/dojo/blob/master/LICENSE - BSD License or Academic Free License
-	Openlayers 2, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License
+	Openlayers 3, http://trac.osgeo.org/openlayers/wiki/Licensing - Modified BSD License
 	JSON2.js, https://github.com/douglascrockford/JSON-js/blob/master/json2.js - Public domain
 	heatmap.js, https://github.com/pa7/heatmap.js - MIT License
 	pure-min.css, https://github.com/yui/pure/blob/master/LICENSE.md - BSD License
