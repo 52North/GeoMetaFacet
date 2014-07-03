@@ -25,6 +25,7 @@
 		<!-- STYLES -->
 		<link rel="stylesheet" href="js/dojo/themes/tundra/tundra.css" media="screen" type="text/css">
 		<link rel="stylesheet" href="css/general_styles.css" media="screen" type="text/css">  
+		<link rel="stylesheet" href="js/ol3/build/ol.css" type="text/css">
 		 
 		<style type="text/css">
 			.dijitComboBox .dijitButtonNode { padding: 0 !important; }
@@ -105,7 +106,7 @@
 					 <!-- INFO -->
 					 <div id="bc_t4m_right" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'center'">
 					 	<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top", splitter:true' style="height:30%">
-							<div id="layerSwitcherCustom" style="position:relative;top:0px;float:right;overflow:visible;"></div>
+							<div id="layerSwitcherCustom" style="position:relative;top:0px;float:left;overflow:visible;"></div>
 						</div>			
 						<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"center"' style="height:30%">
 							<img style="border: none;" id="legend_frame">		 
@@ -121,10 +122,8 @@
 		</div>
 		
 		<!-- BASIC FRAMEWORKS - jQUERY, EXHIBIT, OPENLAYERS -->
-		
-		<script type="text/javascript" src="js/OpenLayers-2.12/OpenLayers.js"></script>
-		<script type="text/javascript" src="js/OpenLayers-2.12/deprecated.js"></script>
-		
+		<script type="text/javascript" src="js/ol3/build/ol-simple.js"></script>
+
 		<script type="text/javascript" src="js/guiFunctions.js"></script>
 		
 		<!-- TIME4MAPS -->
@@ -137,7 +136,7 @@
 		<script type="text/javascript" src="js/Time4Maps/time_logic.js"></script>
 		<script type="text/javascript" src="js/Time4Maps/time_gui_setting.js"></script>
 		<script type="text/javascript" src="js/Time4Maps/time_combobox.js"></script>
-		<script type="text/javascript" src="js/Time4Maps/AntiresistLayerSwitcher.js"></script>
+		<script type="text/javascript" src="js/Time4Maps/layerControl.js"></script>
 		<script type="text/javascript" src="js/Time4Maps/print.js"></script>
 		 
 		<!-- GEONAMES -->
