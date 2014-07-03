@@ -39,7 +39,7 @@ function initializeMapping() {
     var layer_JSON = null;
     var time_JSON = null;
     var period_JSON = null;
-    
+
     wmsDescription_Store.fetchItemByIdentity({
         identity: "layerDescriptionParam",
         onItem: function(item, request) {
@@ -71,9 +71,9 @@ function initializeMapping() {
     map = new ol.Map({
         renderer: "canvas",
         target: "map",
-        layers: [  
+        layers: [
             new ol.layer.Tile({
-            	title: "vmap0",
+                title: "vmap0",
                 source: new ol.source.TileWMS({
                     url: 'http://vmap0.tiles.osgeo.org/wms/vmap0',
                     params: {
@@ -91,141 +91,95 @@ function initializeMapping() {
         }),
         controls: [
             new ol.control.MousePosition({
-                  projection: "EPSG:4326"
+                projection: "EPSG:4326"
             }),
             new ol.control.ZoomSlider()
         ]
     });
 
     layer_Array = new Array(layer_JSON.name.length);
-    
-    for (var i=0; i<layer_Array.length; i++){ 	
-        if (time_JSON != null && time_JSON.def[i] != null && time_JSON.start[i] != null && period_JSON.year[i] != null && period_JSON.month[i] != null && period_JSON.day[i] != null){     	
-        	if (service_JSON.format === "image/tiff" || service_JSON.format == "image/tiff" ) {
-        		wms_layer = new ol.layer.Image({
-        			title: layer_JSON.title[i],
-        			source: new ol.source.ImageWMS({
-        				url: service_JSON.url,
-        				params: {
-        					"LAYERS": layer_JSON.name[i],
-        					"FORMAT": "image/png",
-        					"VERSION": service_JSON.version[0],
-        					"time": cutDate(new Date(time_JSON.def[i]))
-        				}
-        			})
-        		});
-        		
-        		map.addLayer(wms_layer);
-        		layer_Array[i] = wms_layer;   
-        		
-        	}else{
-        		wms_layer = new ol.layer.Image({
-        			title: layer_JSON.title[i],
-        			source: new ol.source.ImageWMS({
-        				url: service_JSON.url,
-        				params: {
-        					"LAYERS": layer_JSON.name[i],
-        					"FORMAT": service_JSON.format[0],
-        					"VERSION": service_JSON.version[0],
-        					"time": cutDate(new Date(time_JSON.def[i]))
-        				}
-        			})
-        		});
-        		map.addLayer(wms_layer);
-        		layer_Array[i] = wms_layer;   
-        		
-        	}
-        	
-        //layer is not time-variant	
-        	/*
-        	console.log("                        ");
-        	console.log("URL: "+service_JSON.url);
-    		console.log("Layers :"+layer_JSON.name[i]);
-    		console.log("TITLE :"+layer_JSON.title[i]);
-    		console.log("FORMAT: "+service_JSON.format[i]);
-    		console.log("VERSION: "+ service_JSON.version[i]);
-    		console.log("time :"+cutDate(new Date(time_JSON.def[i])));
-            console.log(layer_Array);
-            console.log(service_JSON);
-            */
-        }else{
-        	if(service_JSON.format === "image/tiff") {		
-        		wms_layer = new ol.layer.Image({
-        			title: layer_JSON.title[i],
-        			source: new ol.source.ImageWMS({
-        				url: service_JSON.url,
-        				params: {
-        					"LAYERS": layer_JSON.name[i],
-        					"FORMAT": "image/png"
-        				}
-        			})
-        		});
-        		map.addLayer(wms_layer);
-        		layer_Array[i] = wms_layer;   
-        		
-        	}else{
-        		wms_layer = new ol.layer.Image({
-        			title: layer_JSON.title[i],
-        			source: new ol.source.ImageWMS({
-        				url: service_JSON.url,
-        				params: {
-        					"LAYERS": layer_JSON.name[i],
-        					"FORMAT": "image/png"
-        				}
-        			})
-        		});
-        		map.addLayer(wms_layer);
-        		layer_Array[i] = wms_layer;   
-        	}
+
+    for (var i = 0; i < layer_Array.length; i++) {
+        if (time_JSON != null && time_JSON.def[i] != null && time_JSON.start[i] != null && period_JSON.year[i] != null && period_JSON.month[i] != null && period_JSON.day[i] != null) {
+            if (service_JSON.format === "image/tiff" || service_JSON.format == "image/tiff") {
+                wms_layer = new ol.layer.Image({
+                    title: layer_JSON.title[i],
+                    source: new ol.source.ImageWMS({
+                        url: service_JSON.url,
+                        params: {
+                            "LAYERS": layer_JSON.name[i],
+                            "FORMAT": "image/png",
+                            "VERSION": service_JSON.version[0],
+                            "time": cutDate(new Date(time_JSON.def[i]))
+                        }
+                    })
+                });
+
+                map.addLayer(wms_layer);
+                layer_Array[i] = wms_layer;
+
+            } else {
+                wms_layer = new ol.layer.Image({
+                    title: layer_JSON.title[i],
+                    source: new ol.source.ImageWMS({
+                        url: service_JSON.url,
+                        params: {
+                            "LAYERS": layer_JSON.name[i],
+                            "FORMAT": service_JSON.format[0],
+                            "VERSION": service_JSON.version[0],
+                            "time": cutDate(new Date(time_JSON.def[i]))
+                        }
+                    })
+                });
+                map.addLayer(wms_layer);
+                layer_Array[i] = wms_layer;
+
+            }
+        } else {
+            if (service_JSON.format === "image/tiff") {
+                wms_layer = new ol.layer.Image({
+                    title: layer_JSON.title[i],
+                    source: new ol.source.ImageWMS({
+                        url: service_JSON.url,
+                        params: {
+                            "LAYERS": layer_JSON.name[i],
+                            "FORMAT": "image/png"
+                        }
+                    })
+                });
+                map.addLayer(wms_layer);
+                layer_Array[i] = wms_layer;
+
+            } else {
+                wms_layer = new ol.layer.Image({
+                    title: layer_JSON.title[i],
+                    source: new ol.source.ImageWMS({
+                        url: service_JSON.url,
+                        params: {
+                            "LAYERS": layer_JSON.name[i],
+                            "FORMAT": "image/png"
+                        }
+                    })
+                });
+                map.addLayer(wms_layer);
+                layer_Array[i] = wms_layer;
+            }
         }
     }
-    
+
     //initialize map params 
-    setLegendValues(0);
-    
-    if (markers != null) {  
-		markers = null; 
+    setLegendValues(layer_Array.length - 1);
+
+    if (markers != null) {
+        markers = null;
     }
-    
+
     if (heatmap) { //@see heatmap.js
-    	addClickListener(panZoomBar.id, "T4M");
-    	addClickListener2(OLSwitcher, "T4M");
-    } 
-    
+        addClickListener(panZoomBar.id, "T4M");
+        addClickListener2(OLSwitcher, "T4M");
+    }
+
     initLayerControlWidget();
-    
-    
-  /*   
-    var OLSwitcher = new OpenLayers.Control.AntiresistLayerSwitcher({
-	    'div' : OpenLayers.Util.getElement('layerSwitcherCustom'),
-	    'ascending' : false
-	});
-	map.addControl(OLSwitcher);
-    
-    //register change layer event
-    //to update time information, legend and feature info response
-    //map.events.register('changebaselayer', null, function(evt) {
-    map.events.register('changelayer', null, function(evt) { 
-    	if (evt.property == "visibility" || evt.property == "order") {   	
-	    	for (var i = 0; i < evt.layer.map.layers.length; i++) { 
-	    		if (evt.layer.map.layers[i].visibility == true && evt.layer.map.layers[i].isBaseLayer == false) {
-	    			for (var j = 0; j < layer_Array.length; j++) {   
-	    				if (layer_Array[j].name == evt.layer.map.layers[i].name) {
-	    					vis_layer_number = j;
-	    					setLegendValues(vis_layer_number);
-	    			    	updateTimeValues();
-	    	    			if (markers != null) {
-	        	    		   infoControls.click.handler.click(last_event);	 
-	    	                } else { 
-	    	                	if (dojo.byId('feature_label')) dojo.byId('feature_label').innerHTML = "Click on the map to get feature information.";
-	    	                }
-	    				} 
-	    			}
-	    		}
-	    	}
-    	}
-    });
-*/
 }
 
 /**
@@ -391,7 +345,7 @@ function resizeMap() {
         map.updateSize();
 
         //defined in feature_info_setting_dynamic.js  
-        
+
         map_height = map.getSize()[0];
         map_width = map.getSize()[1];
     }

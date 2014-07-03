@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * Copyright 2012 52ï¿½North Initiative for Geospatial Open Source Software GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ var markers;
 var service_url, service_version, service_srs;
 var markers2; 
 var service_url2, service_version2, service_srs2;
+var featureInfoUrl, featureInfoUrl2;
 
 /**
  * This method is used to register an event listener that sets the marker on the map, when the user has clicked into the map.

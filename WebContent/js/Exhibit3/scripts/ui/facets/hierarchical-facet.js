@@ -389,7 +389,6 @@ Exhibit.HierarchicalFacet.prototype.update = function(items) {
     var tree;
 
     Exhibit.jQuery(this._dom.valuesContainer).hide().empty();
-
     tree = this._computeFacet(items);					//CH: added tree.count ...
     if (typeof tree !== "undefined" && tree !== null && tree.count != 0) {
         this._constructBody(tree);
@@ -491,6 +490,7 @@ Exhibit.HierarchicalFacet.prototype._iterateHierarchy = function(hierarchyObject
  */
 Exhibit.HierarchicalFacet.prototype._computeFacet = function(items) {
     //CH: neu  
+	
 	scenarioUpdateFlag = true;
 	projectUpdateFlag = true;    
 	
@@ -501,9 +501,8 @@ Exhibit.HierarchicalFacet.prototype._computeFacet = function(items) {
     var selectedHierarchylevelnames = getHierarchylevelnameSelection();
 	var selectedScenarios = getScenarioSelection();
 	var selectedBoundingboxes = getBoundingboxSelection(); 
-	
+
 	var facetName = this.getLabel();  
-	
     if (facetName == hierarchylevelnameFacet) {
     	var obj;
     	//if resetAll -> do not send http request, just get inital values
@@ -513,13 +512,12 @@ Exhibit.HierarchicalFacet.prototype._computeFacet = function(items) {
     		setHierarchylevelnameCounts(httpGet(countAllHierarchylevelnames + "/" + getProjectTreeNames() + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes));    	
     		obj = this._iterateHierarchy(getProjectTree());
     	}
-    	
-    	//if globalCount == 0 store init values
+
     	if (globalCount == 0) {
+
     		//@see exhibitOutputFunctions
     		setInitValues(hierarchylevelnameFacet, obj); 
     	}
-    	
     	return obj; 
     } else if (facetName == scenarioFacet) {
     	var obj;
@@ -535,8 +533,7 @@ Exhibit.HierarchicalFacet.prototype._computeFacet = function(items) {
     	if (globalCount == 0) {
     		//@see exhibitOutputFunctions
     		setInitValues(scenarioFacet, obj); 
-    	}
-    	
+    	} 
     	return obj;
 	} else return null;
 	//CH: ende neu

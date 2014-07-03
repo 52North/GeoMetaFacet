@@ -17,6 +17,7 @@
 
 var markers;
 var service_url, service_version, service_srs;
+var featureInfoUrl;
 
 var map_width = 990;
 var map_height = 660;
@@ -43,6 +44,7 @@ function bindFeatureControls(time_info) {
     service_srs = wmsDescription_Store.getValue(service_JSON, "srs");
 
     map.on("singleclick", function(evt) {
+        last_event = evt.coordinate;
         map.getLayers().forEach(function(layer) {
             if (layer.getProperties().title === layer_Array[vis_layer_number].getProperties().title) {
                 var resolution = map.getView().getResolution();
@@ -50,59 +52,63 @@ function bindFeatureControls(time_info) {
                 var source = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, resolution, projection, {
                     "INFO_FORMAT": "text/html",
                 });
-               
+                featureInfoUrl = source;
+
                 if (typeof source != null) {
-                    require(["dojo/dom-attr", "dojo/request/xhr", "dojo/io-query"], function(domAttr, xhr, ioQuery) {  
+                    require(["dojo/dom-attr", "dojo/request/xhr", "dojo/io-query"], function(domAttr, xhr, ioQuery) {
                         var sourceObject = ioQuery.queryToObject(source);
-                        if (time_info === "time"){
-                        	$.ajax({
-                        		"url" : 'FeatureInfoRequester',
-                        		"type" : 'GET',
-                        		"data" : {
-                        			"url" : service_url + "?request=GetFeatureInfo&service=WMS",
-                        			"version" : sourceObject.VERSION,
-                        			"query_layers" : sourceObject.QUERY_LAYERS,
-                        			"crs" : sourceObject.SRS,
-                        			"bbox" : sourceObject.BBOX,
-                        			"width":  sourceObject.WIDTH,
-                        			"height":  sourceObject.HEIGHT,
-                        			"I" : sourceObject.X,
-                        			"J" : sourceObject.Y,
-                        			"time": sourceObject.time,
-                        		}, "success" : function(data,status) { 
-    								domAttr.set('feature_label', "innerHTML", data);
-    								if (domAttr.get('feature_label', "innerHTML") == ""){
-    									domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
-    								}
-                        		}
-                        	});
-                        }else{
-                        	$.ajax({
-                        		"url" : 'FeatureInfoRequester',
-                        		"type" : 'GET',
-                        		"data" : {
-                        			"url" : service_url + "?request=GetFeatureInfo&service=WMS",
-                        			"version" : sourceObject.VERSION,
-                        			"query_layers" : sourceObject.QUERY_LAYERS,
-                        			"crs" : (typeof sourceObject.CRS != "undefined"	? sourceObject.CRS : sourceObject.SRS),
-                        			"bbox" : sourceObject.BBOX,
-                        			"width":  sourceObject.WIDTH,
-                        			"height":  sourceObject.HEIGHT,
-                        			"I" : (typeof sourceObject.X != "undefined" ? sourceObject.X : sourceObject.I),
-                        			"J" : (typeof sourceObject.Y != "undefined" ? sourceObject.Y : sourceObject.J),
-                        			"time": "x",
-                        		}, "success" : function(data,status) { 	
-    								domAttr.set('feature_label', "innerHTML", data);
-    								if (domAttr.get('feature_label', "innerHTML") == ""){
-    									domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
-    								}
-                        		}, "error" : function(error){
-                        			console.log(error);
-                        		}
-                        	});
-                        }                        
+                        if (time_info === "time") {
+                            $.ajax({
+                                "url": 'FeatureInfoRequester',
+                                "type": 'GET',
+                                "data": {
+                                    "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                    "version": sourceObject.VERSION,
+                                    "query_layers": sourceObject.QUERY_LAYERS,
+                                    "crs": sourceObject.SRS,
+                                    "bbox": sourceObject.BBOX,
+                                    "width": sourceObject.WIDTH,
+                                    "height": sourceObject.HEIGHT,
+                                    "I": sourceObject.X,
+                                    "J": sourceObject.Y,
+                                    "time": sourceObject.time,
+                                },
+                                "success": function(data, status) {
+                                    domAttr.set('feature_label', "innerHTML", data);
+                                    if (domAttr.get('feature_label', "innerHTML") == "") {
+                                        domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                                    }
+                                }
+                            });
+                        } else {
+                            $.ajax({
+                                "url": 'FeatureInfoRequester',
+                                "type": 'GET',
+                                "data": {
+                                    "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                    "version": sourceObject.VERSION,
+                                    "query_layers": sourceObject.QUERY_LAYERS,
+                                    "crs": (typeof sourceObject.CRS != "undefined" ? sourceObject.CRS : sourceObject.SRS),
+                                    "bbox": sourceObject.BBOX,
+                                    "width": sourceObject.WIDTH,
+                                    "height": sourceObject.HEIGHT,
+                                    "I": (typeof sourceObject.X != "undefined" ? sourceObject.X : sourceObject.I),
+                                    "J": (typeof sourceObject.Y != "undefined" ? sourceObject.Y : sourceObject.J),
+                                    "time": "x",
+                                },
+                                "success": function(data, status) {
+                                    domAttr.set('feature_label', "innerHTML", data);
+                                    if (domAttr.get('feature_label', "innerHTML") == "") {
+                                        domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                                    }
+                                },
+                                "error": function(error) {
+                                    console.log(error);
+                                }
+                            });
+                        }
                     });
-                    
+
                 } else {
                     require(["dojo/dom-attr"], function(domAttr) {
                         domAttr.set("feature_label", "innerHTML", "Click on the map to get feature information.");
