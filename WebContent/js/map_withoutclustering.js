@@ -15,6 +15,10 @@
  * 
  */
 
+// +++ deprecated +++ //
+// This file contains methods to initialize a map without clustering the bounding boxes.
+// Clustering @see map.js
+
 var map2 = null; // OL Map Variable
 var vector = null; // OL Layer Vector
 var selectFeature = null; // OL SelectFeature Control

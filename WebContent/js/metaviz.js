@@ -15,6 +15,12 @@
  *
  */
 
+/**
+ * This javascript file contains source code for initalizing the lineage graph - called metaviz.
+ *
+ * @author Christin Henzen. Professorship of Geoinformation Systems
+ */
+
 var metaViz = {};
 var num_lin_ds = 0,
     num_us_ds = 0;

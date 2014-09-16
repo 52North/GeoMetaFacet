@@ -44,23 +44,22 @@ public class Container {
 	public static int counter = 0;
 	public static Boolean first = false;
 	
-	
 	/**
 	 * create Connection - HSQLConnection.java will use this connection
 	 * @throws SQLException
 	 */
-	public static void setConenction() throws SQLException{
+	public static void setConenction() throws SQLException {
 		try { Class.forName("org.hsqldb.jdbcDriver"); } 
 		catch (ClassNotFoundException e) { System.err.println("Driver not found!"); return; } 
-		conn = null;
-		conn = DriverManager.getConnection("jdbc:hsqldb:file:"+Constants.dbFilePath2 +"; shutdown=true", "root", ""); //path in Constants   //if changed, change path in lineage method
 		
+		conn = null;
+		conn = DriverManager.getConnection("jdbc:hsqldb:file:" + Constants.dbFilePath2 + "; shutdown=true", "root", ""); //path in Constants   //if changed, change path in lineage method		
 	}
 	
 	/**
 	 * creates facets string for first page call
 	 */
-	public static void setResults(){
+	public static void setResults() {
 		HSQLConnection hConn = new HSQLConnection();
 		countAllHierarchylevelnames = hConn.queryStatement("countAllHierarchylevelnames","","Sustainable Landmanagement;GLUES;Regional Projects;LUCCi;TFO;LEGATO;KULUNDA;CarBioCial;SuMaRiO;CC-LandStraD;COMTESS;INNOVATE;SuLaMa;SASCHA;SURUMER", "-","-","-","-","-");
 		countAllScenarios = hConn.queryStatement("countAllScenarios", "", "-", "Scenarios;GLUES Scenarios;Baseline;Baseline under Climate Change;No global biofuel quotas;No global biofuel quotas under Climate Change;Higher consumption of animal sourced food;Higher consumption of animal sourced food under Climate Change;Land expansion;Land expansion under Climate Change;SRES Scenarios;A1 Storyline and Scenario Family;A1;A1B;A2 Storyline and Scenario Family;A2;B1 Storyline and Scenario Family;B1;B2 Storyline and Scenario Family;B2", "-", "-", "-", "-");
@@ -83,40 +82,40 @@ public class Container {
 	 * @param query
 	 * @return
 	 */
-	public static String getResult(String query){
+	public static String getResult(String query) {
 		String result = "";
-		if(query.equals("countAllHierarchylevelnames")){
+		if (query.equals("countAllHierarchylevelnames")) {
 			counter++;
-			result= countAllHierarchylevelnames;
-		}else if (query.equals("countAllScenarios")){
+			result = countAllHierarchylevelnames;
+		} else if (query.equals("countAllScenarios")) {
 			counter++;
-			result= countAllScenarios;
-		}else if (query.equals("findAllTopiccategories")){
+			result = countAllScenarios;
+		} else if (query.equals("findAllTopiccategories")) {
 			counter++;
-			result= findAllTopiccategories;
-		}else if (query.equals("countAllTopiccategories")){
+			result = findAllTopiccategories;
+		} else if (query.equals("countAllTopiccategories")) {
 			counter++;
-			result= countAllTopiccategories;
-		}else if (query.equals("findAllDatatypes")){
+			result = countAllTopiccategories;
+		} else if (query.equals("findAllDatatypes")) {
 			counter++;
-			result= findAllDatatypes;
-		}else if (query.equals("countAllDatatypes")){
+			result = findAllDatatypes;
+		} else if (query.equals("countAllDatatypes")) {
 			counter++;
-			result= countAllDatatypes;
-		}else if (query.equals("findAllOrganizations")){
+			result = countAllDatatypes;
+		} else if (query.equals("findAllOrganizations")) {
 			counter++;
-			result= findAllOrganizations;
-		}else if (query.equals("countAllOrganizations")){
+			result = findAllOrganizations;
+		} else if (query.equals("countAllOrganizations")) {
 			counter++;
-			result= countAllOrganizations;
-		}else if (query.equals("findAllIds")){
+			result = countAllOrganizations;
+		} else if (query.equals("findAllIds")) {
 			counter++;
-			result= findAllIds;
-		}else if (query.equals("findAllBBox")){
+			result = findAllIds;
+		} else if (query.equals("findAllBBox")) {
 			counter++;
-			result= findAllBBox;
+			result = findAllBBox;
 		}
-		if (counter == 10)first=false;
+		if (counter == 10) first = false;
 		return result;
 	}
 }

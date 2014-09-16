@@ -44,18 +44,19 @@ function bindFeatureControls(time_info) {
     service_srs = wmsDescription_Store.getValue(service_JSON, "srs");
 
     map.on("singleclick", function(evt) {
-        last_event = evt.coordinate;
-        map.getLayers().forEach(function(layer) {
-            if (layer.getProperties().title === layer_Array[vis_layer_number].getProperties().title) {
-                var resolution = map.getView().getResolution();
-                var projection = map.getView().getProjection();
-                var source = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, resolution, projection, {
-                    "INFO_FORMAT": "text/html",
-                });
-                featureInfoUrl = source;
+        require(["dojo/dom-attr", "dojo/request/xhr", "dojo/io-query"], function(domAttr, xhr, ioQuery) {
+            for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
+                var layer = map.getLayers().array_[i];
+                if (domAttr.get(map.getLayers().array_[i].getProperties().title + "_checkbox", "checked")) {
+                    last_event = evt.coordinate;
+                    var resolution = map.getView().getResolution();
+                    var projection = map.getView().getProjection();
+                    var source = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, resolution, projection, {
+                        "INFO_FORMAT": "text/html",
+                    });
+                    featureInfoUrl = source;
 
-                if (typeof source != null) {
-                    require(["dojo/dom-attr", "dojo/request/xhr", "dojo/io-query"], function(domAttr, xhr, ioQuery) {
+                    if (typeof source != null) {
                         var sourceObject = ioQuery.queryToObject(source);
                         if (time_info === "time") {
                             $.ajax({
@@ -65,12 +66,12 @@ function bindFeatureControls(time_info) {
                                     "url": service_url + "?request=GetFeatureInfo&service=WMS",
                                     "version": sourceObject.VERSION,
                                     "query_layers": sourceObject.QUERY_LAYERS,
-                                    "crs": sourceObject.SRS,
+                                    "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
                                     "bbox": sourceObject.BBOX,
                                     "width": sourceObject.WIDTH,
                                     "height": sourceObject.HEIGHT,
-                                    "I": sourceObject.X,
-                                    "J": sourceObject.Y,
+                                    "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                    "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
                                     "time": sourceObject.time,
                                 },
                                 "success": function(data, status) {
@@ -88,12 +89,12 @@ function bindFeatureControls(time_info) {
                                     "url": service_url + "?request=GetFeatureInfo&service=WMS",
                                     "version": sourceObject.VERSION,
                                     "query_layers": sourceObject.QUERY_LAYERS,
-                                    "crs": (typeof sourceObject.CRS != "undefined" ? sourceObject.CRS : sourceObject.SRS),
+                                    "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
                                     "bbox": sourceObject.BBOX,
                                     "width": sourceObject.WIDTH,
                                     "height": sourceObject.HEIGHT,
-                                    "I": (typeof sourceObject.X != "undefined" ? sourceObject.X : sourceObject.I),
-                                    "J": (typeof sourceObject.Y != "undefined" ? sourceObject.Y : sourceObject.J),
+                                    "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                    "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
                                     "time": "x",
                                 },
                                 "success": function(data, status) {
@@ -107,40 +108,38 @@ function bindFeatureControls(time_info) {
                                 }
                             });
                         }
-                    });
-
-                } else {
-                    require(["dojo/dom-attr"], function(domAttr) {
+                    } else {
                         domAttr.set("feature_label", "innerHTML", "Click on the map to get feature information.");
+                    }
+
+                    /* remove existant Overlays */
+                    map.getOverlays().forEach(function(overlay) {
+                        map.removeOverlay(overlay);
                     });
+
+                    /*create overlay image*/
+                    var overlayElement = null;
+                    require(["dojo/dom-construct", "dojo/query"], function(domConstruct, domStyle) {
+                        overlayElement = domConstruct.create("img", {
+                            src: 'js/ol3/resources/marker-blue.png',
+                            style: {
+                                position: "absolute",
+                                top: "-25px",
+                                left: "-10.5px",
+                                color: "darkslateblue"
+                            }
+                        });
+                    });
+
+                    /* create overlay */
+                    var overlay = new ol.Overlay({
+                        position: evt.coordinate,
+                        element: overlayElement
+                    });
+
+                    map.addOverlay(overlay);
+                    break;
                 }
-
-                /* remove existant Overlays */
-                map.getOverlays().forEach(function(overlay) {
-                    map.removeOverlay(overlay);
-                });
-
-                /*create overlay image*/
-                var overlayElement = null;
-                require(["dojo/dom-construct", "dojo/query"], function(domConstruct, domStyle) {
-                    overlayElement = domConstruct.create("img", {
-                        src: 'js/ol3/resources/marker-blue.png',
-                        style: {
-                            position: "absolute",
-                            top: "-25px",
-                            left: "-10.5px",
-                            color: "darkslateblue"
-                        }
-                    });
-                });
-
-                /* create overlay */
-                var overlay = new ol.Overlay({
-                    position: evt.coordinate,
-                    element: overlayElement
-                });
-
-                map.addOverlay(overlay);
             }
         });
     });

@@ -465,7 +465,10 @@ public class HSQLConnection {
 				ResultSet rs = stmt.executeQuery(sql); 			
 				result = "[ ";
 				while (rs.next()) 
-					result += "{ \"id\": \"" + rs.getInt(1) + "\", \"label\": \"" + HelpMethods.reReplaceString(rs.getString(2)) + "\", \"datatype\": \"" + rs.getString(3) + "\", \"description\":\"" + rs.getString(4) + "\" },"; 
+					result += "{ \"id\": \"" + rs.getInt(1) + "\", "
+							+ "\"label\": \"" + HelpMethods.reReplaceString(rs.getString(2)) + "\", "
+							+ "\"datatype\": \"" + rs.getString(3) + "\", "
+							+ "\"description\":\"" + HelpMethods.reReplaceString(rs.getString(4)) + "\" },"; 
 				result = result.substring(0,result.length()-1);
 				result += " ]"; 		
 				rs.close();
@@ -809,7 +812,7 @@ public class HSQLConnection {
 		pSteps.put("paramName", "process_steps");
 		int i = 0;
 
-		while (rs.next()){ //TODO: if there are more steps, more processinfos - change would be  needed
+		while (rs.next()) { //TODO: if there are more steps, more processinfos - change would be  needed
 			Map<String, Object> pStep = new HashMap<String, Object>();
 			pStep.put("paramName", "process_step_"+i);
 			pStep.put("description", rs.getString(1));
@@ -859,7 +862,7 @@ public class HSQLConnection {
 	 * @return Map<String, Object> with document information
 	 * @throws SQLException
 	 */
-	private Map<String, Object> getDocs(Statement stmt, String externID) throws SQLException{
+	private Map<String, Object> getDocs(Statement stmt, String externID) throws SQLException {
 		String sql = "SELECT B.Title, B.TEMPORALEXTENTBEGINPOSITION, B.Description " 
 				+ "FROM Details "
 				+ "LEFT JOIN Relatedpub ON Details.GMF_ID = Relatedpub.GMF_ID "
@@ -870,7 +873,7 @@ public class HSQLConnection {
 		int k = 0;
 		Map<String, Object> citation = new HashMap<String, Object>();
 		Map<String, Object> docs = new HashMap<String, Object>();
-		while (rs.next()){
+		while (rs.next()) {
 			citation = new HashMap<String, Object>();
 			citation.put("paramName", "doc_"+k); 	
 			citation.put("title", rs.getString(1));
@@ -894,7 +897,7 @@ public class HSQLConnection {
 	 * @return Map<String, Object> with lineage/usage model information
 	 * @throws SQLException
 	 */
-	private Map<String, Object> getModels(Statement stmt, String modelID, String type, String mainID) throws SQLException{
+	private Map<String, Object> getModels(Statement stmt, String modelID, String type, String mainID) throws SQLException {
 		String sql = "SELECT Identifier, Description, Datetime, Processor "
 				+ "FROM Details "
 				+ "LEFT JOIN Lineage ON Details.GMF_ID = Lineage.GMF_ID "
@@ -911,15 +914,23 @@ public class HSQLConnection {
 		while (rs.next()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("paramName", "model_" + numberModels);
-        	if(rs.getString(1)!=null)model.put("title", rs.getString(1));
-        	else model.put("title", "");
-        	if(rs.getString(2)!=null)model.put("description", rs.getString(2));
-        	else model.put("description", "");
-        	if(rs.getString(3)!=null){
-        		if(!rs.getString(3).equals(""))model.put("dateTime", rs.getString(3));
-        	}else model.put("dateTime", "");
-        	if(rs.getString(4)!=null)model.put("organisation", rs.getString(4));
-        	else model.put("organisation", "");
+			if (rs.getString(1) != null)
+				model.put("title", rs.getString(1));
+			else
+				model.put("title", "");
+			if (rs.getString(2) != null)
+				model.put("description", rs.getString(2));
+			else
+				model.put("description", "");
+			if (rs.getString(3) != null) {
+				if (!rs.getString(3).equals(""))
+					model.put("dateTime", rs.getString(3));
+			} else
+				model.put("dateTime", "");
+			if (rs.getString(4) != null)
+				model.put("organisation", rs.getString(4));
+			else
+				model.put("organisation", "");
         	model.put("type", type);
         	model.put("info", ""); 
         	if (type.equals("usage")) {
@@ -930,22 +941,26 @@ public class HSQLConnection {
         	}
         	String[] ds = new String[1];
         	ds[0] = modelID;
-        	model.put("output_datasets", ds);  
+        	model.put("output_datasets", ds); 
+        	
         	//check if usage dataset is the same as input for model(lineage)
-        	/*for (int j=0; j<ids.length;j++){
-        		if(ids[j].equals(modelID)){
+        	/*for (int j=0; j<ids.length;j++) {
+        		if (ids[j].equals(modelID)) {
         			model.put("linked_2_modelInput", 1);
         			break;
         		}
         		 else model.put("linked_2_modelInput", 0);
         	}*/ //now in get DetailsTo()
+        	
          	models.put("model_" + numberModels, model);
         	modelIds[i] = (String) models.get("paramName");
-        	if( type.equals("usage")){
-        		mappingIdsUuids.put( type + "_model_"+numberModels, (String) model.get("paramName")); 
-        		numberModels++;
-        	}else mappingIdsUuids.put( type + "_model_"+i, (String) model.get("paramName")); 
-        	//TODO:  . why usagemodel1=model0 and usagemodel0=model1 - wrong vis with i=numberModel
+			if (type.equals("usage")) {
+				mappingIdsUuids.put(type + "_model_" + numberModels, (String) model.get("paramName"));
+				numberModels++;
+			} else
+				mappingIdsUuids.put(type + "_model_" + i,
+						(String) model.get("paramName"));
+        	//TODO: . why usagemodel1=model0 and usagemodel0=model1 - wrong vis with i=numberModel
 			
 			i++;
 		}
@@ -961,7 +976,7 @@ public class HSQLConnection {
 	 * @return Map<String, Object> with source information
 	 * @throws SQLException
 	 */
-	private Map<String, Object> getSources(Statement stmt, String externID) throws SQLException{
+	private Map<String, Object> getSources(Statement stmt, String externID) throws SQLException {
 		String sql = "SELECT B.ID, B.TITLE, B.Description, Facets.ORGANIZATION, B.Keywords, "
 				+ "Url.Url, Url.Safe, Url.Info, B.TEMPORALEXTENTBEGINPOSITION, B.TEMPORALEXTENTENDPOSITION, Facets.GEOGRAPHICBOUNDINGBOX, Relationlineagesource.CODE "
 				+ "FROM Details "
@@ -982,29 +997,29 @@ public class HSQLConnection {
 		int i = 0;
 		while (rs.next()) {
 			if (rs.getString(1) != null) {
-			Map<String, Object> detailContent = new HashMap<String, Object>();
-			detailContent.put("paramName", rs.getString(1));
-			detailContent.put("title",  rs.getString(2));
-			detailContent.put("description",  rs.getString(3));
-			detailContent.put("organisation",  rs.getString(4));
-			detailContent.put("keywords",  rs.getString(5));
-			detailContent.put("type",  "lineage");
-			detailContent.put("save",  rs.getString(7));
-			detailContent.put("info",  rs.getString(8));
-			detailContent.put("view",  rs.getString(6));
-			
-			if(!rs.getString(9).equals(""))
-				detailContent.put("time",  rs.getString(9)+"-"+rs.getString(10));
-			else
-				detailContent.put("time",  "");
-			
-			detailContent.put("extent",  rs.getString(11));
-			detailContent.put("vector", "false");	  
-			detailContent.put("relations_csw",  " "); //TODO:get from db
-			mappingIdsUuids.put("lineage_dataset_"+i, (String) detailContent.get("paramName"));
-			datasetList.put((String) detailContent.get("paramName"), detailContent);    
-			ids[i] = rs.getString(1);
-			i++;
+				Map<String, Object> detailContent = new HashMap<String, Object>();
+				detailContent.put("paramName", rs.getString(1));
+				detailContent.put("title", rs.getString(2));
+				detailContent.put("description", rs.getString(3));
+				detailContent.put("organisation", rs.getString(4));
+				detailContent.put("keywords", rs.getString(5));
+				detailContent.put("type", "lineage");
+				detailContent.put("save", rs.getString(7));
+				detailContent.put("info", rs.getString(8));
+				detailContent.put("view", rs.getString(6));
+
+				if (!rs.getString(9).equals(""))
+					detailContent.put("time", rs.getString(9) + "-" + rs.getString(10));
+				else
+					detailContent.put("time", "");
+
+				detailContent.put("extent", rs.getString(11));
+				detailContent.put("vector", "false");
+				detailContent.put("relations_csw", " "); // TODO:get from db
+				mappingIdsUuids.put("lineage_dataset_" + i, (String) detailContent.get("paramName"));
+				datasetList.put((String) detailContent.get("paramName"), detailContent);
+				ids[i] = rs.getString(1);
+				i++;
 			}
 		}
 		return datasetList;	
@@ -1047,21 +1062,17 @@ public class HSQLConnection {
 			
 			detailContent.put("extent",  rs.getString(10));
 			detailContent.put("vector", "false");	  
-			detailContent.put("relations_csw",  ""); //TODO:get from db
-			
-			
-			for (int j=0; j<ids.length;j++){
-				
-				if(ids[j]!=null){
-        			if(ids[j].equals(id)){
-        				detailContent.put("linked_2_modelInput", 1);
-        				break;
-        			}
-        			else detailContent.put("linked_2_modelInput", 0);
+			detailContent.put("relations_csw",  ""); //TODO: get from db
+			 
+			for (int j = 0; j < ids.length; j++) {
+				if (ids[j] != null) {
+					if (ids[j].equals(id)) {
+						detailContent.put("linked_2_modelInput", 1);
+						break;
+					} else
+						detailContent.put("linked_2_modelInput", 0);
 				}
-        	}
-			
-			
+			} 
 		}
 		return detailContent; 
 	}
@@ -1112,23 +1123,18 @@ public class HSQLConnection {
                 mod_ds_relations.put("map0", map0);
 				mod_ds_relations.put("usage_model_0", "model_0");
 			}  
-			if (i >0) {
+			if (i > 0) {
 				String[] mo = new String[i+1];
-				for (int j = 0 ; j<mo.length;j++){
-					mo[j]="usage_model_"+j;
-					
-				}
-				//mo[0] = "usage_model_0";
-				//mo[1] = "usage_model_1"; 
+				for (int j = 0; j < mo.length; j++) {
+					mo[j] = "usage_model_" + j;
+				} 
 				modelsLoc.remove("usage_model_ids");
-				modelsLoc.put("usage_model_ids", mo);	 
-                Map<String, Object> map1 = new HashMap<String, Object>();
-                map1.put("paramName", "usage_models_"+i); 
-                map1.put("dataset_ids", dsArr);
-                mod_ds_relations.put("map"+i,map1);
-				mod_ds_relations.put("usage_model_"+i, "model_"+i);
-				//if(i==1)mappingIdsUuids.put("usage_model_1", "model_0");
-				
+				modelsLoc.put("usage_model_ids", mo);
+				Map<String, Object> map1 = new HashMap<String, Object>();
+				map1.put("paramName", "usage_models_" + i);
+				map1.put("dataset_ids", dsArr);
+				mod_ds_relations.put("map" + i, map1);
+				mod_ds_relations.put("usage_model_" + i, "model_" + i);
 			}			
 			
 			mappingIdsUuids.put("usage_dataset_"+i, (String) detailContent.get("paramName"));
@@ -1147,9 +1153,9 @@ public class HSQLConnection {
 	 * @param id - search words for id
 	 * @return new sql if id has several keywords
 	 */
-	private String checkSQL (String sql, String id){
+	private String checkSQL (String sql, String id) {
 		String newSQL ="";	
-		if (id.split(" ").length<2){
+		if (id.split(" ").length < 2) {
 			return sql;
 		} else {
 			String [] keywords = id.split(" ");	
@@ -1157,13 +1163,12 @@ public class HSQLConnection {
 			String rightHandStatement = sqlSplit[1].replace(id, "whatAPlaceHolder"); 
 		
 			newSQL = sqlSplit[0]; //saves the left handed statement 
-			newSQL += " WHERE " + rightHandStatement.replace( "whatAPlaceHolder", keywords[0]); //adds first keyword to the right handed statement 
+			newSQL += " WHERE " + rightHandStatement.replace("whatAPlaceHolder", keywords[0]); //adds first keyword to the right handed statement 
 			//add "AND" keywords 
-			for (int i=1; i<keywords.length;i++){
-				newSQL += " AND " + rightHandStatement.replace( "whatAPlaceHolder", keywords[i]);	
+			for (int i = 1; i < keywords.length; i++) {
+				newSQL += " AND " + rightHandStatement.replace("whatAPlaceHolder", keywords[i]);	
 			}	
-		}
-		
+		} 
 		return newSQL;
 	}
 	
@@ -1192,14 +1197,12 @@ public class HSQLConnection {
 		String [] inputIds = new String[rs.getRow()];
 		rs.beforeFirst();
 		int i = 0;
-		while(rs.next()){
+		while (rs.next()) {
 			inputIds[i] = rs.getString(1);
-			if(!rs.getString(1).equals(mainID) ){
-				Map<String, Object> detailContent = getDetailsTo(stmt, rs.getString(1), rs.getString(1), "usage_input");//usage_dataset_"+numberModels+"_input
-				
-				datasetList.put((String) detailContent.get("paramName"), detailContent); 
-			}
-			
+			if (!rs.getString(1).equals(mainID)) {
+				Map<String, Object> detailContent = getDetailsTo(stmt, rs.getString(1), rs.getString(1), "usage_input");// usage_dataset_"+numberModels+"_input
+				datasetList.put((String) detailContent.get("paramName"), detailContent);
+			} 
 			i++;
 		}
 		return inputIds;

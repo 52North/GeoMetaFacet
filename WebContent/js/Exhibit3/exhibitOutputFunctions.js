@@ -38,8 +38,7 @@ function getItemsOfTabularView(items) {
  */
 function httpGet(requestDetail) {  
 	var requestUrl = dbHost + requestDetail;
-	var response = "";
-	//console.log("hier: " +requestDetail);
+	var response = ""; 
 	$.ajax({
 	    type: "GET",
 	    async: false,   
@@ -66,7 +65,7 @@ function httpGet(requestDetail) {
 		    response = err.responseText; 
 	    }
 	});
-	
+
 	return response;
 }
 
@@ -559,8 +558,8 @@ function traverseChildrenNames(tree) {
  * @returns the project tree object as json object with children in arrays
  */
 function getProjectTree() { 
-	if (!projectLoaded){
-		projectLoaded=true;
+	//if (!projectLoaded) {
+	//	projectLoaded = true;
 		projectTree = httpGetJSON(projectRegistryUrl);
 		if (projectTree instanceof Object) {
 			console.log("Project tree loaded as object."); 
@@ -568,7 +567,7 @@ function getProjectTree() {
 			console.log("Project tree loaded as string.");
 			projectTree = $.parseJSON(projectTree);
 		} 	
-	}
+	//}
 	return projectTree[0];
 }
  
@@ -578,8 +577,8 @@ function getProjectTree() {
  * @returns the scenario tree object as json object with children in arrays
  */
 function getScenarioTree() {
-	if(!scenarioLoaded){
-		scenarioLoaded=true;
+	//if (!scenarioLoaded) {
+	//	scenarioLoaded = true;
 		scenarioTree = httpGetJSON(scenarioRegistryUrl);
 		if (scenarioTree instanceof Object) {
 			console.log("Scenario tree loaded as object.");
@@ -587,7 +586,7 @@ function getScenarioTree() {
 			console.log("Scenario tree loaded as string.");
 			scenarioTree = $.parseJSON(scenarioTree);
 		}
-	}
+	//}
 	return scenarioTree[0]; 
 }
 
@@ -652,7 +651,9 @@ var topicInits;
  * @param obj - initial facet values to store
  */
 function setInitValues(facet, obj) {
-	if (hierarchylevelnameFacet == facet) hierarchyInits = obj;
+	if (hierarchylevelnameFacet == facet) {
+		hierarchyInits = obj;
+	}
 	else if (scenarioFacet == facet) scenarioInits = obj;
 	else if (datatypeFacet == facet) datatypeInits = obj;
 	else if (organizationFacet == facet) organizationInits = obj;
@@ -666,7 +667,9 @@ function setInitValues(facet, obj) {
  * @returns initial values for the chosen facet
  */
 function getInitValues(facet) {
-	if (hierarchylevelnameFacet == facet) return hierarchyInits;
+	if (hierarchylevelnameFacet == facet) {
+		return hierarchyInits;
+	}
 	else if (scenarioFacet == facet) return scenarioInits;
 	else if (datatypeFacet == facet) return datatypeInits;
 	else if (organizationFacet == facet) return organizationInits;

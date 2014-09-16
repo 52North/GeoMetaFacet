@@ -1,10 +1,33 @@
+/**
+ * Copyright 2012 52�North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 /* Variables */
 var map2 = null;
 var selectOneBox = false;
 var featureStore = null;
 var latestBoxSelection = null;
 
-
+/**
+ * This javascript file contains source code for initalizing the OpenLayers map and legend.
+ * The general params, such as wms name, layer name ... will be added to the gui element.
+ * Time information is checked and appropriate methods to generate time slider or time combobox are called.
+ *
+ * @author Hannes Tressel. Professorship of Geoinformation Systems
+ */
 function initMap() {
     require(["dojo/dom-attr"], function(domAttr) {
         if (domAttr.get("mapII", "innerHTML") === "") {
@@ -110,9 +133,8 @@ function createAllBoxesFromDB() {
                 if (featureStore.query({
                     extent: item.geographicboundingbox
                 }).length === 0) {
-
+                
                     //Erzeugung einer Punktliste aus der im Anschluss ein LineString Feature erzeugt wird
-                    // console.log(item.geographicboundingbox);
                     var bbox = LonLatToPointArray(item);
                     ol.extent.extend(extent, ol.extent.boundingExtent(bbox));
 
@@ -162,7 +184,7 @@ function createAllBoxesFromDB() {
 
 function LonLatToPointArray(item) {
     if (item instanceof Object) {
-        item = item.geographicboundingbox;
+        item = item.geographicboundingbox;     
     } else {
         item = item;
     }
@@ -176,6 +198,8 @@ function LonLatToPointArray(item) {
 
             if (parseFloat(latlngSplit[1]) > 89) latlngSplit[1] = "85";
             if (parseFloat(latlngSplit[1]) < -89) latlngSplit[1] = "-85";
+            if (parseFloat(latlngSplit[0]) > 89) latlngSplit[0] = "85";
+            if (parseFloat(latlngSplit[0]) < -89) latlngSplit[0] = "-85";
 
             latlngSplit[0] = parseFloat(latlngSplit[0]);
             latlngSplit[1] = parseFloat(latlngSplit[1]);
@@ -205,18 +229,21 @@ function showFeature(id) {
 function focusSingleFeature(id) {
     if (!metaVizOn) {
         var feature = httpGet(findOne + "/" + id);
-        var bbox = LonLatToPointArray(feature.geographicboundingbox);
-        var extent = ol.extent.boundingExtent(bbox);
-        map2.getView().getView2D().fitExtent(extent, map2.getSize());
-        unselectAllFeatures();
+        var bbox = null;
+        if (feature instanceof Object){
+        	bbox = LonLatToPointArray(feature.geographicboundingbox);
+            var extent = ol.extent.boundingExtent(bbox);
+            map2.getView().getView2D().fitExtent(extent, map2.getSize());
+            unselectAllFeatures();
 
-        //Select choosen Feature from HTML-List
-        var featureToSelect = getFeatureByExtent(feature.geographicboundingbox);
-        if (featureToSelect != null) {
-            map2.interactions_.array_[10].getFeatures().push(featureToSelect);
-        } else {
-            console.log("es ist ein Fehler aufgetreten!");
-        }
+            //Select choosen Feature from HTML-List
+            var featureToSelect = getFeatureByExtent(feature.geographicboundingbox);
+            if (featureToSelect != null) {
+            	map2.interactions_.array_[10].getFeatures().push(featureToSelect);
+            } else {
+            	console.log("es ist ein Fehler aufgetreten!");
+            }
+        }      
     }
 }
 

@@ -1,3 +1,20 @@
+/**
+ * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 var wmsDescription_Store;
 var time4Maps = {};
 
@@ -83,6 +100,7 @@ time4Maps.displayLayerChooser = function(data) {
         data: storeData,
         identifier: "id"
     });
+
     wmsDescription_Store.fetchItemByIdentity({
         identity: "layers",
         onItem: function(item, request) {
@@ -297,6 +315,11 @@ time4Maps.showTime4MapsLayer = function(service) {
     if (heatmap)
         time4MapsMode = true;
 
+    require(["dojo/dom"], function(dom) {
+        var title = dom.byId("metaDataTable").rows[0].cells[1].innerHTML;
+        dom.byId("description_wms_title").innerHTML = "Visualize " + title + " layers in Time4Maps";
+    });
+
     time4Maps.dataBaseRequestWithoutLayer(service, function(data) {
         var map = dojo.byId("map");
         //delete children of map
@@ -305,7 +328,12 @@ time4Maps.showTime4MapsLayer = function(service) {
                 map.removeChild(map.lastChild);
             }
         }
-        time4Maps.displayLayerChooser(data);
+
+        if (data != "null\n") {
+            time4Maps.displayLayerChooser(data);
+        } else {
+            console.log("no data");
+        }
     });
 };
 

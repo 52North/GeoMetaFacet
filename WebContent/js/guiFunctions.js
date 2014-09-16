@@ -296,7 +296,7 @@
          row.appendChild(cell);
          row.appendChild(cell2);
          table.appendChild(row);
-     } else if (entry.datatype == "dataset") { //link to metavic_details.html if hierarchy.html is used
+     } else if (entry.datatype == "dataset" && hierarchyStandalone == true) { //link to metaviz_details.html if hierarchy.html is used
          a.href = "metaviz_detail.html?mode=hsql&id=" + entry.uuid;
          a.innerHTML = "Show lineage information";
          var row = document.createElement("tr");

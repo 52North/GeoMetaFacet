@@ -1,18 +1,18 @@
 /**
- * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
- * 
+ * Copyright 2012 52ï¿½North Initiative for Geospatial Open Source Software GmbH
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 
 /**
@@ -31,7 +31,9 @@ function initLayerControlWidget() {
                     style: {
                         display: "block",
                         position: "relative",
-                        width: "100%",
+                        top: "20px",
+                        left: "5px",
+                        width: "90%",
                         marginBottom: "10px"
                     }
                 }), "layerSwitcherCustom", "first");
@@ -67,6 +69,8 @@ function initLayerControlWidget() {
                             layer.setVisible(false);
                         }
                         updateLegend();
+                        updateTimeValues();
+                        updateFeatureInfo();
                         //change LAyerLegend
 
                     }
@@ -100,24 +104,6 @@ function initLayerControlWidget() {
                     }
                 }, layer.getProperties().title + "_area");
 
-                /*
-                domConstruct.create("input", {
-                    type: "range",
-                    value: "10",
-                    min: "0",
-                    max: "10",
-                    step: ".05",
-                    onchange: function() {
-                        layer.setOpacity(this.value / 10);
-                    },
-                    style: {
-                        position: "relative",
-                        top: "10px",
-                        left: "20px",
-                        width: "110px"
-                    }
-                }, layer.getProperties().title + "_area");
-                */
                 domConstruct.create("div", {
                     id: layer.getProperties().title + "_slider"
                 }, layer.getProperties().title + "_area");
@@ -156,6 +142,7 @@ function updateLayerControlWidget() {
         initLayerControlWidget();
         updateLegend();
         updateTimeValues();
+        updateFeatureInfo();
 
     });
 }
@@ -165,8 +152,71 @@ function updateLegend() {
         for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
             if (dom.byId(map.getLayers().array_[i].getProperties().title + "_checkbox").checked) {
                 setLegendValues(i - 1);
+                vis_layer_number = i - 1;
                 break;
             }
         }
     });
+}
+
+function updateFeatureInfo() {
+    if (last_event != null) {
+        var source = featureInfoUrl;
+        var layer_JSON;
+        wmsDescription_Store.fetchItemByIdentity({
+            identity: "layerDescriptionParam",
+            onItem: function(item, request) {
+                layer_JSON = item;
+            }
+        });
+
+        if (typeof source != null) {
+            require(["dojo/dom-attr", "dojo/io-query", "dijit/registry"], function(domAttr, ioQuery, registry) {
+                var sourceObject = ioQuery.queryToObject(source);
+                var queryLayer = null;
+                var checked = false;
+                for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
+                    if (map.getLayers().array_[i] instanceof ol.layer.Image) {
+                        if (domAttr.get(map.getLayers().array_[i].getProperties().title + "_checkbox", "checked")) {
+                            checked = true;
+                            var layer = map.getLayers().array_[i].getSource().getParams().LAYERS;
+                            $.ajax({
+                                "url": 'FeatureInfoRequester',
+                                "type": 'GET',
+                                "data": {
+                                    "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                    "version": sourceObject.VERSION,
+                                    "query_layers": layer,
+                                    "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
+                                    "bbox": sourceObject.BBOX,
+                                    "width": sourceObject.WIDTH,
+                                    "height": sourceObject.HEIGHT,
+                                    "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                    "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
+                                    "time": (sourceObject.time) ? (sourceObject.time) : ("x")
+                                },
+                                "success": function(data, status) {
+                                    domAttr.set('feature_label', "innerHTML", data);
+                                    if (domAttr.get('feature_label', "innerHTML") == "") {
+                                        domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+
+                if (!checked) {
+                    domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                    map.getOverlays().forEach(function(overlay) {
+                        map.removeOverlay(overlay);
+                    });
+                    last_event = null;
+                }
+            });
+
+
+        }
+    }
 }

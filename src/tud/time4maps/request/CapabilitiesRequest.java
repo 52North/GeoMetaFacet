@@ -106,9 +106,7 @@ public class CapabilitiesRequest {
 		
 		try { 
 			String responseBody = "";
-			HttpGet httpget = new HttpGet(wmsUrl);
-			 
-			System.out.println("CR - WMS: " + wmsUrl);
+			HttpGet httpget = new HttpGet(wmsUrl); 
 			
 			// Create a response handler
 			BasicResponseHandler responseHandler = new BasicResponseHandler();

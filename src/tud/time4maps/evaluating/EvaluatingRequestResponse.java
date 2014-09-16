@@ -238,9 +238,9 @@ public class EvaluatingRequestResponse {
 		legend.put("paramName", "legendParam"); //neu
                 
         //Hannes 20.02.2013
-		String[] width_ = new String[ layerNames.length];
-		String[] height_ = new String[ layerNames.length];
-		String[] format_ = new String[ layerNames.length];
+		String[] width_ = new String[layerNames.length];
+		String[] height_ = new String[layerNames.length];
+		String[] format_ = new String[layerNames.length];
 		
 		for (int i=0; i < layerNames.length; i++) {
 			String xpLayerLegend = "//Layer[./Name='"+ layerNames[i] + "']/Style/LegendURL/OnlineResource"; 
@@ -252,7 +252,7 @@ public class EvaluatingRequestResponse {
 			String xpLayerLegendBounds_ = "//Layer[./Name='"+ layerNames[i] + "']/Style/LegendURL"; 
          	NodeList legendFormatNodes_ = (NodeList) exp.getXPathResult(xpLayerLegendBounds_, new NodeSet() , nl);
                         
-        	if (legendFormatNodes_ != null && legendFormatNodes_.item(0) != null){
+        	if (legendFormatNodes_ != null && legendFormatNodes_.item(0) != null) {
         		width_[i] = legendFormatNodes_.item(0).getAttributes().getNamedItem("width").getNodeValue();
         		height_[i] = legendFormatNodes_.item(0).getAttributes().getNamedItem("height").getNodeValue();
                         
@@ -287,12 +287,10 @@ public class EvaluatingRequestResponse {
 		NodeList layerAbstract = (NodeList) exp.getXPathResult(xpNestedLayerAbstract, new NodeSet(), nl); 
 		
 		//if results are empty try getting layer on first hierarchy level	
-		if (layerName == null && layerTitle == null) { //TODO: optimization of if/else
-			
+		if (layerName == null && layerTitle == null) { //TODO: optimization of if/else 
 			layerTitle = (NodeList) exp.getXPathResult(xpLayerTitle, new NodeSet(), nl); 
 			layerName = (NodeList) exp.getXPathResult(xpLayerName, new NodeSet(), nl); 
-			layerAbstract = (NodeList) exp.getXPathResult(xpLayerAbstract, new NodeSet(), nl); 
-			
+			layerAbstract = (NodeList) exp.getXPathResult(xpLayerAbstract, new NodeSet(), nl);  
 		}   
 		
 		Map <String,Object> layers = new HashMap<String,Object>();
@@ -320,8 +318,7 @@ public class EvaluatingRequestResponse {
 			if (element_list.item(i).getNodeName().contains("style")) {
 				
 			} else {
-				if (element_list.item(i).getChildNodes().getLength() < 2) {
-					
+				if (element_list.item(i).getChildNodes().getLength() < 2) { 
 					html_response += "<tr>";
 					html_response += "<td>";
 					html_response += element_list.item(i).getNodeName();
@@ -340,10 +337,8 @@ public class EvaluatingRequestResponse {
 	
 	public static String trimHTML(String html_response) {  
 		html_response = html_response.split("<body>")[1];
-		html_response = html_response.split("</body>")[0];
-		
-		html_response = html_response.replace("<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"1\">", "<table>");
-		
+		html_response = html_response.split("</body>")[0]; 
+		html_response = html_response.replace("<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"1\">", "<table>");		
 		html_response = html_response.replace("\'", " "); 
 		html_response = html_response.replace("\"", " "); 
 		html_response = html_response.replace("\n", "");
@@ -351,5 +346,4 @@ public class EvaluatingRequestResponse {
 		html_response = html_response.trim(); 
 		return html_response;
 	}
-	
 }

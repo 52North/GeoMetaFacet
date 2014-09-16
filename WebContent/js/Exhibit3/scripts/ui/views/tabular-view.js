@@ -336,9 +336,7 @@ Exhibit.TabularView.prototype._reconstruct = function() {
     var selectedBoundingboxes = getBoundingboxSelection();
 	
 	//check and return null if the same request is made - prevents multiple recosntructions of the tab view
-    //console.log("TabularView - reconstruct");
-    if(tempRequest == selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes ){
-    	console.log("same request - skipped for " + tempRequest);
+    if (tempRequest == selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes ){
     	return null;
     } else {
     	tempRequest = selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes;
@@ -358,9 +356,13 @@ Exhibit.TabularView.prototype._reconstruct = function() {
     //if no no selection is made - a simple "getAll" request is done
     if (selectedTopics == "-" && selectedDatatypes == "-" && selectedOrganizations == "-" && selectedScenarios == "-" && selectedHierarchylevelnames == "-" && selectedBoundingboxes == "-") { 
     	items = httpGet(findAllIds);
+    	//resetAllBool = true;
+
     } else { 							   
     	items = httpGet(findByMixed + "/" + selectedHierarchylevelnames + "/" + selectedTopics + "/" + selectedDatatypes + "/" + selectedOrganizations + "/" + selectedScenarios + "/" + selectedBoundingboxes);
     	collectionSummaryWidget._reconstruct();
+    	//resetAllBool = false;
+
     }
     
     items = this._getSortedItems(items, this._settings.sortAscending);
@@ -488,7 +490,6 @@ Exhibit.TabularView.prototype._reconstruct = function() {
                     
                     //valueType = column.format === "list" ? results.valueType : column.format;
                     valueType = "text";
-                    
                     //SH                    
                     if (c == 0) {                     	
                     	column.uiContext.formatLinkList(item.id,

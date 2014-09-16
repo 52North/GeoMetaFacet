@@ -30,7 +30,7 @@ import tud.time4maps.controlling.RequestControlling;
 
 /**
  * Servlet implementation class FeatureInfoRequester.
- * This class handles time4maps feature infor requests from frontend and intitialize 
+ * This class handles time4maps feature info requests from frontend and intitializes 
  * feature info requests.
  * 
  * @author Christin Henzen. Professorship of Geoinformation Systems

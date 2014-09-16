@@ -15,6 +15,11 @@
  * 
  */
 
+/**
+ * This javascript file contains source code for collecting click data, storing data in files and visualize in heatmaps.
+ *
+ * @author Christin Henzen. Professorship of Geoinformation Systems
+ */
 var normalHMStore, mapHMStore, T4MHMStore, MVIHMStore, INFHMStore, seaHMStore; //storing click information
 var facetScroll = {}, listScroll = {}, tabMDScroll = {}, tabTreeScroll = {}, middleScroll = {}; //getting scroll information
 var facetMiddleSplitter = {}, listDetailSplitter = {}, mapFInfoSplitter = {}, mapTimeSplitter = {}, mapListDetailSplitter = {};

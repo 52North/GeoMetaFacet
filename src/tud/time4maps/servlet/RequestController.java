@@ -26,7 +26,7 @@ import javax.servlet.http.*;
 
 /**
  * Servlet implementation class RequestController.
- * This class handles time4maps request from frontend and initializes map service request.
+ * This class handles time4maps requests from frontend and initializes map service requests.
  * 
  * @author Christin Henzen. Professorship of Geoinformation Systems
  */

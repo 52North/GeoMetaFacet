@@ -31,15 +31,15 @@ public class StartController implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		// shutdown code - close conenction
-		if(Container.conn!=null)
+		if (Container.conn != null)
 			try {
-				if(Container.conn!=null)
-				Container.conn.close();
+				if (Container.conn != null)
+					Container.conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
+
 	}
 
 	@Override
@@ -55,7 +55,4 @@ public class StartController implements ServletContextListener {
 			e.printStackTrace();
 		}
 	}
-	
-
-
 }
