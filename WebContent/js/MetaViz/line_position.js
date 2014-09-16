@@ -68,7 +68,7 @@ function setLines() {
 	  surface_height = card_size_with_buffer;
   else surface_height = num_us_ds * card_size_with_buffer;
    
-  surface_height = surface_height + 2000; //we need a lil bit more space for linked arrows
+  //surface_height = surface_height + 2000; //we need a lil bit more space for linked arrows -> creates a lot of white spaces
 
   
   if (num_us_ds > 0) 
@@ -89,19 +89,18 @@ function setLines() {
       id_string = "lineage_dataset_mini_";
       mod_id_string = "lineage_model_mini_0"; 
   }      
-   
+  var mod_top_pos = getTopPosition(mod_id_string);   
   for (var i = 0; i < num_ds; i++) {  
-      var ds_top_pos = getTopPosition(id_string+i);      
-      var mod_top_pos = getTopPosition(mod_id_string);  
+      var ds_top_pos = getTopPosition(id_string+i);       
       //surface.createLine({x1:lineage_ds_left, y1:ds_top_pos+offset, x2:lineage_model_left, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();        
       drawArrow({start: {x : lineage_ds_left, y :ds_top_pos+offset}, end: {x:lineage_model_left,y:mod_top_pos+offset}});
   }  
   
-  if (num_ds == 0) { 
-	  mod_top_pos = 0;
-	  offset = 50;
-  }
-  
+//  if (num_ds == 0) {              //deleted at 07-02-14 geonetwork - wrong position for vis without lin ds
+//	  mod_top_pos = 0;
+//	  offset = 50;
+//  }
+
   // + lines lin_mod - detail  
   if (dojo.byId('lineage_model_0') != null) //surface.createLine({x1:lineage_model_left+lineage_model_width, y1:mod_top_pos+offset, x2:detail_left-30, y2:mod_top_pos+offset}).setStroke({color: "black", style: "Dot"}).moveToFront();    
   drawArrow({start: {x : lineage_model_left+lineage_model_width, y :mod_top_pos+offset}, end: {x:detail_left-30,y:mod_top_pos+offset}});
@@ -178,15 +177,25 @@ function drawArrow(p) {
         y1= p.start.y,
         x2 = p.end.x,
         y2= p.end.y;
+
+ //shorten the line because of triangles overlaping
+    x2 = x1 +( (x2-x1)*0.8);
+    y2 = y1 +( (y2-y1)*0.8);
+
     var _arrowHeight = p.arrowHeight || 10;
     var _arrowWidth = p.arrowWidth || 2;
     var len = Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
     var _defaultStroke = {
         color : p.color || "black",
-        style : p.style ||"dot",
+        style : p.style ||"dot", //solid|dot
         width : 1
     };
-    
+    var _arrowEnd = {
+        color : p.color || "black",
+        style : p.style ||"solid", //solid|dot
+        width : 1
+    };
+ 
     //Add a line to the group
     group.createLine({
         x1 : 0, y1 : 0,
@@ -200,8 +209,8 @@ function drawArrow(p) {
     .lineTo(len,0)
     .lineTo(len-_arrowHeight,_arrowWidth)
     .lineTo(len-_arrowHeight,0)
-    .setStroke(p.stroke || _defaultStroke)
-    .setFill(p.stroke ? p.stroke.color : _defaultStroke.color );
+    .setStroke(p.stroke || _arrowEnd)
+    .setFill(p.stroke ? p.stroke.color : _arrowEnd.color );
 
     var _rot = Math.asin((y2-y1)/len)*180/Math.PI;
     if (x2 <= x1) {_rot = 180-_rot;}
