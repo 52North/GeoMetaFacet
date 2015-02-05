@@ -165,6 +165,7 @@ function initializeMapping() {
                 layer_Array[i] = wms_layer;
             }
         }
+        if (i < layer_Array.length - 1) wms_layer.setVisible(false);
     }
 
     //initialize map params 
@@ -180,6 +181,7 @@ function initializeMapping() {
     }
 
     initLayerControlWidget();
+    manageGetFeatureInfoOfAllLayersCheckBox();
 }
 
 /**
@@ -353,4 +355,23 @@ function resizeMap() {
         map2.updateSize();
     }
 
+}
+
+function manageGetFeatureInfoOfAllLayersCheckBox() {
+    require(["dojo/dom-style", "dijit/registry"], function(domStyle, reg) {
+        if (map.getLayers().array_.length > 2) {
+            domStyle.set("cp_FeatureInfoAllLayerCheckbox", "display", "block");
+            domStyle.set("cp_layerSwitcher", "height", "20%");
+            domStyle.set("cp_legendFrame", "height", "30%");
+            domStyle.set("cp_FeatureInfoAllLayerCheckbox", "height", "10%");
+            domStyle.set("cp_finfo", "height", "40%");
+            reg.byId("bc_t4m_right").resize();
+        } else {
+            domStyle.set("cp_FeatureInfoAllLayerCheckbox", "display", "none");
+            domStyle.set("cp_layerSwitcher", "height", "20%");
+            domStyle.set("cp_legendFrame", "height", "40%");
+            domStyle.set("cp_finfo", "height", "40%");
+            reg.byId("bc_t4m_right").resize();
+        }
+    });
 }

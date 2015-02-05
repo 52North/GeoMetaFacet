@@ -1,18 +1,18 @@
 /**
  * Copyright 2012 52�North Initiative for Geospatial Open Source Software GmbH
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 
 /* Variables */
@@ -133,12 +133,14 @@ function createAllBoxesFromDB() {
                 if (featureStore.query({
                     extent: item.geographicboundingbox
                 }).length === 0) {
-                
+
                     //Erzeugung einer Punktliste aus der im Anschluss ein LineString Feature erzeugt wird
                     var bbox = LonLatToPointArray(item);
                     ol.extent.extend(extent, ol.extent.boundingExtent(bbox));
 
+
                     if (bbox != null) {
+
                         featureStore.put({
                             id: [item.id],
                             extent: item.geographicboundingbox,
@@ -184,30 +186,33 @@ function createAllBoxesFromDB() {
 
 function LonLatToPointArray(item) {
     if (item instanceof Object) {
-        item = item.geographicboundingbox;     
+        item = item.geographicboundingbox;
     } else {
         item = item;
     }
 
     if (item != null) {
+
         var latlng = item.split(";");
 
         var koord = [];
         for (var i = 0; i < latlng.length; i++) {
             latlngSplit = latlng[i].split(",");
 
-            if (parseFloat(latlngSplit[1]) > 89) latlngSplit[1] = "85";
-            if (parseFloat(latlngSplit[1]) < -89) latlngSplit[1] = "-85";
-            if (parseFloat(latlngSplit[0]) > 89) latlngSplit[0] = "85";
-            if (parseFloat(latlngSplit[0]) < -89) latlngSplit[0] = "-85";
+            if (parseFloat(latlngSplit[1]) > 85.1) latlngSplit[1] = "85";
+            if (parseFloat(latlngSplit[1]) < -85.1) latlngSplit[1] = "-85";
+            //if (parseFloat(latlngSplit[0]) > 89) latlngSplit[0] = "85";
+            //if (parseFloat(latlngSplit[0]) < -89) latlngSplit[0] = "-85";
 
             latlngSplit[0] = parseFloat(latlngSplit[0]);
             latlngSplit[1] = parseFloat(latlngSplit[1]);
+
             koord.push(transform(latlngSplit[0], latlngSplit[1]));
+
         }
 
-        koord.push([koord[3][0], koord[0][1]]);
-
+        //koord.push([koord[3][0], koord[0][1]]);
+        koord.push(koord[0]);
         koord.extent = ol.extent.boundingExtent(koord);
 
         return koord;
@@ -230,8 +235,8 @@ function focusSingleFeature(id) {
     if (!metaVizOn) {
         var feature = httpGet(findOne + "/" + id);
         var bbox = null;
-        if (feature instanceof Object){
-        	bbox = LonLatToPointArray(feature.geographicboundingbox);
+        if (feature instanceof Object) {
+            bbox = LonLatToPointArray(feature.geographicboundingbox);
             var extent = ol.extent.boundingExtent(bbox);
             map2.getView().getView2D().fitExtent(extent, map2.getSize());
             unselectAllFeatures();
@@ -239,11 +244,11 @@ function focusSingleFeature(id) {
             //Select choosen Feature from HTML-List
             var featureToSelect = getFeatureByExtent(feature.geographicboundingbox);
             if (featureToSelect != null) {
-            	map2.interactions_.array_[10].getFeatures().push(featureToSelect);
+                map2.interactions_.array_[10].getFeatures().push(featureToSelect);
             } else {
-            	console.log("es ist ein Fehler aufgetreten!");
+                console.log("es ist ein Fehler aufgetreten!");
             }
-        }      
+        }
     }
 }
 
@@ -504,7 +509,6 @@ function initCluster(featureStore, areas) {
         var bbox = map2.getView().calculateExtent(map2.getSize());
         Cluster(featureStore, resolution, bbox, 1, threshold, calculateAreaThreshold(areas));
     });
-
 }
 
 function calculateAreaThreshold(areas) {
@@ -512,7 +516,7 @@ function calculateAreaThreshold(areas) {
 
     require(["dojo/store/Memory"], function(Memory) {
         var area = areas.query(function(item) {
-            return item.area > 0;
+            return item.area >= 0;
         }, {
             sort: [{
                 attribute: "area"

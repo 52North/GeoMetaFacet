@@ -21,9 +21,9 @@
  * @author Hannes Tressel. Professorship of Geoinformation Systems
  */
 function initLayerControlWidget() {
-    require(["dojo/dom-construct", "dijit/form/HorizontalSlider", "dojo/dom-attr", "dojo/dom", "dijit/registry"], function(domConstruct, HzSlider, domAttr, dom, registry) {
+    require(["dojo/dom-construct", "dijit/form/HorizontalSlider", "dojo/dom-attr", "dojo/dom", "dijit/registry", "dojo/query"], function(domConstruct, HzSlider, domAttr, dom, registry, query) {
+        var checkedAll = false;
         map.getLayers().forEach(function(layer, index) {
-
             if (layer instanceof ol.layer.Image) {
                 domConstruct.destroy(layer.getProperties().title + "_checkbox");
                 domConstruct.place(domConstruct.create("div", {
@@ -131,6 +131,40 @@ function initLayerControlWidget() {
             }
 
         });
+
+        domConstruct.create("input", {
+            type: "button",
+            value: "Select All/None",
+            style: {
+                position: "relative",
+                bottom: "-22px",
+                left: "27px"
+            },
+            onclick: function() {
+                query("#layerSwitcherCustom input[type='checkbox']").forEach(function(widget) {
+                    (!checkedAll) ? (widget.checked = true) : (widget.checked = false);
+                });
+
+                if (checkedAll) {
+                    map.getLayers().forEach(function(layer) {
+                        if (layer instanceof ol.layer.Image) {
+                            layer.setVisible(false);
+                        }
+                    });
+                    checkedAll = false
+                } else {
+                    map.getLayers().forEach(function(layer) {
+                        (layer instanceof ol.layer.Image) ? (layer.setVisible(true)) : (layer.setVisible(true));
+                    });
+                    checkedAll = true
+                }
+
+                updateLegend();
+                updateTimeValues();
+                updateFeatureInfo();
+            }
+
+        }, "layerSwitcherCustom");
     });
 }
 
@@ -160,63 +194,181 @@ function updateLegend() {
 }
 
 function updateFeatureInfo() {
-    if (last_event != null) {
-        var source = featureInfoUrl;
-        var layer_JSON;
-        wmsDescription_Store.fetchItemByIdentity({
-            identity: "layerDescriptionParam",
-            onItem: function(item, request) {
-                layer_JSON = item;
-            }
-        });
+    require(["dojo/dom-attr", "dojo/io-query", "dijit/registry", "dojo/dom", "dojo/query", "dojo/request/iframe", "dojo/dom-construct"], function(domAttr, ioQuery, registry, dom, query, iframe, domConstruct) {
 
-        if (typeof source != null) {
-            require(["dojo/dom-attr", "dojo/io-query", "dijit/registry"], function(domAttr, ioQuery, registry) {
-                var sourceObject = ioQuery.queryToObject(source);
-                var queryLayer = null;
-                var checked = false;
+        if (last_event != null) {
+            manageFeatureInfoWindow();
+            var layer_JSON;
+            wmsDescription_Store.fetchItemByIdentity({
+                identity: "layerDescriptionParam",
+                onItem: function(item, request) {
+                    layer_JSON = item;
+                }
+            });
+
+            var layer = null;
+            var visible = false;
+
+            if (domAttr.get("featureInfoAllLayer", "checked")) {
                 for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
-                    if (map.getLayers().array_[i] instanceof ol.layer.Image) {
-                        if (domAttr.get(map.getLayers().array_[i].getProperties().title + "_checkbox", "checked")) {
-                            checked = true;
-                            var layer = map.getLayers().array_[i].getSource().getParams().LAYERS;
-                            $.ajax({
-                                "url": 'FeatureInfoRequester',
-                                "type": 'GET',
-                                "data": {
-                                    "url": service_url + "?request=GetFeatureInfo&service=WMS",
-                                    "version": sourceObject.VERSION,
-                                    "query_layers": layer,
-                                    "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
-                                    "bbox": sourceObject.BBOX,
-                                    "width": sourceObject.WIDTH,
-                                    "height": sourceObject.HEIGHT,
-                                    "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
-                                    "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
-                                    "time": (sourceObject.time) ? (sourceObject.time) : ("x")
-                                },
-                                "success": function(data, status) {
-                                    domAttr.set('feature_label', "innerHTML", data);
-                                    if (domAttr.get('feature_label', "innerHTML") == "") {
-                                        domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                    layer = map.getLayers().array_[i];
+                    if (layer.getVisible()) {
+                        visible = true;
+                        var source = featureInfoUrl;
+                        if (source != null) {
+                            var sourceObject = ioQuery.queryToObject(source);
+                            var url = null;
+                            if (hasTimeData) {
+                                $.ajax({
+                                    "url": 'FeatureInfoRequester',
+                                    "type": 'GET',
+                                    "data": {
+                                        "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                        "version": sourceObject.VERSION,
+                                        "query_layers": layer.getSource().getParams().LAYERS,
+                                        "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
+                                        "bbox": sourceObject.BBOX,
+                                        "width": sourceObject.WIDTH,
+                                        "height": sourceObject.HEIGHT,
+                                        "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                        "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
+                                        "time": sourceObject.time,
+                                    },
+                                    "success": function(data, status) {
+                                        domConstruct.create("div", {
+                                            id: "featureInfo_multi",
+                                            innerHTML: data,
+                                            style: {
+                                                "display": "inline-block",
+                                                "margin": "0 5px 10px 0px"
+                                            }
+                                        }, "featureinfo");
+
                                     }
-                                }
-                            });
-                            break;
+                                });
+                            } else {
+                                $.ajax({
+                                    "url": 'FeatureInfoRequester',
+                                    "type": 'GET',
+                                    "data": {
+                                        "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                        "version": sourceObject.VERSION,
+                                        "query_layers": layer.getSource().getParams().LAYERS,
+                                        "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
+                                        "bbox": sourceObject.BBOX,
+                                        "width": sourceObject.WIDTH,
+                                        "height": sourceObject.HEIGHT,
+                                        "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                        "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
+                                        "time": "x",
+                                    },
+                                    "success": function(data, status) {
+                                        domConstruct.create("div", {
+                                            id: "featureInfo_multi",
+                                            innerHTML: data,
+                                            style: {
+                                                "display": "inline-block",
+                                                "margin": "0 5px 10px 0px"
+                                            }
+                                        }, "featureinfo");
+
+                                    }
+                                });
+                            }
                         }
                     }
                 }
 
-                if (!checked) {
+                if (!visible) {
+                    query("#featureinfo > div").forEach(domConstruct.destroy);
+                    domConstruct.create("div", {
+                        id: "featureInfo_multi",
+                        innerHTML: "Click on the map to get feature information.",
+                        style: {
+                            "display": "inline-block",
+                            "margin": "0 5px 10px 0px"
+                        }
+                    }, "featureinfo");
+
+                    map.getOverlays().forEach(function(overlay) {
+                        map.removeOverlay(overlay);
+                    });
+                    last_event = null;
+                    source = null;
+                }
+
+
+            } else {
+                for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
+                    layer = map.getLayers().array_[i];
+                    if (layer.getVisible()) {
+                        visible = true;
+                        var source = featureInfoUrl;
+                        if (typeof source != null) {
+                            var sourceObject = ioQuery.queryToObject(source);
+                            var url = null;
+                            if (hasTimeData) {
+                                $.ajax({
+                                    "url": 'FeatureInfoRequester',
+                                    "type": 'GET',
+                                    "data": {
+                                        "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                        "version": sourceObject.VERSION,
+                                        "query_layers": layer.getSource().getParams().LAYERS,
+                                        "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
+                                        "bbox": sourceObject.BBOX,
+                                        "width": sourceObject.WIDTH,
+                                        "height": sourceObject.HEIGHT,
+                                        "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                        "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
+                                        "time": sourceObject.time,
+                                    },
+                                    "success": function(data, status) {
+                                        domAttr.set('feature_label', "innerHTML", data);
+                                        if (domAttr.get('feature_label', "innerHTML") == "") {
+                                            domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                                        }
+                                    }
+                                });
+                            } else {
+                                $.ajax({
+                                    "url": 'FeatureInfoRequester',
+                                    "type": 'GET',
+                                    "data": {
+                                        "url": service_url + "?request=GetFeatureInfo&service=WMS",
+                                        "version": sourceObject.VERSION,
+                                        "query_layers": layer.getSource().getParams().LAYERS,
+                                        "crs": (sourceObject.VERSION === "1.3.0") ? (sourceObject.CRS) : (sourceObject.SRS),
+                                        "bbox": sourceObject.BBOX,
+                                        "width": sourceObject.WIDTH,
+                                        "height": sourceObject.HEIGHT,
+                                        "I": (sourceObject.VERSION === "1.3.0") ? (sourceObject.I) : (sourceObject.X),
+                                        "J": (sourceObject.VERSION === "1.3.0") ? (sourceObject.J) : (sourceObject.Y),
+                                        "time": "x",
+                                    },
+                                    "success": function(data, status) {
+                                        domAttr.set('feature_label', "innerHTML", data);
+                                        if (domAttr.get('feature_label', "innerHTML") == "") {
+                                            domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if (!visible) {
+                    //Click on the map to get feature information.
                     domAttr.set('feature_label', "innerHTML", "Click on the map to get feature information.");
                     map.getOverlays().forEach(function(overlay) {
                         map.removeOverlay(overlay);
                     });
                     last_event = null;
+                    source = null;
                 }
-            });
-
-
+            }
         }
-    }
+    });
 }
