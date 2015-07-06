@@ -46,7 +46,8 @@ function fromDateChanged(newFrom_DojoDate) { //fired when from date is set
         dijit.byId('time_slider').set("value",
             correctDate(newFrom_JSDate, 0).getTime());
         setMapTime(newFrom_JSDate);
-        if (last_event != null) { 
+        /*
+        if (last_event != null) {
             var source = featureInfoUrl;
             if (typeof source != null) {
                 require(["dojo/dom-attr", "dojo/io-query"], function(domAttr, ioQuery) {
@@ -73,8 +74,9 @@ function fromDateChanged(newFrom_DojoDate) { //fired when from date is set
                     });
                 });
             }
-
         }
+        */
+        updateFeatureInfo();
     } else if (lastDate != null && lastDate != "0NaN-NaN") {
         newFrom_DojoDate = lastDate;
 
@@ -83,7 +85,8 @@ function fromDateChanged(newFrom_DojoDate) { //fired when from date is set
         dijit.byId('time_slider').set("value",
             correctDate(newFrom_JSDate, 0).getTime());
         setMapTime(newFrom_JSDate);
-
+        updateFeatureInfo();
+        /*
         if (last_event != null) { 
             var source = featureInfoUrl;
             if (typeof source != null) {
@@ -113,6 +116,7 @@ function fromDateChanged(newFrom_DojoDate) { //fired when from date is set
             }
 
         }
+        */
     }
 }
 
@@ -275,11 +279,11 @@ function cutDate(date_String) {
 //calculate new dates (add period) in given time range and adapt gui
 var activeTime;
 
-function playSequence() {   
+function playSequence() {
     if (play_button.get('label') == "Animate map") {
         activeTime = window.setInterval("adaptPlayButton()", 2000);
     } else {
-        window.clearInterval(activeTime); 
+        window.clearInterval(activeTime);
         play_button.set('label', 'Animate map');
     }
 }
@@ -295,14 +299,14 @@ function adaptPlayButton() {
 
     if (dijit.byId('time_slider').get('value') >= dijit.byId('time_slider')
         .get('maximum')) {
-        window.clearInterval(activeTime); 
+        window.clearInterval(activeTime);
         play_button.set('label', 'Animate map');
     } else {
         adaptSequenceGui(period_JSON);
     }
 }
 
-function adaptSequenceGui(period_JSON) { 
+function adaptSequenceGui(period_JSON) {
     play_button.set('label', 'Stop');
     var from_JSDate = dijit.byId('fromDate_Input').get('value');
     var newDate_JSDate = new Date(from_JSDate);

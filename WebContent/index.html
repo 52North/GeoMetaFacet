@@ -149,6 +149,7 @@
 							<h2 id="description_wms_title" style="left:10px;">Visualize layers in Time4Maps</h2>	          
 					    	<div id="cb" ></div>
 						    <div id="load"></div>
+						    <div id="btn_selectAll"></div>
 						</div>
 					</div>
 	
@@ -200,15 +201,19 @@
 						</div>
 						<!-- T4M MAPS RIGHT -->
 						<div id="bc_t4m_right" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region: 'center'">
-						 	<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top", splitter:true' style="height:30%">
+						 	<div id="cp_layerSwitcher" role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='region:"top", splitter:true' style="height: 20%;">
 								<div id="layerSwitcherCustom" style="position:relative;top:0px;float:left;overflow:visible;"></div>
-							</div>			
-							<div role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"center"' style="height:30%">
+							</div>	
+							<div id="cp_legendFrame" role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"center"' style="height: 30%;" >
 								<img style="border: none;" id="legend_frame">		 
-							</div>			
-							<div id="cp_finfo" role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"bottom", splitter:true' style="height:40%"> 
+							</div>
+							<div id="cp_finfo" role="contentinfo" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"bottom", splitter:true' style="height:40%;"> 
 								<!-- FEATURE INFO -->
 								<div id="featureinfo"><label id="feature_label">Click on the map to get feature information.</label></div> 
+							</div>
+							<div id="cp_FeatureInfoAllLayerCheckbox" role="navigation" data-dojo-type="dijit/layout/ContentPane" data-dojo-props=' region:"bottom"' style="height: 10%; display:block;" >
+								<input type="checkbox" id="featureInfoAllLayer" onchange="updateFeatureInfo();">
+        	 					<label>Get Feature Information Of All Visible Layer</label>   
 							</div>
 						</div>
 					</div>			

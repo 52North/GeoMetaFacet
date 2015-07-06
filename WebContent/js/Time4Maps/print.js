@@ -283,14 +283,17 @@ function openPrintPreview() {
         ui.legendHeight = 400;
 
         var layers = "";
-        for (var i = map.getLayers().array_.length - 1; i > 0; i--) {
-            var layer = map.getLayers().array_[i];
-            if (layer.getVisible()) {
-                layers += layer.getSource().getParams().LAYERS + ",";
+        var time = null;
+        map.getLayers().forEach(function(layer){
+        	if (layer instanceof ol.layer.Image && layer.getVisible()){
+        		layers += layer.getSource().getParams().LAYERS + ",";
+                (layer.getSource().getParams().time != undefined)?(time=layer.getSource().getParams().time):(time="x");
             }
-        }
+        	
+        });
         //entferne ','
         layers = layers.slice(0, layers.length - 1);
+      
         if (layers.length > 0) {
             mapSurface = gfx.createSurface("map1", ui.mapWidth, ui.mapHeight);
             mapSurface.createImage({
@@ -303,7 +306,8 @@ function openPrintPreview() {
                     version: service_JSON.version[0],
                     srs: service_JSON.srs[0],
                     format: service_JSON.format[0],
-                    layers: layers
+                    layers: layers,
+                    time: time
                 }, map)
             });
         }
@@ -311,12 +315,13 @@ function openPrintPreview() {
 
         if (ui.map2_) {
             var layers2 = "";
-            for (var i = map2.getLayers().array_.length - 1; i > 0; i--) {
-                var layer = map2.getLayers().array_[i];
-                if (layer.getVisible()) {
-                    layers2 += layer.getSource().getParams().LAYERS + ",";
-                }
-            }
+            time = null;
+            map2.getLayers().forEach(function(layer){
+            	if (layer instanceof ol.layer.Image && layer.getVisible()){
+            		layers2 += layer.getSource().getParams().LAYERS + ",";
+                    (layer.getSource().getParams().time != undefined)?(time=layer.getSource().getParams().time):(time="x");
+            	}
+            });
             layers2 = layers2.slice(0, layers2.length - 1);
             if (layers2.length > 0) {
                 mapSurface2 = gfx.createSurface("map2", ui.mapWidth, ui.mapHeight);
@@ -330,7 +335,8 @@ function openPrintPreview() {
                         version: service_JSON2.version[0],
                         srs: service_JSON2.srs[0],
                         format: service_JSON2.format[0],
-                        layers: layers2
+                        layers: layers2,
+                        time: time
                     }, map2)
                 });
             }
@@ -372,7 +378,7 @@ function openPrintPreview() {
             layers2 = "";
             for (var i = map2.getLayers().array_.length - 1; i > 0; i--) {
                 var layer = map2.getLayers().array_[i];
-                if (layer.getVisible()) {
+                if (layer instanceof ol.layer.Image && layer.getVisible()) {
                     layers2 = layer.getSource().getParams().LAYERS;
                     break;
                 }
@@ -568,11 +574,13 @@ function getMapImage(data, map) {
         format: "&FORMAT=" + data.format,
         transparent: "&TRANSPARENT=true",
         layers: "&LAYERS=" + data.layers,
+        time: (data.time != "x")?("&TIME="+data.time):(""),
         srs: (data.version === "1.1.1") ? ("&SRS=" + data.srs) : ((data.srs === "EPSG:4326") ? ("&CRS=CRS:84") : ("&CRS=" + data.srs)),
         styles: "&STYLES=&WIDTH=" + Math.floor(styles.width / faktor.x) + "&HEIGHT=" + Math.floor(styles.height / faktor.y) + "&BBOX=" + styles.bbox
     }
 
-    return (imgURL.url + imgURL.service + imgURL.version + imgURL.request + imgURL.format + imgURL.transparent + imgURL.layers + imgURL.srs + imgURL.styles);
+    console.log(imgURL.url + imgURL.service + imgURL.version + imgURL.request + imgURL.format + imgURL.transparent + imgURL.layers + imgURL.time + imgURL.srs + imgURL.styles);
+    return (imgURL.url + imgURL.service + imgURL.version + imgURL.request + imgURL.format + imgURL.transparent + imgURL.layers + imgURL.time + imgURL.srs + imgURL.styles);
 }
 
 function getLegendImage(data) {
@@ -591,6 +599,5 @@ function getLegendImage(data) {
         styles: "&WIDTH=" + styles.width + "&HEIGHT=" + styles.height,
         layers: "&LAYER=" + data.layers
     }
-
     return (imgURL.url + imgURL.request + imgURL.version + imgURL.format + imgURL.styles + imgURL.layers);
 }
