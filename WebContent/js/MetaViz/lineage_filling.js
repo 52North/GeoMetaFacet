@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 52°North Initiative for Geospatial Open Source Software GmbH
+ * Copyright 2012 52Â°North Initiative for Geospatial Open Source Software GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,10 +49,10 @@ function fillLineage() {
 					  if (cit.date != null && cit.date != "") pubs_html += "<tr><td class=\"table_left\" valign=\"top\">PUBLISHING DATE</td><td>" + cit.date + "</td></tr>";
 					  //if http
 					  if (cit.others != null && cit.others != "" && cit.others.toString().substring(0,4) =="http") pubs_html += "<tr><td class=\"table_left\" valign=\"top\">CITATION</td><td><a onclick=\"window.open(\'" + cit.others +"\')\">"+cit.others+"</a></td></tr>";
-					  else // if starts with doi -> calculate http://dx.doi.org/doi 
+					  else // if starts with doi -> calculate https://doi.org/doi 
 						  if (cit.others != null && cit.others != "" && cit.others.toString().substring(0,4)=="doi:" ) {
 							  var helper = cit.others.toString().substring(4,cit.others.toString().lenth);
-							  helper = "http://dx.doi.org/"+ helper;
+							  helper = "https://doi.org/"+ helper;
 							  pubs_html += "<tr><td class=\"table_left\" valign=\"top\">CITATION</td><td><a onclick=\"window.open(\'" + helper +"\')\">"+helper+"</a></td></tr>";
 					  } else if(cit.others != null && cit.others != "") pubs_html += "<tr><td class=\"table_left\" valign=\"top\">CITATION</td><td>" + cit.others + "</td></tr>";
 				  } 
