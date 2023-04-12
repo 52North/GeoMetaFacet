@@ -33,3 +33,20 @@
 		<namespaceuri>http://www.isotc211.org/2005/gmd</namespaceuri>
 	</namespace>
 </namespaces>
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<namespaces>
+  <namespace prefix="csw" namespaceuri="http://www.opengis.net/cat/csw/2.0.2"/>
+  <namespace prefix="gco" namespaceuri="http://www.isotc211.org/2005/gco"/>
+  <namespace prefix="gmd" namespaceuri="http://www.isotc211.org/2005/gmd"/>
+  <namespace prefix="gmi" namespaceuri="http://eden.ign.fr/xsd/metafor/20050620/gmi"/>
+  <namespace prefix="gml" namespaceuri="http://www.opengis.net/gml"/>
+  <namespace prefix="srv" namespaceuri="http://www.isotc211.org/2005/srv"/>
+  <namespace prefix="xsi" namespaceuri="http://www.w3.org/2001/XMLSchema-instance"/>
+  <namespace namespaceuri="http://www.isotc211.org/2005/gmd"/>
+</namespaces>
