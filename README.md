@@ -1,3 +1,7 @@
+# ARCHIVED
+
+This project is no longer maintained and will not receive any further updates. If you plan to continue using it, please be aware that future security issues will not be addressed.
+
 # GeoMetaFacet
 
 GeoMetaFacet  is a web client to explore and visualize geodata. It focuses on a user-friendly and interactive navigation through the metadata and allows the user to quickly get an overview of available data.
